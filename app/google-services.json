@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "225667559446",
+    "project_id": "guni-attendance-3b667",
+    "storage_bucket": "guni-attendance-3b667.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225667559446:android:1532e9139406788d734537",
+        "android_client_info": {
+          "package_name": "com.example.guniattendance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "225667559446-tardhd8b3bk5k26unkmi1jimmfbkl8nh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD98-7kbBRK2J2SES5F7Nxyhsf4LMTkZxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "225667559446-tardhd8b3bk5k26unkmi1jimmfbkl8nh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

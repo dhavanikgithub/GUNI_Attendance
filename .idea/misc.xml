@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/caches/transforms-3/570c1cdd49599dd57fa00f7a48b45801/transformed/appcompat-1.4.2/res/layout/support_simple_spinner_dropdown_item.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1115" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/button_background.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/button_bakground.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.1115" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_baseline_email_24.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_baseline_error_outline_24.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1115" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/ic_round_person_24.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/main_background.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/drawable/top_view.xml" value="0.121" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/activity_auth.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/activity_faculty.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/activity_student.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_app_pin.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_edit_student.xml" value="0.15753424657534246" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_enable_attendance.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_faculty_home.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_faculty_register.xml" value="0.17692307692307693" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_launcher_screen.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_login.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_select_attendance.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_splash_screen.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_student_home.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_student_list.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_student_register.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/fragment_take_attendance.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/GUNIAttendance/app/src/main/res/layout/item_list.xml" value="0.14666666666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
