@@ -7,38 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:997968797390:android:ae9d752e5690f6898eba9f",
+        "mobilesdk_app_id": "1:997968797390:android:884ec376bd37cb518eba9f",
         "android_client_info": {
           "package_name": "com.example.guniattendance"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "997968797390-31fpndpausd3ede1nv03pkvngf9cuspa.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA8afrzMwiYznbqA1EJqJ55vtuVImMpSKs"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "997968797390-31fpndpausd3ede1nv03pkvngf9cuspa.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:997968797390:android:938dc4e8e792afa78eba9f",
-        "android_client_info": {
-          "package_name": "com.example.guniattendancefaculty"
         }
       },
       "oauth_client": [
