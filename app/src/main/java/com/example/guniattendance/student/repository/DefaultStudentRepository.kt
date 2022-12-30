@@ -10,12 +10,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DefaultStudentRepository : StudentRepository {
 
     private val auth = FirebaseAuth.getInstance()
     private val students = FirebaseFirestore.getInstance().collection("student")
+
+    private val cal = Calendar.getInstance()
+    private val df: DateFormat = SimpleDateFormat("dd-MM-yyyy")
+    private val date = df.format(cal.time)
 
     override suspend fun getCurUser(): Resource<Student> = withContext(Dispatchers.IO) {
         safeCall {
@@ -32,7 +38,7 @@ class DefaultStudentRepository : StudentRepository {
 
             val attendances =
                 FirebaseFirestore.getInstance().collection("attendance").document("date")
-                    .collection(Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString())
+                    .collection(date.toString())
                     .document("semester")
                     .collection(curUser.sem.toString())
 
@@ -81,7 +87,7 @@ class DefaultStudentRepository : StudentRepository {
                 val attendances =
                     FirebaseFirestore.getInstance().collection("attendance").document("date")
                         .collection(
-                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+                            date.toString()
                         ).document("semester")
                         .collection(curUser.sem.toString())
 
