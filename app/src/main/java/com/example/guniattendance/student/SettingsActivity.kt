@@ -30,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
                     putString("moodle_url", updatedUrl)
                     commit()
                 }
-                Toast.makeText(this,"OG : $ogUrl\nUpdated : $updatedUrl", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"OG : $ogUrl\nUpdated : ${client.url}", Toast.LENGTH_SHORT).show()
             }
         }
 
