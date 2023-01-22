@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">GUNI Attendance</string>
+    <string name="capture_image">Capture Image</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="moodle_username">Moodle Username</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="select_sem">Select Sem</string>
+    <string name="register">Register</string>
+    <string name="image">Image</string>
+    <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
+    <string name="set_pin">Set pin</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="faculty_name">Faculty Name</string>
+    <string name="take_attendance">Take Attendance</string>
+    <string name="student_list">Student list</string>
+    <string name="enter_pin">Enter pin</string>
+    <string name="let_s_go">Let\'s Go</string>
+    <string name="login">Login</string>
+    <string name="select_elective_subject_1">Select elective subject 1</string>
+    <string name="select_elective_subject_2">Select elective subject 2</string>
+    <string name="el_subject_1">el subject 1</string>
+    <string name="el_subject_2">el subject 2</string>
+    <string name="select_lab">Select lab</string>
+    <string name="select_class">Select class</string>
+    <string name="moodle_url">Enter Moodle Server Url</string>
+    <string name="moodle_btn">Set Up Moodle Server</string>
+    <string name="enter_your_enrolment_number">Enter your enrolment number</string>
+    <string name="enrolment_number">Enrolment number</string>
+    <string name="name">Name</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
+    <string name="student_name">Student Name</string>
+    <string name="select_subject">Select subject</string>
+    <string name="sign_out">Sign out</string>
+    <string name="setting">Settings</string>
+    <string name="edit">edit</string>
+    <string name="semester">Semester:</string>
+    <string name="class_lab">Class: Lab:</string>
+    <string name="update_student">Update Student</string>
+    <string name="select_branch">Select Branch</string>
+    <string name="location">Latitude:  \nLongitude: </string>
+    <string name="accuracy">Accuracy: </string>
+    <string name="register_faculty">Register Faculty</string>
+    <string name="already_user_nlogin_here">Already user?\nLogin here</string>
+    <string name="register_student">Register Student</string>
+    <string name="want_to_attendance_for_someone_else">Want to add attendance for someone else?\nClick Here</string>
+    <string name="go_back">Go back</string>
+    <string name="take_your_attendance_nclick_here">Take your attendance? \nClick here</string>
+    <string-array name="semester">
+        <item>1st</item>
+        <item>2nd</item>
+        <item>3rd</item>
+        <item>4th</item>
+        <item>5th</item>
+        <item>6th</item>
+        <item>7th</item>
+        <item>8th</item>
+    </string-array>
+    <string-array name="type">
+        <item>Lecture</item>
+        <item>Lab</item>
+    </string-array>
+    <string-array name="branch">
+        <item>CE/IT</item>
+        <item>AI</item>
+    </string-array>
+</resources>
