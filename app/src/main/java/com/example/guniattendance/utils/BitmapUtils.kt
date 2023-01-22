@@ -6,14 +6,38 @@ import android.graphics.*
 import android.media.Image
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import android.os.StrictMode
+import android.util.Base64
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileDescriptor
 import java.io.FileOutputStream
+import java.net.URL
+
 
 class BitmapUtils {
 
     companion object {
+
+        // Convert the given Image URL to Base64(Bitmap)
+        // Returns Base64 string
+        fun convertUrlToBase64(url: String?): String? {
+            val newurl: URL
+            val bitmap: Bitmap
+            var base64: String? = ""
+            try {
+                val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+                StrictMode.setThreadPolicy(policy)
+                newurl = URL(url)
+                bitmap = BitmapFactory.decodeStream(newurl.openConnection().getInputStream())
+                val outputStream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return base64
+        }
 
         // Crop the given bitmap with the given rect.
         fun cropRectFromBitmap(source: Bitmap, rect: Rect): Bitmap {

@@ -18,10 +18,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.example.guniattendance.R
+import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.AuthActivity
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
-import com.example.guniattendance.student.SettingsActivity
 import com.example.guniattendance.utils.Constants.ALLOWED_RADIUS
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
@@ -31,6 +31,7 @@ import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
@@ -70,10 +71,8 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
             btnSetting.setOnClickListener{
                 Toast.makeText(context,"Settings",Toast.LENGTH_SHORT).show()
-                Intent(context, SettingsActivity::class.java).also {
-                    startActivity(it)
-                    requireActivity().finish()
-                }
+                val i = Intent(context, SettingsActivity::class.java)
+                startActivity(i)
             }
 
             btnSignOut.setOnClickListener {

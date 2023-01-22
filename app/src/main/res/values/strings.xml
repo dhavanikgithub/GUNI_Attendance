@@ -24,7 +24,7 @@
     <string name="select_class">Select class</string>
     <string name="moodle_url">Enter Moodle Server Url</string>
     <string name="moodle_btn">Set Up Moodle Server</string>
-    <string name="enter_your_enrolment_number">Enter your enrolment number</string>
+    <string name="enter_your_enrolment_number">Enter your enrollment number</string>
     <string name="enrolment_number">Enrolment number</string>
     <string name="name">Name</string>
     <string name="enable">Enable</string>
@@ -43,6 +43,7 @@
     <string name="register_faculty">Register Faculty</string>
     <string name="already_user_nlogin_here">Already user?\nLogin here</string>
     <string name="register_student">Register Student</string>
+    <string name="check">Check</string>
     <string name="want_to_attendance_for_someone_else">Want to add attendance for someone else?\nClick Here</string>
     <string name="go_back">Go back</string>
     <string name="take_your_attendance_nclick_here">Take your attendance? \nClick here</string>
@@ -64,4 +65,19 @@
         <item>CE/IT</item>
         <item>AI</item>
     </string-array>
+    <!-- Preference Titles -->
+    <string name="messages_header">Update Url</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Enter Moodle Server Url</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>
