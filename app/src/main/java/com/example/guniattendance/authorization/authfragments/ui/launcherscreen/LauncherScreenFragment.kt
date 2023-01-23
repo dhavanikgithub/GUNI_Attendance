@@ -1,6 +1,5 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -18,26 +17,21 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
     private lateinit var binding: FragmentLauncherScreenBinding
 
+
+    companion object{
+        lateinit var studentEnrolment: String
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentLauncherScreenBinding.bind(view)
-
         binding.apply {
             btnCheckEnrol.setOnClickListener{
 
                 if(et1Enrollment.text.toString().isEmpty()){
-                    val alertDialogBuilder = AlertDialog.Builder(context)
-                    alertDialogBuilder.setTitle("Error")
-                    alertDialogBuilder
-                        .setMessage("Enrollment number is empty!")
-                        .setCancelable(true)
-                        .setPositiveButton("OK") { dialog, id ->
-                            dialog.cancel()
-                        }
-                    val alertDialog = alertDialogBuilder.create()
-                    alertDialog.show()
+                    context?.let { it1 -> ClientAPI.showErrorBox(it1, "Error", "Enrollment number is empty!", "OK") }
                 }else{
+                    studentEnrolment = et1Enrollment.text.toString()
                     lateinit var fetchedProfileURL: String
                     val attRepo = MoodleController.getAttendanceRepository(ClientAPI().Url,ClientAPI().coreToken,ClientAPI().attandanceToken,ClientAPI().uploadToken)
                     activity?.let { it1 ->
@@ -49,14 +43,17 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                                     fetchedProfileURL = item.get("profileimageurl").toString()
                                 }
 
-                                var convertedfetchedProfileImage = convertUrlToBase64(fetchedProfileURL)
-                                var convertedDefaultProfileImage = convertUrlToBase64(ClientAPI().userDefaultPicURL)
+                                val convertedfetchedProfileImage = convertUrlToBase64(fetchedProfileURL)
+                                val convertedDefaultProfileImage = convertUrlToBase64(ClientAPI().userDefaultPicURL)
 
                                 if(convertedfetchedProfileImage == convertedDefaultProfileImage){
                                     findNavController().navigate(
                                         LauncherScreenFragmentDirections
                                             .actionLauncherScreenFragmentToLoginFragment()
                                     )
+                                }
+                                else{
+                                    //OPEN CAMERA FOR ATTENDANCE
                                 }
                             }
 
@@ -69,19 +66,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     }
                 }
             }
-//            btnRegisterStudent.setOnClickListener {
-//                findNavController().navigate(
-//                    LauncherScreenFragmentDirections
-//                        .actionLauncherScreenFragmentToStudentRegisterFragment()
-//                )
-//            }
-//
-//            btnLogin.setOnClickListener {
-//                findNavController().navigate(
-//                    LauncherScreenFragmentDirections
-//                        .actionLauncherScreenFragmentToLoginFragment()
-//                )
-//            }
 
         }
 

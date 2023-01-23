@@ -1,12 +1,32 @@
 package com.example.guniattendance.utils
 
+import android.app.AlertDialog
+import android.content.Context
+
 class ClientAPI {
     val attandanceToken = "697859a828111d63c3f68543ac986827"
     val coreToken = "4f3c9f8f0404a7db50825391c295937e"
     val uploadToken = "8d29dd97dd7c93b0e3cdd43d4b797c87"
     var Url = "http://202.131.126.214"
     var defaultUrl = "http://202.131.126.214/webservice/rest/server.php"
-    val userDefaultPicURL = "http://202.131.126.214/webservice/pluginfile.php/89/user/icon/f1?token=ac9128ff0a686749c3c00b55f7a80e95"
-    val userDefaultPicEncoded = "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAAAAABVicqIAAAEL0lEQVR4Ae1Yh3LrOAy8//9NYqHm3ouEvbFsDmc8YYxQuvoeUpQQE22wEJYr/qGPgMZQqAKA6oyJEeSvjr+lkv8RXYih42f6bcbEv60nvxv//6vkt6z8q0B8IvG+qjq3rMSASBAB5HHF7HQBI0TdLre742m/XXU1Asb1WekKujxcjTFux1UVRmwPXXEVmi6PQEqoQqrNiGCvGHH2tQg0/UX2Vp5KFFjdnwjPb+OF5LBVUYVOrkQVUp9I0phAXp+8tsFTiX4KhPZOvjiy2JVY2LAUzKBdYTnwdf/YEItlPS4bwUTtUsjyefOvQJ7lbR8oE6QekLaPHL2H8cXfKgDTVPhGo9EyMSaHRnTKxId9/Jfjc5voisvGM6DldMnCcmSRlq5rAQrNnULPscWZxr8+75VoqQqH7klRnq5I2DqU9gQ4pgkh34cxJYw3lUIQqQaaeegiW0FR4yFL+ugiuROgZE4gB9J8PeFFgIJKALk975GJlKCxr1AkkKh6mhdkWIgW0dUOdIetpOjpksVA8zXeyE0hyMr8INxJiVvRcSeha06eIH5ZKe3Juowu1L2XLtKWZXQB90RQJhivQwMtskRyJuMGn7TwufaeuANaZO5kQ6/U8yhAWSUNac6eLAVl5g56pdFy+0lKGIdKyszdyJdrPzEeBKWWSOo7jZ5h7IKWuhXIxqHCRh6AMnMXu8KPczK6u2JzB5UFad89XVGBpxx7IGQJS+BHwaSTu9EWfevqjRcVnfiKDT2RlqPLyFuN6a/Ygn1EIc3eGTtVopNBoCKbZwXvdJmRe8gM511QhbTnr+m6LkeIOY6iIKG+kO8g5K0JD5CplWBsSnfojV9Ff+gwtmTK2y8UIt0pVpEirZw6ESgm0RWak32FkHDs1ARokazEn54PVkZWIswGI0oBCBRSn+nRLp5rgaLIrYTudd6R309ead67gBJzh7AaaHSFcVgF/JSuuGF5vfCo9/ghXYqwI8285s6M3EXGvJYIYU0azW3uaBzfs/3mTlVWUXnddBm5ElV3JZB2oJn9DMQ4tOI1d1Cp7ukeDnNHMh1/wKddkOOrH+6XoLh+FLi0C2NDykDGtsAj9VL3kRbve3zSy74WRyXxICIzDh8S5EHweeI1tK8h4E+frudyGz7SBeCSiPDTlRYvAD6Yu9GYMtvfzwlyIZ9UGHIhjYV0xQOjDz2RzmiZAzrSkTBaJ59Ajsyz4kvwKN83Hs2dZhPoGsWlwXdzAlnTOA2ExrXgm0qgZ1r+SfUljGdFXiAhjc0BYo0gSxdkw1liI8g9XQDOJKf3hGcAGRCF9vOA9IqcW1HpXOPgSHSiOVlJLZnelOzEh4OLFUfiEPJ0XenYmxwJXkVzlqi6kXkP50+Qtypr7tp+Lrr6FplKZDHMBTIsJGPuZGX87OE8CdpKMtola3KeOSHXoin+BMHohtLq8jhTAAAAAElFTkSuQmCC"
-}
+    val userDefaultPicURL =
+        "http://202.131.126.214/webservice/pluginfile.php/89/user/icon/f1?token=4f3c9f8f0404a7db50825391c295937e"
+    companion object{
+        fun showErrorBox(context: Context, title: String, msg: String, negB:String = "", posB:String = "", cancelable: Boolean = true){
+            val alertDialogBuilder = AlertDialog.Builder(context)
+            alertDialogBuilder.setTitle(title)
+            alertDialogBuilder
+                .setMessage(msg)
+                .setCancelable(cancelable)
+                .setNegativeButton(negB) { dialog, id ->
+                    dialog.cancel()
+                }
+                .setPositiveButton(posB) { dialog, id ->
+                    dialog.cancel()
+                }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+    }
 
+}

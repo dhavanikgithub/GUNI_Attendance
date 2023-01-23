@@ -11,6 +11,12 @@ import com.example.guniattendance.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,4 +49,32 @@ class LoginViewModel @Inject constructor(
         }
 
     }
+
+    fun sentHttpRequest(url: String): Boolean?{
+        val url = URL(url)
+        val con = url.openConnection() as HttpURLConnection
+        con.requestMethod = "POST"
+        con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+        con.doOutput = true
+        con.doInput = true
+        val wr = DataOutputStream(con.outputStream)
+        wr.flush()
+        wr.close()
+        val `is`: InputStream = con.inputStream
+        val rd = BufferedReader(InputStreamReader(`is`))
+        var line: String?
+        val response = StringBuilder()
+        while (rd.readLine().also { line = it } != null) {
+            response.append(line)
+            response.append('\r')
+        }
+        rd.close()
+        var res = response.toString()
+        if(res.indexOf("token") != -1){
+            return true
+        }
+
+        return false
+    }
+
 }

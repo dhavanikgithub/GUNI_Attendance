@@ -31,7 +31,7 @@ class BitmapUtils {
                 newurl = URL(url)
                 bitmap = BitmapFactory.decodeStream(newurl.openConnection().getInputStream())
                 val outputStream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                 base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
             } catch (e: Exception) {
                 e.printStackTrace()

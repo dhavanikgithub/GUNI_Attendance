@@ -1,15 +1,16 @@
 <resources>
     <string name="app_name">GUNI Attendance</string>
-    <string name="capture_image">Capture Image</string>
-    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="capture_image">Capture Your Face</string>
+    <string name="enter_your_email_address">Your email address</string>
     <string name="moodle_username">Moodle Username</string>
+    <string name="moodle_pdw">Moodle Password</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="select_sem">Select Sem</string>
     <string name="register">Register</string>
     <string name="image">Image</string>
     <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
     <string name="set_pin">Set pin</string>
-    <string name="enter_your_name">Enter your name</string>
+    <string name="enter_your_name">Your name</string>
     <string name="faculty_name">Faculty Name</string>
     <string name="take_attendance">Take Attendance</string>
     <string name="student_list">Student list</string>
@@ -24,7 +25,7 @@
     <string name="select_class">Select class</string>
     <string name="moodle_url">Enter Moodle Server Url</string>
     <string name="moodle_btn">Set Up Moodle Server</string>
-    <string name="enter_your_enrolment_number">Enter your enrollment number</string>
+    <string name="enter_your_enrolment_number">Your Enrollment number</string>
     <string name="enrolment_number">Enrolment number</string>
     <string name="name">Name</string>
     <string name="enable">Enable</string>

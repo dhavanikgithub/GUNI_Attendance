@@ -15,14 +15,19 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
+import com.example.guniattendance.utils.ClientAPI
 import com.example.guniattendance.utils.Constants.DATA
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.MoodleController
+import com.uvpce.attendance_moodle_api_library.ServerCallback
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONArray
 import javax.inject.Inject
 
 
@@ -58,7 +63,43 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             branch
         )
 
+
+        val attRepo = MoodleController.getAttendanceRepository(
+            ClientAPI().Url,
+            ClientAPI().coreToken,
+            ClientAPI().attandanceToken,
+            ClientAPI().uploadToken)
+
+
         binding.apply {
+
+            //Setting automatically the values of fields..
+            val enrol = LauncherScreenFragment.studentEnrolment
+            enrollmentText.setText(enrol)
+            enrollmentText.isEnabled = false
+
+            activity?.let { it1 ->
+                attRepo.getMoodleUserID( it1, enrollmentText.text.toString(), object : ServerCallback {
+                        override fun onSuccess(result: JSONArray) {
+                            (0 until result.length()).forEach {
+                                val item = result.getJSONObject(it)
+                                val lastname = item.get("lastname").toString()
+                                val emailaddr = item.get("email").toString()
+                                nameText.setText(lastname)
+                                nameText.isEnabled = false
+
+                                emailText.setText(emailaddr)
+                                emailText.isEnabled = false
+                            }
+                        }
+
+                        override fun onError(result: String) {
+                            snackbar("Unknown Error, Contact Administrator!")
+                        }
+
+                    })
+            }
+
 
             autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
 
@@ -96,10 +137,10 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             btnRegister.setOnClickListener {
 
                 viewModel.register(
-                    enrolment = etEnrol.text?.trim().toString(),
-                    name = etName.text?.trim().toString(),
-                    email = etEmail.text?.trim().toString(),
-                    phone = etPhone.text?.trim().toString(),
+                    enrolment = enrollmentText.text?.trim().toString(),
+                    name = nameText.text?.trim().toString(),
+                    email = emailText.text?.trim().toString(),
+                    phone = phoneText.text?.trim().toString(),
                     branch = autoCompleteTvBranch.text?.trim().toString(),
                     sem = sem,
                     pin = pinView.text.toString(),
@@ -108,10 +149,10 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 )
             }
             val storeArray=ArrayList<String>()
-            storeArray.add(etEnrol.text.toString())
-            storeArray.add(etName.text.toString())
-            storeArray.add(etEmail.text.toString())
-            storeArray.add(etPhone.text.toString())
+            storeArray.add(enrollmentText.text.toString())
+            storeArray.add(nameText.text.toString())
+            storeArray.add(emailText.text.toString())
+            storeArray.add(phoneText.text.toString())
             storeArray.add(autoCompleteTvBranch.text.toString())
             storeArray.add(sem.toString())
             storeArray.add(pinView.text.toString())
@@ -192,22 +233,22 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 )
                 when (it) {
                     "emptyEmail" -> {
-                        binding.etEmail.error = "Email cannot be empty"
+                        binding.emailText.error = "Email cannot be empty"
                     }
                     "email" -> {
-                        binding.etEmail.error = "Enter a valid email"
+                        binding.emailText.error = "Enter a valid email"
                     }
                     "emptyPhone" -> {
-                        binding.etPhone.error = "Phone number cannot be empty"
+                        binding.phoneText.error = "Phone number cannot be empty"
                     }
                     "phone" -> {
-                        binding.etPhone.error = "Enter a valid phone number"
+                        binding.phoneText.error = "Enter a valid phone number"
                     }
                     "emptyBranch" -> {
                         binding.autoCompleteTvBranch.error = "Please enter branch"
                     }
                     "name" -> {
-                        binding.etName.error = "Name cannot be empty"
+                        binding.nameText.error = "Name cannot be empty"
                     }
                     "sem" -> {
                         binding.autoCompleteTvSem.error = "Please select semester"
@@ -217,12 +258,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     }
                     "uri" -> {
                         snackbar("Capture your image")
-                    }
-                    "emptyEnrolment" -> {
-                        binding.etEnrol.error = "Please enter enrolment number"
-                    }
-                    "enrolment" -> {
-                        binding.etEnrol.error = "Enrolment number should be of length 11"
                     }
                     "emptyLec" -> {
                         binding.autoCompleteTvClass.error = "Please enter your class"
@@ -242,16 +277,16 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 )
             }
         ) {
-            binding.apply {
-                etEmail.setText("")
-                etName.setText("")
-                autoCompleteTvSem.setText("")
-                autoCompleteTvLab.setText("")
-                autoCompleteTvLab.setText("")
-                etEnrol.setText("")
-                etPhone.setText("")
-                pinView.setText("")
-            }
+//            binding.apply {
+//                emailText.setText("")
+//                nameText.setText("")
+//                autoCompleteTvSem.setText("")
+//                autoCompleteTvLab.setText("")
+//                autoCompleteTvLab.setText("")
+//                enrollmentText.setText("")
+//                phoneText.setText("")
+//                pinView.setText("")
+//            }
 
             showProgress(
                 activity = requireActivity(),

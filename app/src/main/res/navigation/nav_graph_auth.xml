@@ -15,7 +15,11 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.guniattendance.authorization.authfragments.ui.login.LoginFragment"
-        android:label="@string/login" />
+        android:label="@string/login" >
+        <action
+            android:id="@+id/action_loginFragment_to_studentRegisterFragment"
+            app:destination="@id/studentRegisterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/launcherScreenFragment"
         android:name="com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment"
