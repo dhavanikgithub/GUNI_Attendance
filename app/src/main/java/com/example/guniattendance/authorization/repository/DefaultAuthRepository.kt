@@ -27,17 +27,17 @@ class DefaultAuthRepository : AuthRepository {
         enrolment: String,
         name: String,
         email: String,
-        phone: String,
-        branch: String,
-        sem: Int,
-        pin: String,
-        lec: String,
-        lab: String,
+//        phone: String,
+//        branch: String,
+//        sem: Int,
+//        pin: String,
+//        lec: String,
+//        lab: String,
         bitmap: Bitmap,
         profilePicUri: Uri
     ): Resource<Student> = withContext(Dispatchers.IO) {
         safeCall {
-            val result = auth.createUserWithEmailAndPassword(email, pin).await()
+            val result = auth.createUserWithEmailAndPassword(email, "123").await()
             auth.currentUser?.updateProfile(
                 userProfileChangeRequest {
                     displayName = name
@@ -61,15 +61,15 @@ class DefaultAuthRepository : AuthRepository {
                 )
 
             val student = Student(
-                phone = phone,
+//                phone = phone,
                 email = email,
                 uid = result.user!!.uid,
                 byteArray = byteArray,
-                branch = branch,
-                sem = sem,
+//                branch = branch,
+//                sem = sem,
                 enrolment = enrolment,
-                lecture = lec,
-                lab = lab,
+//                lecture = lec,
+//                lab = lab,
                 name = name
             )
 

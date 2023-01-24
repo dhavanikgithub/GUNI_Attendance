@@ -12,12 +12,12 @@ interface AuthRepository {
         enrolment: String,
         name: String,
         email: String,
-        phone: String,
-        branch: String,
-        sem: Int,
-        pin: String,
-        lec: String,
-        lab: String,
+//        phone: String,
+//        branch: String,
+//        sem: Int,
+//        pin: String,
+//        lec: String,
+//        lab: String,
         bitmap: Bitmap,
         profilePicUri: Uri
     ): Resource<Student>

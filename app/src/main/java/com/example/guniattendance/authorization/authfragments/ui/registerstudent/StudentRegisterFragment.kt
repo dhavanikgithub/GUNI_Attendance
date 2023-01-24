@@ -101,38 +101,38 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             }
 
 
-            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
-
-            autoCompleteTvSem.setAdapter(arrayAdapterSem)
-
-            autoCompleteTvSem.setOnItemClickListener { _, _, i, _ ->
-
-                autoCompleteTvClass.setText("")
-                autoCompleteTvLab.setText("")
-
-                sem = i + 1
-
-                val classes = DATA[i].second
-                val labs = DATA[i].third
-
-                val arrayAdapterClass = ArrayAdapter(
-                    requireContext(),
-                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-                    classes
-                )
-
-                val arrayAdapterLabs = ArrayAdapter(
-                    requireContext(),
-                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-                    labs
-                )
-
-                autoCompleteTvClass.setAdapter(arrayAdapterClass)
-                autoCompleteTvLab.setAdapter(arrayAdapterLabs)
-
-                tlClass.isVisible = true
-                tlLab.isVisible = true
-            }
+//            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
+//
+//            autoCompleteTvSem.setAdapter(arrayAdapterSem)
+//
+//            autoCompleteTvSem.setOnItemClickListener { _, _, i, _ ->
+//
+//                autoCompleteTvClass.setText("")
+//                autoCompleteTvLab.setText("")
+//
+//                sem = i + 1
+//
+//                val classes = DATA[i].second
+//                val labs = DATA[i].third
+//
+//                val arrayAdapterClass = ArrayAdapter(
+//                    requireContext(),
+//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+//                    classes
+//                )
+//
+//                val arrayAdapterLabs = ArrayAdapter(
+//                    requireContext(),
+//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+//                    labs
+//                )
+//
+//                autoCompleteTvClass.setAdapter(arrayAdapterClass)
+//                autoCompleteTvLab.setAdapter(arrayAdapterLabs)
+//
+//                tlClass.isVisible = true
+//                tlLab.isVisible = true
+//            }
 
             btnRegister.setOnClickListener {
 
@@ -140,24 +140,24 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     enrolment = enrollmentText.text?.trim().toString(),
                     name = nameText.text?.trim().toString(),
                     email = emailText.text?.trim().toString(),
-                    phone = phoneText.text?.trim().toString(),
-                    branch = autoCompleteTvBranch.text?.trim().toString(),
-                    sem = sem,
-                    pin = pinView.text.toString(),
-                    lec = autoCompleteTvClass.text?.trim().toString(),
-                    lab = autoCompleteTvLab.text?.trim().toString()
+//                    phone = phoneText.text?.trim().toString(),
+//                    branch = autoCompleteTvBranch.text?.trim().toString(),
+//                    sem = sem,
+//                    pin = pinView.text.toString(),
+//                    lec = autoCompleteTvClass.text?.trim().toString(),
+//                    lab = autoCompleteTvLab.text?.trim().toString()
                 )
             }
             val storeArray=ArrayList<String>()
             storeArray.add(enrollmentText.text.toString())
             storeArray.add(nameText.text.toString())
             storeArray.add(emailText.text.toString())
-            storeArray.add(phoneText.text.toString())
-            storeArray.add(autoCompleteTvBranch.text.toString())
-            storeArray.add(sem.toString())
-            storeArray.add(pinView.text.toString())
-            storeArray.add(autoCompleteTvClass.text.toString())
-            storeArray.add(autoCompleteTvLab.text.toString())
+//            storeArray.add(phoneText.text.toString())
+//            storeArray.add(autoCompleteTvBranch.text.toString())
+//            storeArray.add(sem.toString())
+//            storeArray.add(pinView.text.toString())
+//            storeArray.add(autoCompleteTvClass.text.toString())
+//            storeArray.add(autoCompleteTvLab.text.toString())
 
 
 
@@ -238,33 +238,33 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     "email" -> {
                         binding.emailText.error = "Enter a valid email"
                     }
-                    "emptyPhone" -> {
-                        binding.phoneText.error = "Phone number cannot be empty"
-                    }
-                    "phone" -> {
-                        binding.phoneText.error = "Enter a valid phone number"
-                    }
-                    "emptyBranch" -> {
-                        binding.autoCompleteTvBranch.error = "Please enter branch"
-                    }
+//                    "emptyPhone" -> {
+//                        binding.phoneText.error = "Phone number cannot be empty"
+//                    }
+//                    "phone" -> {
+//                        binding.phoneText.error = "Enter a valid phone number"
+//                    }
+//                    "emptyBranch" -> {
+//                        binding.autoCompleteTvBranch.error = "Please enter branch"
+//                    }
                     "name" -> {
                         binding.nameText.error = "Name cannot be empty"
                     }
-                    "sem" -> {
-                        binding.autoCompleteTvSem.error = "Please select semester"
-                    }
-                    "pin" -> {
-                        snackbar("Pin should be of 6 length")
-                    }
-                    "uri" -> {
-                        snackbar("Capture your image")
-                    }
-                    "emptyLec" -> {
-                        binding.autoCompleteTvClass.error = "Please enter your class"
-                    }
-                    "emptyLab" -> {
-                        binding.autoCompleteTvLab.error = "Please enter your lab"
-                    }
+//                    "sem" -> {
+//                        binding.autoCompleteTvSem.error = "Please select semester"
+//                    }
+//                    "pin" -> {
+//                        snackbar("Pin should be of 6 length")
+//                    }
+//                    "uri" -> {
+//                        snackbar("Capture your image")
+//                    }
+//                    "emptyLec" -> {
+//                        binding.autoCompleteTvClass.error = "Please enter your class"
+//                    }
+//                    "emptyLab" -> {
+//                        binding.autoCompleteTvLab.error = "Please enter your lab"
+//                    }
                     else -> snackbar(it)
                 }
             },

@@ -41,40 +41,34 @@ class StudentRegisterViewModel @Inject constructor(
         enrolment: String,
         name: String,
         email: String,
-        phone: String,
-        branch: String,
-        sem: Int,
-        pin: String,
-        lec: String,
-        lab: String
     ) {
 
         val error = if (email.isEmpty()) {
             "emptyEmail"
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "email"
-        } else if (phone.isEmpty()) {
-            "emptyPhone"
-        } else if (!Patterns.PHONE.matcher(phone).matches()) {
-            "phone"
-        } else if (branch.isEmpty()) {
-            "emptyBranch"
-        } else if (sem == 0) {
-            "sem"
+//        } else if (phone.isEmpty()) {
+//            "emptyPhone"
+//        } else if (!Patterns.PHONE.matcher(phone).matches()) {
+//            "phone"
+//        } else if (branch.isEmpty()) {
+//            "emptyBranch"
+//        } else if (sem == 0) {
+//            "sem"
         } else if (name.isEmpty()) {
             "name"
-        } else if (pin.length != 6) {
-            "pin"
+//        } else if (pin.length != 6) {
+//            "pin"
         } else if (curImageUri.value == Uri.EMPTY || curImageUri.value == null) {
             "uri"
         } else if (enrolment.isEmpty()) {
             "emptyEnrolment"
         } else if (enrolment.length != 11) {
             "enrolment"
-        } else if (lec.isEmpty()) {
-            "emptyLec"
-        } else if (lab.isEmpty()) {
-            "emptyLab"
+//        } else if (lec.isEmpty()) {
+//            "emptyLec"
+//        } else if (lab.isEmpty()) {
+//            "emptyLab"
         } else null
 
         error?.let {
@@ -102,14 +96,14 @@ class StudentRegisterViewModel @Inject constructor(
                     enrolment = enrolment,
                     name = name,
                     email = email,
-                    phone = phone,
-                    branch = branch,
-                    sem = sem,
-                    pin = pin,
+//                    phone = phone,
+//                    branch = branch,
+//                    sem = sem,
+//                    pin = pin,
                     bitmap = bitmap,
                     profilePicUri = curImageUri.value!!,
-                    lec = lec,
-                    lab = lab
+//                    lec = lec,
+//                    lab = lab
                 )
                 _registerStatus.postValue(Events(result))
             }

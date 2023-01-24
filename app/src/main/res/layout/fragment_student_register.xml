@@ -23,7 +23,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parent_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="39dp"
+            tools:layout_editor_absoluteY="-49dp">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_image"
@@ -71,8 +73,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="number"
-                    android:textStyle="bold"
-                    android:maxLength="11" />
+                    android:maxLength="11"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -92,8 +94,8 @@
                     android:id="@+id/name_text"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textStyle="bold"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -116,67 +118,6 @@
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_phone"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="30dp"
-                android:textStyle="bold"
-                android:hint="@string/enter_your_phone_number"
-                app:layout_constraintTop_toBottomOf="@id/tl_email"
-                app:startIconDrawable="@drawable/ic_baseline_phone_24">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/phone_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="phone"
-                    android:maxLength="10" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_branch"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="30dp"
-                app:layout_constraintTop_toBottomOf="@id/tl_phone">
-
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteTvBranch"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/select_branch"
-                    android:inputType="none"
-                    tools:ignore="TextContrastCheck" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_sem"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginRight="30dp"
-                app:layout_constraintTop_toBottomOf="@id/tl_branch">
-
-                <AutoCompleteTextView
-                    android:id="@+id/autoCompleteTvSem"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/select_sem"
-                    android:inputType="none"
-                    tools:ignore="TextContrastCheck" />
-
-            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tl_class"
@@ -187,7 +128,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_marginRight="30dp"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/tl_sem">
+                app:layout_constraintTop_toBottomOf="@id/tl_email">
 
                 <AutoCompleteTextView
                     android:id="@+id/autoCompleteTvClass"
@@ -220,47 +161,47 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/tv_set_pin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/set_pin"
-                android:textSize="20sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tl_lab" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_set_pin"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="16dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:text="@string/set_pin"-->
+<!--                android:textSize="20sp"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tl_lab" />-->
 
 
-            <com.chaos.view.PinView
-                android:id="@+id/pin_view"
-                style="@style/PinWidget.PinView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:cursorVisible="false"
-                android:inputType="numberPassword"
-                app:hideLineWhenFilled="true"
-                app:itemCount="6"
-                app:itemSpacing="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_set_pin"
-                app:lineColor="#2D89EF"
-                app:lineWidth="3dp" />
+<!--            <com.chaos.view.PinView-->
+<!--                android:id="@+id/pin_view"-->
+<!--                style="@style/PinWidget.PinView"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="15dp"-->
+<!--                android:cursorVisible="false"-->
+<!--                android:inputType="numberPassword"-->
+<!--                app:hideLineWhenFilled="true"-->
+<!--                app:itemCount="6"-->
+<!--                app:itemSpacing="10dp"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tv_set_pin"-->
+<!--                app:lineColor="#2D89EF"-->
+<!--                app:lineWidth="3dp" />-->
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_register"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="357dp"
+                android:layout_height="42dp"
                 android:layout_margin="30dp"
                 android:background="@drawable/button_background"
                 android:text="@string/register"
                 android:textAllCaps="false"
                 android:textSize="18sp"
-                app:layout_constraintTop_toBottomOf="@id/pin_view"
-                tools:ignore="TextContrastCheck"
-                tools:layout_editor_absoluteX="30dp" />
+                app:layout_constraintTop_toBottomOf="@id/tl_email"
+                app:layout_constraintLeft_toLeftOf="@id/tl_email"
+                app:layout_constraintRight_toRightOf="@+id/tl_email" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
