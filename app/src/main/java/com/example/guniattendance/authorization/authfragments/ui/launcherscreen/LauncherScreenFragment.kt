@@ -35,7 +35,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     lateinit var fetchedProfileURL: String
                     val attRepo = MoodleController.getAttendanceRepository(ClientAPI().Url,ClientAPI().coreToken,ClientAPI().attandanceToken,ClientAPI().uploadToken)
                     activity?.let { it1 ->
-                        attRepo.getMoodleUserID(it1, et1Enrollment.text.toString(), object: ServerCallback {
+                        attRepo.getUserInfoMoodle(it1, et1Enrollment.text.toString(), object: ServerCallback {
                             override fun onSuccess(result: JSONArray) {
                                 //Enrollment exists.
                                 (0 until result.length()).forEach {

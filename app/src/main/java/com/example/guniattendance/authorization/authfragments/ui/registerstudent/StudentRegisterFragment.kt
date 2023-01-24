@@ -3,9 +3,11 @@ package com.example.guniattendance.authorization.authfragments.ui.registerstuden
 import android.Manifest
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -17,17 +19,16 @@ import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
-import com.example.guniattendance.utils.ClientAPI
-import com.example.guniattendance.utils.Constants.DATA
-import com.example.guniattendance.utils.EventObserver
-import com.example.guniattendance.utils.showProgress
-import com.example.guniattendance.utils.snackbar
+import com.example.guniattendance.utils.*
+import com.example.guniattendance.utils.BitmapUtils.Companion.bitmapToString
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import com.uvpce.attendance_moodle_api_library.MoodleController
 import com.uvpce.attendance_moodle_api_library.ServerCallback
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.inject.Inject
 
 
@@ -40,7 +41,9 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private lateinit var viewModel: StudentRegisterViewModel
     private var curImageUri: Uri = Uri.EMPTY
     private var sem = 0
+    lateinit var userid: String
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -49,19 +52,19 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
         binding = FragmentStudentRegisterBinding.bind(view)
 
-        val semesters = requireActivity().resources.getStringArray(R.array.semester)
-        val arrayAdapterSem = ArrayAdapter(
-            requireContext(),
-            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-            semesters
-        )
-
-        val branch = requireActivity().resources.getStringArray(R.array.branch)
-        val arrayAdapterBranch = ArrayAdapter(
-            requireContext(),
-            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-            branch
-        )
+//        val semesters = requireActivity().resources.getStringArray(R.array.semester)
+//        val arrayAdapterSem = ArrayAdapter(
+//            requireContext(),
+//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+//            semesters
+//        )
+//
+//        val branch = requireActivity().resources.getStringArray(R.array.branch)
+//        val arrayAdapterBranch = ArrayAdapter(
+//            requireContext(),
+//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+//            branch
+//        )
 
 
         val attRepo = MoodleController.getAttendanceRepository(
@@ -79,10 +82,11 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             enrollmentText.isEnabled = false
 
             activity?.let { it1 ->
-                attRepo.getMoodleUserID( it1, enrollmentText.text.toString(), object : ServerCallback {
+                attRepo.getUserInfoMoodle( it1, enrollmentText.text.toString(), object : ServerCallback {
                         override fun onSuccess(result: JSONArray) {
                             (0 until result.length()).forEach {
                                 val item = result.getJSONObject(it)
+                                userid = item.get("id").toString()
                                 val lastname = item.get("lastname").toString()
                                 val emailaddr = item.get("email").toString()
                                 nameText.setText(lastname)
@@ -136,22 +140,77 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
             btnRegister.setOnClickListener {
 
-                viewModel.register(
-                    enrolment = enrollmentText.text?.trim().toString(),
-                    name = nameText.text?.trim().toString(),
-                    email = emailText.text?.trim().toString(),
-//                    phone = phoneText.text?.trim().toString(),
-//                    branch = autoCompleteTvBranch.text?.trim().toString(),
-//                    sem = sem,
-//                    pin = pinView.text.toString(),
-//                    lec = autoCompleteTvClass.text?.trim().toString(),
-//                    lab = autoCompleteTvLab.text?.trim().toString()
-                )
+                //Update the selected photo in moodle
+                var bitmap = context?.let { it1 -> BitmapUtils.getBitmapFromUri(it1.contentResolver, curImageUri) }
+                var bitmapStr = bitmap?.let { it1 -> bitmapToString(it1) }
+
+                //Create regex to get the filename from curImageUri
+                var path: Path = Paths.get(curImageUri.toString())
+                var filename: String = path.fileName.toString()
+                //Uploading the correct chosen pic
+                activity?.let { it1 ->
+                    attRepo.uploadFileMoodle(
+                        it1,
+                        "user",
+                        "draft",
+                        "0",
+                        "/",
+                        "${filename}",
+                        "$bitmapStr",
+                        "user",
+                        "2",
+                        object : ServerCallback {
+                            override fun onSuccess(result: JSONArray) {
+                                Log.i("Successfully uploaded the file:", "${result}")
+                                (0 until result.length()).forEach {
+                                    val item = result.getJSONObject(it)
+                                    //val contextid = item.get("contextid").toString()
+                                    var draftitemid = item.get("itemid").toString()
+                                    //Updated the uploaded picture.
+                                    activity?.let { it1 ->
+                                        attRepo.updatePictureMoodle(
+                                            it1,
+                                            draftitemid,
+                                            userid,
+                                            object : ServerCallback {
+                                                override fun onSuccess(result: JSONArray) {
+                                                    Log.i("Successfully updated the profile picture:", "${result}")
+                                                }
+
+                                                override fun onError(result: String) {
+                                                    snackbar("Unknown Error, Contact Administrator!")
+                                                }
+
+                                            })
+                                    }
+                                }
+                            }
+
+                            override fun onError(result: String) {
+                                snackbar("Unknown Error, Contact Administrator!")
+                            }
+
+                        })
+                }
+
+
+
+//                viewModel.register(
+//                    enrolment = enrollmentText.text?.trim().toString(),
+//                    name = nameText.text?.trim().toString(),
+//                    email = emailText.text?.trim().toString(),
+////                    phone = phoneText.text?.trim().toString(),
+////                    branch = autoCompleteTvBranch.text?.trim().toString(),
+////                    sem = sem,
+////                    pin = pinView.text.toString(),
+////                    lec = autoCompleteTvClass.text?.trim().toString(),
+////                    lab = autoCompleteTvLab.text?.trim().toString()
+//                )
             }
-            val storeArray=ArrayList<String>()
-            storeArray.add(enrollmentText.text.toString())
-            storeArray.add(nameText.text.toString())
-            storeArray.add(emailText.text.toString())
+//            val storeArray=ArrayList<String>()
+//            storeArray.add(enrollmentText.text.toString())
+//            storeArray.add(nameText.text.toString())
+//            storeArray.add(emailText.text.toString())
 //            storeArray.add(phoneText.text.toString())
 //            storeArray.add(autoCompleteTvBranch.text.toString())
 //            storeArray.add(sem.toString())
@@ -256,9 +315,9 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //                    "pin" -> {
 //                        snackbar("Pin should be of 6 length")
 //                    }
-//                    "uri" -> {
-//                        snackbar("Capture your image")
-//                    }
+                    "uri" -> {
+                        snackbar("Capture your image!")
+                    }
 //                    "emptyLec" -> {
 //                        binding.autoCompleteTvClass.error = "Please enter your class"
 //                    }

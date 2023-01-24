@@ -67,6 +67,13 @@ class BitmapUtils {
             return image
         }
 
+        fun bitmapToString(bitmap: Bitmap): String? {
+            val baos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+            val b = baos.toByteArray()
+            return Base64.encodeToString(b, Base64.DEFAULT)
+        }
+
 
         // Rotate the given `source` by `degrees`.
         // See this SO answer -> https://stackoverflow.com/a/16219591/10878733
