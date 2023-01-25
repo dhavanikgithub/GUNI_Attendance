@@ -19,13 +19,22 @@ class BitmapUtils {
 
     companion object {
 
-        // Convert the given Image URL to Base64(Bitmap)
-        // Returns Base64 string
+        fun finalizeURL(url: String?, token: String?): String? {
+            lateinit var finalurl: String
+            var uri = Uri.parse(url)
+            if (url != null) {
+                finalurl = "http://" + uri.host + "/webservice/"
+                finalurl += url.substring(url.indexOf("pluginfile.php"))
+                finalurl = finalurl.split("?")[0]
+                finalurl += "?token=${token}"
+                return finalurl
+            }
 
-        fun dhavanik(){
-
+            return null
         }
 
+        // Convert the given Image URL to Base64(Bitmap)
+        // Returns Base64 string
         fun convertUrlToBase64(url: String?): String? {
             val newurl: URL
             val bitmap: Bitmap
