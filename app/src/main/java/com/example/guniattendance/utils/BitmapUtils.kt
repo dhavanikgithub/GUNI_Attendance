@@ -19,6 +19,7 @@ class BitmapUtils {
 
     companion object {
 
+
         fun finalizeURL(url: String?, token: String?): String? {
             lateinit var finalurl: String
             var uri = Uri.parse(url)
