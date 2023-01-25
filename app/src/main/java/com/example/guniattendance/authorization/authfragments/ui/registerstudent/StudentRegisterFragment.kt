@@ -19,6 +19,8 @@ import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
+import com.example.guniattendance.moodle.ClientAPI
+import com.example.guniattendance.moodle.MoodleRepository
 import com.example.guniattendance.utils.*
 import com.example.guniattendance.utils.BitmapUtils.Companion.bitmapToString
 import com.jianastrero.capiche.doIHave
@@ -67,11 +69,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //        )
 
 
-        val attRepo = MoodleController.getAttendanceRepository(
-            ClientAPI().Url,
-            ClientAPI().coreToken,
-            ClientAPI().attandanceToken,
-            ClientAPI().uploadToken)
+
 
 
         binding.apply {
@@ -81,28 +79,18 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             enrollmentText.setText(enrol)
             enrollmentText.isEnabled = false
 
-            activity?.let { it1 ->
-                attRepo.getUserInfoMoodle( it1, enrollmentText.text.toString(), object : ServerCallback {
-                        override fun onSuccess(result: JSONArray) {
-                            (0 until result.length()).forEach {
-                                val item = result.getJSONObject(it)
-                                userid = item.get("id").toString()
-                                val lastname = item.get("lastname").toString()
-                                val emailaddr = item.get("email").toString()
-                                nameText.setText(lastname)
-                                nameText.isEnabled = false
+            MoodleRepository(requireActivity()).getStudentInfo(enrol, onReceive = {
+                userid = it.id
+                nameText.setText(it.lastname)
+                nameText.isEnabled = false
 
-                                emailText.setText(emailaddr)
-                                emailText.isEnabled = false
-                            }
-                        }
-
-                        override fun onError(result: String) {
-                            snackbar("Unknown Error, Contact Administrator!")
-                        }
-
-                    })
+                emailText.setText(it.emailAddress)
+                emailText.isEnabled = false
             }
+            , onError = {
+                    snackbar("Unknown Error, Contact Administrator!")
+                }
+            )
 
 
 //            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
@@ -139,61 +127,9 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //            }
 
             btnRegister.setOnClickListener {
-
-                //Update the selected photo in moodle
-                var bitmap = context?.let { it1 -> BitmapUtils.getBitmapFromUri(it1.contentResolver, curImageUri) }
-                var bitmapStr = bitmap?.let { it1 -> bitmapToString(it1) }
-
-                //Create regex to get the filename from curImageUri
-                var path: Path = Paths.get(curImageUri.toString())
-                var filename: String = path.fileName.toString()
-                //Uploading the correct chosen pic
-                activity?.let { it1 ->
-                    attRepo.uploadFileMoodle(
-                        it1,
-                        "user",
-                        "draft",
-                        "0",
-                        "/",
-                        "${filename}",
-                        "$bitmapStr",
-                        "user",
-                        "2",
-                        object : ServerCallback {
-                            override fun onSuccess(result: JSONArray) {
-                                Log.i("Successfully uploaded the file:", "${result}")
-                                (0 until result.length()).forEach {
-                                    val item = result.getJSONObject(it)
-                                    //val contextid = item.get("contextid").toString()
-                                    var draftitemid = item.get("itemid").toString()
-                                    //Updated the uploaded picture.
-                                    activity?.let { it1 ->
-                                        attRepo.updatePictureMoodle(
-                                            it1,
-                                            draftitemid,
-                                            userid,
-                                            object : ServerCallback {
-                                                override fun onSuccess(result: JSONArray) {
-                                                    Log.i("Successfully updated the profile picture:", "${result}")
-                                                }
-
-                                                override fun onError(result: String) {
-                                                    snackbar("Unknown Error, Contact Administrator!")
-                                                }
-
-                                            })
-                                    }
-                                }
-                            }
-
-                            override fun onError(result: String) {
-                                snackbar("Unknown Error, Contact Administrator!")
-                            }
-
-                        })
-                }
-
-
+                MoodleRepository(requireActivity()).uploadStudentPicture(userid,curImageUri, onReceive = { Log.i("Successfully updated the profile picture:",
+                    it.toString(4)
+                )}, onError = {snackbar("Unknown Error, Contact Administrator!")})
 
 //                viewModel.register(
 //                    enrolment = enrollmentText.text?.trim().toString(),
