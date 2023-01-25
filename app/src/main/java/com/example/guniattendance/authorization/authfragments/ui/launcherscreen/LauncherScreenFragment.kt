@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.ScannerActivity
+import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.utils.BitmapUtils.Companion.convertUrlToBase64
 import com.example.guniattendance.utils.BitmapUtils.Companion.finalizeURL
@@ -32,8 +33,8 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
         binding = FragmentLauncherScreenBinding.bind(view)
         binding.apply {
+            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
-
                 if(et1Enrollment.text.toString().isEmpty()){
                     context?.let { it1 -> ClientAPI.showErrorBox(it1, "Error", "Enrollment number is empty!", "OK") }
                 }else{
@@ -92,5 +93,15 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
         }
 
+    }
+
+    override fun onDestroy() {
+        DownloadModel.destroyObject()
+        super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        DownloadModel.destroyObject()
+        super.onDestroyView()
     }
 }

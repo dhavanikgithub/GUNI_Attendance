@@ -4,6 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_background">
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="20dp"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:indeterminate="false"
+            android:progress="1"
+            android:max="100"/>
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:text="Text"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/guni_logo"
@@ -96,4 +130,5 @@
 <!--        app:layout_constraintTop_toBottomOf="@id/btn_register_student"-->
 <!--        app:layout_constraintVertical_bias="0.7" />-->
 
+</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
