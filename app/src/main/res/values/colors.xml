@@ -22,4 +22,10 @@
     <color name="yellow">#FFFF00</color>
     <color name="green">#008000</color>
     <color name="gray">#808080</color>
+
+    //Colors for Scanner Background
+    <color name="black_transparent">#2C000000</color>
+    <color name="black_transparent2">#5E000000</color>
+    <color name="black_transparent3">#40000000</color>
+    <color name="crop_image_view_background_color">@color/white</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
+import com.example.guniattendance.ScannerActivity
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.utils.BitmapUtils.Companion.convertUrlToBase64
 import com.example.guniattendance.utils.BitmapUtils.Companion.finalizeURL
@@ -66,6 +68,10 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                                     }
                                     else{
                                         //OPEN CAMERA FOR ATTENDANCE
+
+                                        Intent(context, ScannerActivity::class.java).also{
+                                            startActivity(it)
+                                        }
                                     }
                                     } catch (e: Exception){
                                         Log.i("Exception", "$e")

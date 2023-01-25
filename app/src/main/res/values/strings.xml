@@ -81,4 +81,23 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_settings">SettingsActivity</string>
+
+    <!--Strings for Scanner-->
+    <string name="shortcut_scan_from_camera">Scan</string>
+    <string name="shortcut_scan_from_file">Scan image</string>
+    <string name="shortcut_create_barcode">Create barcode</string>
+    <string name="shortcut_history">History</string>
+
+    <!--Scan barcode from camera fragment-->
+    <string name="fragment_scan_barcode_from_camera_scan_from_file">Scan image</string>
+    <string name="fragment_scan_barcode_from_camera_flash">Flash</string>
+    <string name="fragment_scan_barcode_from_camera_barcode_saved">Saved</string>
+
+    <!--Scan barcode from file activity-->
+    <string name="activity_scan_barcode_from_file_title">Scan</string>
+    <string name="activity_scan_barcode_from_file_scan">OK</string>
+    <string name="activity_scan_barcode_from_file_rotate_left">Rotate left</string>
+    <string name="activity_scan_barcode_from_file_rotate_right">Rotate right</string>
+    <string name="activity_scan_barcode_from_file_change_image">Choose another image</string>
+
 </resources>

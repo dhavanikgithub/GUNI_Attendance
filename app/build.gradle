@@ -53,7 +53,11 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Dhavanik's Moodle Library
-    implementation 'com.github.dhavanikgithub:attendance_moodle_api_lib:1.2.1'
+    implementation 'com.github.dhavanikgithub:attendance_moodle_api_lib:1.2.5'
+
+    //ZXING Library for QR Scanner
+    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 
     // Firebase Firestore for database
     implementation 'com.google.firebase:firebase-firestore-ktx:24.2.1'
