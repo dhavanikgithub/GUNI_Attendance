@@ -21,6 +21,11 @@ class BitmapUtils {
 
         // Convert the given Image URL to Base64(Bitmap)
         // Returns Base64 string
+
+        fun dhavanik(){
+
+        }
+
         fun convertUrlToBase64(url: String?): String? {
             val newurl: URL
             val bitmap: Bitmap
@@ -66,6 +71,7 @@ class BitmapUtils {
             parcelFileDescriptor.close()
             return image
         }
+
 
         fun bitmapToString(bitmap: Bitmap): String? {
             val baos = ByteArrayOutputStream()

@@ -1,17 +1,25 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
+import com.example.guniattendance.utils.BitmapUtils.Companion.bitmapToString
 import com.example.guniattendance.utils.BitmapUtils.Companion.convertUrlToBase64
+import com.example.guniattendance.utils.BitmapUtils.Companion.getBitmapFromUri
 import com.example.guniattendance.utils.ClientAPI
 import com.example.guniattendance.utils.snackbar
 import com.uvpce.attendance_moodle_api_library.MoodleController
 import com.uvpce.attendance_moodle_api_library.ServerCallback
 import org.json.JSONArray
+import java.net.URI
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
@@ -41,10 +49,29 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                                 (0 until result.length()).forEach {
                                     val item = result.getJSONObject(it)
                                     fetchedProfileURL = item.get("profileimageurl").toString()
+                                    Log.i("TAG", "onSuccess: ${fetchedProfileURL}")
                                 }
 
-                                val convertedfetchedProfileImage = convertUrlToBase64(fetchedProfileURL)
-                                val convertedDefaultProfileImage = convertUrlToBase64(ClientAPI().userDefaultPicURL)
+                                var fetechedProfileuri: Uri
+                                fetechedProfileuri = fetchedProfileURL.toUri()
+
+                                val convertedfetchedProfileImage = context?.let { it2 ->
+                                    getBitmapFromUri(
+                                        it2.contentResolver , fetechedProfileuri)
+                                }
+                                var userDefaultPicuri: Uri
+                                userDefaultPicuri = ClientAPI().userDefaultPicURL.toUri()
+                                val convertedDefaultProfileImage = context?.let { it2 ->
+                                    getBitmapFromUri(
+                                        it2.contentResolver, userDefaultPicuri)
+                                }
+
+                                var fetchedbitmaptostring = convertedfetchedProfileImage?.let { it2 ->
+                                    bitmapToString(
+                                        it2
+                                    )
+                                }
+                                Log.i("TAG", "onSuccess: ${fetchedbitmaptostring}")
 
                                 if(convertedfetchedProfileImage == convertedDefaultProfileImage){
                                     findNavController().navigate(
@@ -59,6 +86,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
                             override fun onError(result: String) {
                                 //Enrollment does not exists.
+                                Log.i("TAG", "onError: ${result}")
                                 snackbar("Invalid Enrollment Number!")
                             }
 

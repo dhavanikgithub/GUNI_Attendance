@@ -27,7 +27,6 @@
             android:id="@+id/et1_enrollment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="number"
             android:maxLength="11"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
