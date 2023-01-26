@@ -70,5 +70,10 @@
         <action
             android:id="@+id/action_takeAttendanceFragment2_to_launcherScreenFragment"
             app:destination="@id/launcherScreenFragment" />
+        <argument android:name="attendanceUid"
+            app:argType="string" />
+        <argument
+            android:name="uid"
+            app:argType="string" />
     </fragment>
 </navigation>
