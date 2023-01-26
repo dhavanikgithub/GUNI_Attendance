@@ -21,10 +21,11 @@ class MoodleRepository(val context: Context) {
         ClientAPI.attandanceToken,
         ClientAPI.uploadToken)
     fun isStudentRegisterForFace(enollmentNo:String,onReceive:(Boolean)->Unit,onError:(String)->Unit){
-        lateinit var fetchedProfileURL: String
+
             attRepo.getUserInfoMoodle(context, enollmentNo, object: ServerCallback {
                 override fun onSuccess(result: JSONArray) {
                     try {
+                        var fetchedProfileURL = ""
                         //Enrollment exists.
                         (0 until result.length()).forEach {
                             val item = result.getJSONObject(it)
