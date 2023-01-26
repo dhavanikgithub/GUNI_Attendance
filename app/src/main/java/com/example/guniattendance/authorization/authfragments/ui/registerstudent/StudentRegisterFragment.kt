@@ -19,18 +19,11 @@ import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
-import com.example.guniattendance.moodle.ClientAPI
-import com.example.guniattendance.moodle.MoodleRepository
+import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
-import com.example.guniattendance.utils.BitmapUtils.Companion.bitmapToString
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.MoodleController
-import com.uvpce.attendance_moodle_api_library.ServerCallback
 import dagger.hilt.android.AndroidEntryPoint
-import org.json.JSONArray
-import java.nio.file.Path
-import java.nio.file.Paths
 import javax.inject.Inject
 
 
@@ -79,7 +72,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             enrollmentText.setText(enrol)
             enrollmentText.isEnabled = false
 
-            MoodleRepository(requireActivity()).getStudentInfo(enrol, onReceive = {
+            MoodleConfig.getModelRepo(requireActivity()).getStudentInfo(enrol, onReceive = {
                 userid = it.id
                 nameText.setText(it.lastname)
                 nameText.isEnabled = false
@@ -127,7 +120,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //            }
 
             btnRegister.setOnClickListener {
-                MoodleRepository(requireActivity()).uploadStudentPicture(userid,curImageUri, onReceive = { Log.i("Successfully updated the profile picture:",
+                MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri, onReceive = { Log.i("Successfully updated the profile picture:",
                     it.toString(4)
                 )}, onError = {snackbar("Unknown Error, Contact Administrator!")})
 

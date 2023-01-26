@@ -3,10 +3,10 @@ package com.example.guniattendance.ml.utils
 import android.graphics.Bitmap
 import android.graphics.Rect
 import com.example.guniattendance.ml.utils.models.FaceNetModel
-import com.example.guniattendance.utils.BitmapUtils
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

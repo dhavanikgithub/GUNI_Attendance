@@ -8,12 +8,12 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.example.guniattendance.ml.utils.models.MaskDetectionModel
-import com.example.guniattendance.utils.BitmapUtils
 import com.example.guniattendance.utils.Constants.NO_MASK
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

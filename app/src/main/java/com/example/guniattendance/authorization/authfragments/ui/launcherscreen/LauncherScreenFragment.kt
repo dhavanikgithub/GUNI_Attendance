@@ -8,9 +8,9 @@ import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
-import com.example.guniattendance.moodle.MoodleRepository
-import com.example.guniattendance.moodle.ClientAPI
+import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.snackbar
+import com.uvpce.attendance_moodle_api_library.repo.ClientAPI
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
@@ -27,7 +27,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     context?.let { it1 -> ClientAPI.showErrorBox(it1, "Error", "Enrollment number is empty!", "OK") }
                 }else {
                     studentEnrolment = et1Enrollment.text.toString()
-                    MoodleRepository(requireActivity()).isStudentRegisterForFace(studentEnrolment,
+                    MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment,
                         onReceive = { it1 ->
                             if (it1) {
                                 findNavController().navigate(LauncherScreenFragmentDirections
