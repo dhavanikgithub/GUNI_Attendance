@@ -1,19 +1,15 @@
 package com.example.guniattendance
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
-import com.budiyev.android.codescanner.AutoFocusMode
-import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.CodeScannerView
-import com.budiyev.android.codescanner.DecodeCallback
-import com.budiyev.android.codescanner.ErrorCallback
-import com.budiyev.android.codescanner.ScanMode
-import com.example.guniattendance.databinding.ActivityScannerBinding
-import com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import com.budiyev.android.codescanner.*
+import com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragmentDirections
 
 class ScannerActivity : AppCompatActivity() {
     private lateinit var codeScanner: CodeScanner
@@ -22,11 +18,12 @@ class ScannerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner)
+
+
         scannerView = findViewById(R.id.scanner_view)
         codeScanner = CodeScanner(this, scannerView)
         FLayout = findViewById(R.id.FLayout)
         initScanner()
-
     }
 
     private fun initScanner(){
@@ -41,9 +38,14 @@ class ScannerActivity : AppCompatActivity() {
             codeScanner.decodeCallback = DecodeCallback {
                 runOnUiThread {
                     //Code to Next Activity i.e. StudentHome Should be here
+                    val navHostFragment =
+                        supportFragmentManager.findFragmentById(R.id.FLayout) as NavHostFragment
                     Toast.makeText(this@ScannerActivity,it.text,Toast.LENGTH_SHORT).show()
                     FLayout.visibility = View.VISIBLE
-                    supportFragmentManager.beginTransaction().replace(R.id.FLayout, TakeAttendanceFragment()).commit()
+                    navHostFragment.findNavController().navigate(
+                        StudentHomeFragmentDirections
+                            .actionStudentHomeFragmentToTakeAttendanceFragment("123","123")
+                    )
                 }
             }
 
