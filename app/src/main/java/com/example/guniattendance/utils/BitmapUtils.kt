@@ -19,15 +19,20 @@ class BitmapUtils {
 
     companion object {
 
+
         fun finalizeURL(url: String?, token: String?): String? {
             lateinit var finalurl: String
             var uri = Uri.parse(url)
-            if (url != null) {
-                finalurl = "http://" + uri.host + "/webservice/"
-                finalurl += url.substring(url.indexOf("pluginfile.php"))
-                finalurl = finalurl.split("?")[0]
-                finalurl += "?token=${token}"
-                return finalurl
+            try {
+                if (url != null) {
+                    finalurl = "http://" + uri.host + "/webservice/"
+                    finalurl += url.substring(url.indexOf("pluginfile.php")) //For not Default Pic
+                    finalurl = finalurl.split("?")[0]
+                    finalurl += "?token=${token}"
+                    return finalurl
+                }
+            } catch (e:StringIndexOutOfBoundsException){
+                return url
             }
 
             return null

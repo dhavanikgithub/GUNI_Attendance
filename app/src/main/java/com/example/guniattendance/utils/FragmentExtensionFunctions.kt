@@ -2,8 +2,10 @@ package com.example.guniattendance.utils
 
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -22,7 +24,25 @@ fun hideKeyboard(activity: Activity) {
         )
     }
 }
+fun showProgress(
+    activity: Activity,
+    bool: Boolean,
+    parentLayout: View,
+    progressBar: View,
+) {
+    progressBar.isVisible = bool
+    if (bool) {
+        parentLayout.alpha = 0.2f
+        activity.window!!.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
+    } else {
+        parentLayout.alpha = 1f
+        activity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
 
+}
 fun showProgress(
     activity: Activity,
     bool: Boolean,
