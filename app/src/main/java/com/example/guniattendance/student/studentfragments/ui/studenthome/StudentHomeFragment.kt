@@ -68,6 +68,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             layoutTakeAttendance.setOnClickListener {
                 viewModel.getActiveAttendance()
             }
+            
 
             btnSetting.setOnClickListener{
                 Toast.makeText(context,"Settings",Toast.LENGTH_SHORT).show()

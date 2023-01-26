@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_auth"
     app:startDestination="@id/splashScreenFragment">
 
@@ -30,6 +31,9 @@
         <action
             android:id="@+id/action_launcherScreenFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_launcherScreenFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentRegisterFragment"
@@ -49,5 +53,22 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_appPinFragment"
             app:destination="@id/appPinFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"
+        android:label="fragment_scanner"
+        tools:layout="@layout/fragment_scanner" >
+        <action
+            android:id="@+id/action_scannerFragment_to_takeAttendanceFragment2"
+            app:destination="@id/takeAttendanceFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/takeAttendanceFragment2"
+        android:name="com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment"
+        android:label="TakeAttendanceFragment" >
+        <action
+            android:id="@+id/action_takeAttendanceFragment2_to_launcherScreenFragment"
+            app:destination="@id/launcherScreenFragment" />
     </fragment>
 </navigation>
