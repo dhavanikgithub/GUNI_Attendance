@@ -27,7 +27,7 @@ class MaskDetectionModel(
         0 to MASK,
         1 to NO_MASK,
     )
-    private val modelName = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/mask_detector.tflite")
+    private val modelName = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite")
 
     private var interpreter: Interpreter
     private val imageTensorProcessor = ImageProcessor.Builder()

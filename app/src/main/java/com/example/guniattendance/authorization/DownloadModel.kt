@@ -13,6 +13,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.guniattendance.utils.showProgress
+import com.google.firestore.v1.Cursor
+import com.google.firestore.v1.CursorOrBuilder
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -48,9 +50,10 @@ class DownloadModel(val activity: Activity,
         fileMode1 = true
         val file1 = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/facenet.tflite")
         if (!file1.exists()) {
-            currentFile = File("/storage/emulated/0/Download/facenet.tflite")
-            newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/facenet.tflite")
             startDownload("https://raw.githubusercontent.com/ParthBhuva97/assets/main/facenet.tflite","facenet.tflite")
+            currentFile = File("/storage/emulated/0/Download/facenet.tflite")
+            newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/facenet.tflite")
+            currentFile!!.renameTo(newFile)
         }
         else{
             Toast.makeText(activity,"Assets Found", Toast.LENGTH_SHORT).show()
@@ -62,9 +65,11 @@ class DownloadModel(val activity: Activity,
         fileMode1 = false
         val file2 = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite")
         if(!file2.exists()){
-            currentFile = File("/storage/emulated/0/Download/mask_detector.tflite")
-            newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/mask_detector.tflite")
             startDownload("https://raw.githubusercontent.com/ParthBhuva97/assets/main/mask_detector.tflite","mask_detector.tflite")
+            currentFile = File("/storage/emulated/0/Download/mask_detector.tflite")
+
+            newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite")
+            currentFile!!.renameTo(newFile)
         }
         else{
             Toast.makeText(activity,"Assets Found", Toast.LENGTH_SHORT).show()
@@ -139,30 +144,39 @@ class DownloadModel(val activity: Activity,
             var progress = 0
             var isDownloadFinished = false
             while (!isDownloadFinished) {
-                val cursor =
-                    downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
-                if (cursor.moveToFirst()) {
-                    when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
-                        DownloadManager.STATUS_RUNNING -> {
-                            val totalBytes =
-                                cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                            if (totalBytes > 0) {
-                                val downloadedBytes =
-                                    cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                                progress = (downloadedBytes * 100 / totalBytes).toInt()
+                val cursor:android.database.Cursor=downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
+                try{
+                    if (cursor.moveToFirst()) {
+                        when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
+                            DownloadManager.STATUS_RUNNING -> {
+                                val totalBytes =
+                                    cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                                if (totalBytes > 0) {
+                                    val downloadedBytes =
+                                        cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                                    progress = (downloadedBytes * 100 / totalBytes).toInt()
+                                }
                             }
+                            DownloadManager.STATUS_SUCCESSFUL -> {
+                                progress = 100
+                                isDownloadFinished = true
+                            }
+                            DownloadManager.STATUS_PAUSED, DownloadManager.STATUS_PENDING -> {}
+                            DownloadManager.STATUS_FAILED -> isDownloadFinished = true
                         }
-                        DownloadManager.STATUS_SUCCESSFUL -> {
-                            progress = 100
-                            isDownloadFinished = true
-                        }
-                        DownloadManager.STATUS_PAUSED, DownloadManager.STATUS_PENDING -> {}
-                        DownloadManager.STATUS_FAILED -> isDownloadFinished = true
+                        val message = Message.obtain()
+                        message.what = UPDATE_DOWNLOAD_PROGRESS
+                        message.arg1 = progress
+                        mainHandler.sendMessage(message)
                     }
-                    val message = Message.obtain()
-                    message.what = UPDATE_DOWNLOAD_PROGRESS
-                    message.arg1 = progress
-                    mainHandler.sendMessage(message)
+                }
+                catch (e:Exception)
+                {
+                    e.printStackTrace()
+
+                }
+                finally {
+                    cursor.close()
                 }
             }
         }

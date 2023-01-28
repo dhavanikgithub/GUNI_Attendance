@@ -7,7 +7,7 @@ class Models {
     companion object {
         val FACENET = ModelInfo(
             "FaceNet",
-            File("/storage/emulated/0/Android/data/com.example.guniattendance/files/facenet.tflite"),
+            File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/facenet.tflite"),
             0.4f,
             10f,
             128,
