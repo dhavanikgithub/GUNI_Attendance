@@ -13,7 +13,7 @@ class MoodleConfig {
         fun getModelRepo(context: Context):ModelRepository {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             url = sharedPreferences.getString("ServerList", "202.131.126.214")!!
-            return ModelRepository(context,"http://+$url")
+            return ModelRepository(context,"http://$url")
         }
     }
 
