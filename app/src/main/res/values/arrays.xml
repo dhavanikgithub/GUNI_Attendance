@@ -9,4 +9,11 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <string-array name="moodle_urls">
+        <item>202.131.126.214</item>
+        <item>202.131.126.215</item>
+        <item>202.131.126.216</item>
+    </string-array>
+
 </resources>

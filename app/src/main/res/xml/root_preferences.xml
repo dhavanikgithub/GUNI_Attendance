@@ -2,10 +2,18 @@
 
     <PreferenceCategory app:title="@string/messages_header">
 
-        <EditTextPreference
-            app:key="signature"
+<!--        <EditTextPreference-->
+<!--            app:key="signature"-->
+<!--            app:title="@string/moodle_url"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+        <ListPreference
+            app:key="ServerList"
             app:title="@string/moodle_url"
-            app:useSimpleSummaryProvider="true" />
+            app:entries="@array/moodle_urls"
+            app:entryValues="@array/moodle_urls"
+            app:useSimpleSummaryProvider="true"
+            />
     </PreferenceCategory>
 
 </PreferenceScreen>

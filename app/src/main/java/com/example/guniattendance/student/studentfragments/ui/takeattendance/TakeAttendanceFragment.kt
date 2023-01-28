@@ -95,7 +95,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                     parentLayout = binding.parentLayout,
                     loading = binding.lottieAnimation
                 )
-                Log.d("TAG_ATTENDANCE", "subscribeToObserve: $it")
+                Log.i("TAG_ATTENDANCE", "subscribeToObserve: $it")
                 snackbar(it)
             },
             onLoading = {

@@ -1,11 +1,13 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
+import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
@@ -41,6 +43,11 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             Log.i("TAG", "onError: $it")
                             snackbar("Invalid Enrollment Number!")
                         })
+                }
+            }
+            settingsBtn.setOnClickListener{
+                Intent(context,SettingsActivity::class.java).also{
+                    startActivity(it)
                 }
             }
 
