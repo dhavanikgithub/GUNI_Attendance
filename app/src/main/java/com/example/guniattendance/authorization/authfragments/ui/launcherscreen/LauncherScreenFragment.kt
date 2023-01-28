@@ -26,12 +26,12 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
                 if(et1Enrollment.text.toString().isEmpty()){
-                    context?.let { it1 -> ClientAPI.showErrorBox(it1, "Error", "Enrollment number is empty!", "OK") }
+                    context?.let { snackbar("Enrollment number is empty!") }
                 }else {
                     studentEnrolment = et1Enrollment.text.toString()
                     MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment,
-                        onReceive = { it1 ->
-                            if (it1) {
+                        onReceive = { it ->
+                            if (it) {
                                 findNavController().navigate(LauncherScreenFragmentDirections
                                         .actionLauncherScreenFragmentToLoginFragment())
                             }
