@@ -68,9 +68,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             onDenied = {
                 requestPermission()
             })
-
         viewModel.getStudent(args.uid)
-
         binding.apply {
 
             bboxOverlay.setWillNotDraw(false)
@@ -80,7 +78,6 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
             fileReader = FileReader(faceNetModel)
         }
-
     }
 
     private fun subscribeToObserve() {
@@ -186,6 +183,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             preview,
             imageFrameAnalysis
         )
+
     }
 
     private fun start(student: Student) {
@@ -197,9 +195,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
         val images = java.util.ArrayList<Pair<String, Bitmap>>()
         images.add(Pair(enrolNo, bitmap))
-
         fileReader.run(images, fileReaderCallback)
-
     }
 
     private val fileReaderCallback = object : FileReader.ProcessCallback {
@@ -207,6 +203,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             data: ArrayList<Pair<String, FloatArray>>,
             numImagesWithNoFaces: Int
         ) {
+
             frameAnalyser.run(data, frameAnalyserCallback)
         }
     }
@@ -223,7 +220,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                     parentLayout = binding.parentLayout,
                     loading = binding.lottieAnimation
                 )
-                viewModel.addAttendance(args.attendanceUid, name)
+//                viewModel.addAttendance(args.attendanceUid, name)
             }
         }
     }

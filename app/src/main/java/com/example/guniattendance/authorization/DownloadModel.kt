@@ -64,7 +64,8 @@ class DownloadModel(val activity: Activity,
             return
         fileMode1 = false
         val file2 = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite")
-        if(!file2.exists()){
+        if(!file2.exists())
+        {
             startDownload("https://raw.githubusercontent.com/ParthBhuva97/assets/main/mask_detector.tflite","mask_detector.tflite")
             currentFile = File("/storage/emulated/0/Download/mask_detector.tflite")
 
@@ -145,39 +146,30 @@ class DownloadModel(val activity: Activity,
             var isDownloadFinished = false
             while (!isDownloadFinished) {
                 val cursor:android.database.Cursor=downloadManager.query(DownloadManager.Query().setFilterById(downloadId))
-                try{
-                    if (cursor.moveToFirst()) {
-                        when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
-                            DownloadManager.STATUS_RUNNING -> {
-                                val totalBytes =
-                                    cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                                if (totalBytes > 0) {
-                                    val downloadedBytes =
-                                        cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                                    progress = (downloadedBytes * 100 / totalBytes).toInt()
-                                }
+                if (cursor.moveToFirst()) {
+                    when (cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))) {
+                        DownloadManager.STATUS_RUNNING -> {
+                            val totalBytes =
+                                cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                            if (totalBytes > 0) {
+                                val downloadedBytes =
+                                    cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                                progress = (downloadedBytes * 100 / totalBytes).toInt()
                             }
-                            DownloadManager.STATUS_SUCCESSFUL -> {
-                                progress = 100
-                                isDownloadFinished = true
-                            }
-                            DownloadManager.STATUS_PAUSED, DownloadManager.STATUS_PENDING -> {}
-                            DownloadManager.STATUS_FAILED -> isDownloadFinished = true
                         }
-                        val message = Message.obtain()
-                        message.what = UPDATE_DOWNLOAD_PROGRESS
-                        message.arg1 = progress
-                        mainHandler.sendMessage(message)
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            progress = 100
+                            isDownloadFinished = true
+                        }
+                        DownloadManager.STATUS_PAUSED, DownloadManager.STATUS_PENDING -> {}
+                        DownloadManager.STATUS_FAILED -> isDownloadFinished = true
                     }
+                    val message = Message.obtain()
+                    message.what = UPDATE_DOWNLOAD_PROGRESS
+                    message.arg1 = progress
+                    mainHandler.sendMessage(message)
                 }
-                catch (e:Exception)
-                {
-                    e.printStackTrace()
-
-                }
-                finally {
-                    cursor.close()
-                }
+                cursor.close()
             }
         }
     }
