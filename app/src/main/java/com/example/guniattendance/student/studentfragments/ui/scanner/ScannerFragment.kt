@@ -55,9 +55,12 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
 
                 codeScanner.decodeCallback = DecodeCallback {
                     handler.post(Runnable {
+                        // Edited by Jaydeepsinh
+                        val encryptedMsg = it.text
+                        val encodedData = encryptedMsg.split("+")[0]
                         //Code to Next Activity i.e. StudentHome Should be here
                         //val navHostFragment: NavHostFragment = FragmentManager.findFragment(view) as NavHostFragment
-                        Toast.makeText(context, it.text, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, encryptedMsg, Toast.LENGTH_SHORT).show()
                        // binding.fragFlayout.visibility = View.VISIBLE
                             findNavController().navigate(
                                 ScannerFragmentDirections.actionScannerFragmentToTakeAttendanceFragment2("123","123")
