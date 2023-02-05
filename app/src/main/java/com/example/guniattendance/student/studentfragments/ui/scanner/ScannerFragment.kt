@@ -63,7 +63,7 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                         Toast.makeText(context, encryptedMsg, Toast.LENGTH_SHORT).show()
                        // binding.fragFlayout.visibility = View.VISIBLE
                             findNavController().navigate(
-                                ScannerFragmentDirections.actionScannerFragmentToTakeAttendanceFragment2("123","123")
+                                ScannerFragmentDirections.actionScannerFragmentToStudentHomeFragment3()
                             )
 
                     })

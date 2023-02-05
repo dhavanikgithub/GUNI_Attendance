@@ -16,7 +16,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.guniattendance.authorization.authfragments.ui.login.LoginFragment"
-        android:label="@string/login" >
+        android:label="@string/login">
         <action
             android:id="@+id/action_loginFragment_to_studentRegisterFragment"
             app:destination="@id/studentRegisterFragment" />
@@ -60,20 +60,11 @@
         android:label="fragment_scanner"
         tools:layout="@layout/fragment_scanner" >
         <action
-            android:id="@+id/action_scannerFragment_to_takeAttendanceFragment2"
-            app:destination="@id/takeAttendanceFragment2" />
+            android:id="@+id/action_scannerFragment_to_studentHomeFragment3"
+            app:destination="@id/studentHomeFragment3" />
     </fragment>
     <fragment
-        android:id="@+id/takeAttendanceFragment2"
-        android:name="com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment"
-        android:label="TakeAttendanceFragment" >
-        <action
-            android:id="@+id/action_takeAttendanceFragment2_to_launcherScreenFragment"
-            app:destination="@id/launcherScreenFragment" />
-        <argument android:name="attendanceUid"
-            app:argType="string" />
-        <argument
-            android:name="uid"
-            app:argType="string" />
-    </fragment>
+        android:id="@+id/studentHomeFragment3"
+        android:name="com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragment"
+        android:label="StudentHomeFragment" />
 </navigation>
