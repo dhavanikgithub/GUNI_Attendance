@@ -12,7 +12,12 @@ import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.snackbar
+import com.google.android.material.snackbar.Snackbar
 import com.uvpce.attendance_moodle_api_library.repo.ClientAPI
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
@@ -29,20 +34,25 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     context?.let { snackbar("Enrollment number is empty!") }
                 }else {
                     studentEnrolment = et1Enrollment.text.toString()
-                    MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment,
-                        onReceive = { it ->
-                            if (it) {
+                    MainScope().launch {
+                        try{
+                            var result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment)
+//                            Log.i("Error","log1")
+                            if (result.hasUserUploadImg) {
+//                                Log.i("Error","log2")
                                 findNavController().navigate(LauncherScreenFragmentDirections
-                                        .actionLauncherScreenFragmentToLoginFragment())
+                                    .actionLauncherScreenFragmentToLoginFragment())
                             }
                             else {
+//                                Log.i("Error","log3")
                                 findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToScannerFragment())
 //                                Intent(context, ScannerActivity::class.java).also { startActivity(it) }
                             }
-                        }, onError = {
-                            Log.i("TAG", "onError: $it")
-                            snackbar("Invalid Enrollment Number!")
-                        })
+                        } catch (ex:Exception){
+                            snackbar("Invalid Enrollment Number "+ex.message)
+                            Log.i("Error-LauScFra","Invalid Enrollment Number "+ex.message)
+                        }
+                    }
                 }
             }
             settingsBtn.setOnClickListener{

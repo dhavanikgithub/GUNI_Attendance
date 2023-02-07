@@ -168,6 +168,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private fun bindPreview(cameraProvider: ProcessCameraProvider) {
         val preview: Preview = Preview.Builder().build()
+        // CameraSelector - wraps a set of filters for the camera you want to use
         val cameraSelector: CameraSelector = CameraSelector.Builder()
             .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
             .build()
@@ -177,7 +178,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
         imageFrameAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), frameAnalyser)
-        cameraProvider.bindToLifecycle(
+        var camera = cameraProvider.bindToLifecycle(
             viewLifecycleOwner,
             cameraSelector,
             preview,

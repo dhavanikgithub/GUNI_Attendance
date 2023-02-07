@@ -24,6 +24,9 @@ import com.example.guniattendance.utils.*
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -72,18 +75,21 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             enrollmentText.setText(enrol)
             enrollmentText.isEnabled = false
 
-            MoodleConfig.getModelRepo(requireActivity()).getStudentInfo(enrol, onReceive = {
-                userid = it.id
-                nameText.setText(it.lastname)
-                nameText.isEnabled = false
+            MainScope().launch {
+                try {
+                    var result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
+                    userid = result.id
+                    nameText.setText(result.lastname)
+                    nameText.isEnabled = false
 
-                emailText.setText(it.emailAddress)
-                emailText.isEnabled = false
-            }
-            , onError = {
-                    snackbar("Unknown Error, Contact Administrator!")
+                    emailText.setText(result.emailAddress)
+                    emailText.isEnabled = false
+                } catch (e: java.lang.Exception) {
+                    activity?.let { BasicUtils.errorDialogBox(it, "getUserInfo Error","getUserInfo Error, Contact Administrator!"+e.message) }
                 }
-            )
+
+            }
+
 
 
 //            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
@@ -120,9 +126,16 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //            }
 
             btnRegister.setOnClickListener {
-                MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri, onReceive = { Log.i("Successfully updated the profile picture:",
-                    it.toString(4)
-                )}, onError = {snackbar("Unknown Error, Contact Administrator!")})
+                MainScope().launch {
+                    try{
+                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        Log.i("Successfully updated the profile picture:", res.toString(4))
+                    } catch (e: Exception){
+                        snackbar("Unknown Error, Contact Administrator!")
+//                        BasicUtils.errorDialogBox()
+                    }
+
+                }
 
 //                viewModel.register(
 //                    enrolment = enrollmentText.text?.trim().toString(),
