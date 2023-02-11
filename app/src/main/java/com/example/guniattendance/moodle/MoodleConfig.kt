@@ -11,14 +11,12 @@ class MoodleConfig {
     companion object{
         var url = "http://202.131.126.214"
         private lateinit var reslt: ModelRepository
-        fun getModelRepo(context: Context):ModelRepository {
+        suspend fun getModelRepo(context: Context):ModelRepository {
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
             url = sharedPreferences.getString("ServerList", "202.131.126.214")!!
 
-            MainScope().launch {
-                reslt = ModelRepository.getModelRepo(context)
-            }
-             return reslt
+            reslt = ModelRepository.getModelRepo(context)
+            return reslt
         }
     }
 
