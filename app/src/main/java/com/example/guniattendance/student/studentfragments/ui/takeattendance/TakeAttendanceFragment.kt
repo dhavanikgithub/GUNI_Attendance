@@ -27,9 +27,12 @@ import com.example.guniattendance.ml.utils.FrameAnalyserAttendance
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
+import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
 import com.google.common.util.concurrent.ListenableFuture
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.Executors
 
@@ -39,7 +42,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private lateinit var binding: FragmentTakeAttendanceBinding
     private lateinit var viewModel: TakeAttendanceViewModel
-    private val args: TakeAttendanceFragmentArgs by navArgs()
+//    private val args: TakeAttendanceFragmentArgs by navArgs()
 
     private lateinit var frameAnalyser: FrameAnalyserAttendance
     private lateinit var faceNetModel: FaceNetModel
@@ -68,7 +71,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             onDenied = {
                 requestPermission()
             })
-        viewModel.getStudent(args.uid)
+//        viewModel.getStudent(args.uid)
         binding.apply {
 
             bboxOverlay.setWillNotDraw(false)
@@ -187,11 +190,11 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     }
 
-    private fun start(student: Student) {
+    private fun start(student: BaseUserInfo) {
 
-        val enrolNo = student.enrolment
+        val enrolNo = student.username
 
-        val decodedByteArray: ByteArray = Base64.decode(student.byteArray, Base64.DEFAULT)
+        val decodedByteArray: ByteArray = Utility().convertUrlToBase64(student.imageUrl).toByteArray()
         val bitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
 
         val images = java.util.ArrayList<Pair<String, Bitmap>>()

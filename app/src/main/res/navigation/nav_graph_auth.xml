@@ -32,8 +32,8 @@
             android:id="@+id/action_launcherScreenFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
         <action
-            android:id="@+id/action_launcherScreenFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment" />
+            android:id="@+id/action_launcherScreenFragment_to_studentHomeFragment"
+            app:destination="@id/studentHomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentRegisterFragment"
@@ -60,11 +60,39 @@
         android:label="fragment_scanner"
         tools:layout="@layout/fragment_scanner" >
         <action
-            android:id="@+id/action_scannerFragment_to_studentHomeFragment3"
-            app:destination="@id/studentHomeFragment3" />
+            android:id="@+id/action_scannerFragment_to_attendanceInfoFragment"
+            app:destination="@id/attendanceInfoFragment">
+            <argument
+                android:name="qrData"
+                app:argType="string"
+                android:defaultValue="" />
+        </action>
     </fragment>
     <fragment
-        android:id="@+id/studentHomeFragment3"
+        android:id="@+id/studentHomeFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragment"
-        android:label="StudentHomeFragment" />
+        android:label="StudentHomeFragment" >
+        <action
+            android:id="@+id/action_studentHomeFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/attendanceInfoFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.attendance.AttendanceInfoFragment"
+        android:label="fragment_attendance_info"
+        tools:layout="@layout/fragment_attendance_info" >
+        <action
+            android:id="@+id/action_attendanceInfoFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment">
+
+        </action>
+        <action
+            android:id="@+id/action_attendanceInfoFragment_to_takeAttendanceFragment"
+            app:destination="@id/takeAttendanceFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/takeAttendanceFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment"
+        android:label="TakeAttendanceFragment" />
 </navigation>

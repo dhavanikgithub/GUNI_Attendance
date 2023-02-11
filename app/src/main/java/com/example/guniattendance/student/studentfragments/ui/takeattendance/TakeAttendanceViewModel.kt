@@ -1,13 +1,17 @@
 package com.example.guniattendance.student.studentfragments.ui.takeattendance
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.guniattendance.data.entity.Student
+import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.student.repository.StudentRepository
 import com.example.guniattendance.utils.Events
 import com.example.guniattendance.utils.Resource
+import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,15 +34,15 @@ class TakeAttendanceViewModel @Inject constructor(
         }
     }
 
-    private val _studentListStatus = MutableLiveData<Events<Resource<Student>>>()
-    val studentListStatus: LiveData<Events<Resource<Student>>> = _studentListStatus
+    private val _studentListStatus = MutableLiveData<Events<Resource<BaseUserInfo>>>()
+    val studentListStatus: LiveData<Events<Resource<BaseUserInfo>>> = _studentListStatus
 
-    fun getStudent(uid: String) {
+    fun getStudent(context:Context,uid: String) {
         _studentListStatus.postValue(Events(Resource.Loading()))
 
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.getStudent(uid)
-            _studentListStatus.postValue(Events(result))
+            val result = MoodleConfig.getModelRepo(context).getUserInfo(uid)
+            _studentListStatus.postValue(Events(Resource.Success(result)))
         }
     }
 

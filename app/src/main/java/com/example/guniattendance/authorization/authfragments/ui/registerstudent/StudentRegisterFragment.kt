@@ -130,6 +130,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     try{
                         var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
+
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
 //                        BasicUtils.errorDialogBox()

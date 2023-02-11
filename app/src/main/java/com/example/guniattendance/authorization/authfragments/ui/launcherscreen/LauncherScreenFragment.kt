@@ -1,9 +1,14 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.Manifest.permission
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
@@ -12,10 +17,6 @@ import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.snackbar
-import com.google.android.material.snackbar.Snackbar
-import com.uvpce.attendance_moodle_api_library.repo.ClientAPI
-import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -30,29 +31,37 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         binding.apply {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
-                if(et1Enrollment.text.toString().isEmpty()){
-                    context?.let { snackbar("Enrollment number is empty!") }
-                }else {
-                    studentEnrolment = et1Enrollment.text.toString()
-                    MainScope().launch {
-                        try{
-                            var result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment)
-//                            Log.i("Error","log1")
-                            if (result.hasUserUploadImg) {
-//                                Log.i("Error","log2")
-                                findNavController().navigate(LauncherScreenFragmentDirections
-                                    .actionLauncherScreenFragmentToLoginFragment())
+                if(checkPermission()){
+                    if(et1Enrollment.text.toString().isEmpty()){
+                        context?.let { snackbar("Enrollment number is empty!") }
+                    }else {
+                        studentEnrolment = et1Enrollment.text.toString()
+                        // Coroutins on backgroud thread
+                        MainScope().launch {
+                            try{
+                                var result =
+                                    context?.let { it1 ->
+                                        MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(
+                                            it1,studentEnrolment)
+                                    }
+//                            Thread.sleep(5000)
+                                if (result!!.hasUserUploadImg) {
+                                    findNavController().navigate(LauncherScreenFragmentDirections
+                                        .actionLauncherScreenFragmentToStudentRegisterFragment())
+//                                txtView.setText(result.hasUserUploadImg.toString())
+//                                findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment3())
+                                }
+                                else {
+                                    findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment())
+                                }
+
+                            } catch (ex:Exception){
+                                snackbar("Invalid Enrollment Number "+ex.message)
                             }
-                            else {
-//                                Log.i("Error","log3")
-                                findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToScannerFragment())
-//                                Intent(context, ScannerActivity::class.java).also { startActivity(it) }
-                            }
-                        } catch (ex:Exception){
-                            snackbar("Invalid Enrollment Number "+ex.message)
-                            Log.i("Error-LauScFra","Invalid Enrollment Number "+ex.message)
                         }
                     }
+                } else{
+                    requestPermission()
                 }
             }
             settingsBtn.setOnClickListener{
@@ -63,6 +72,37 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 
         }
 
+    }
+
+    private fun checkPermission(): Boolean{
+        // ContextCompat.checkSelfPermission() - is used to check the dangerous permission.
+        val cameraPermission =
+            ContextCompat.checkSelfPermission(requireContext(), permission.CAMERA)
+        // if permission is already granted, then its 0, if not then its -1. So if cameraPermission is 0 then it's true, other wise its false.
+        return cameraPermission == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission(){
+        val PERMISSION_CODE = 200
+//        ActivityCompat.requestPermissions(this, arrayOf(permission.CAMERA), PERMISSION_CODE)
+//        ContextCompat.requestPermission(arrayOf(permission.CAMERA), PERMISSION_CODE)
+        requestPermissions(arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE), PERMISSION_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.size > 0) {
+            val cameraPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED
+            if (cameraPermission) {
+                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroy() {

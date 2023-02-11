@@ -65,9 +65,9 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
         viewModel.getUser()
 
         binding.apply {
-            layoutTakeAttendance.setOnClickListener {
-                viewModel.getActiveAttendance()
-            }
+//            layoutTakeAttendance.setOnClickListener {
+//                viewModel.getActiveAttendance()
+//            }
             
 
             btnSetting.setOnClickListener{
@@ -77,34 +77,38 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSignOut.setOnClickListener {
-                FirebaseAuth.getInstance().signOut()
-                Intent(requireActivity(), AuthActivity::class.java).also {
-                    startActivity(it)
-                    requireActivity().finish()
+//                FirebaseAuth.getInstance().signOut()
+//                Intent(requireActivity(), AuthActivity::class.java).also {
+//                    startActivity(it)
+//                    requireActivity().finish()
+//                }
+                try{
+                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToScannerFragment())
+                } catch (e: Exception){
+                    Log.e("","Navigate Error"+ e.toString(),e)
                 }
+
             }
 
-            tvTakeOtherAttendance.setOnClickListener {
-                layoutTakeOtherAttendance.isVisible = true
-                layoutTakeAttendance.isVisible = false
-                tvGoBack.isVisible = true
-                tvTakeOtherAttendance.isVisible = false
-            }
-
-            tvGoBack.setOnClickListener {
-                layoutTakeOtherAttendance.isVisible = false
-                layoutTakeAttendance.isVisible = true
-                tvGoBack.isVisible = false
-                tvTakeOtherAttendance.isVisible = true
-            }
-
-            btnTakeOtherAttendance.setOnClickListener {
-                viewModel.getActiveAttendanceForOther(etEnrol.text.trim().toString())
-            }
+//            tvTakeOtherAttendance.setOnClickListener {
+//                layoutTakeOtherAttendance.isVisible = true
+//                layoutTakeAttendance.isVisible = false
+//                tvGoBack.isVisible = true
+//                tvTakeOtherAttendance.isVisible = false
+//            }
+//
+//            tvGoBack.setOnClickListener {
+//                layoutTakeOtherAttendance.isVisible = false
+//                layoutTakeAttendance.isVisible = true
+//                tvGoBack.isVisible = false
+//                tvTakeOtherAttendance.isVisible = true
+//            }
+//
+//            btnTakeOtherAttendance.setOnClickListener {
+//                viewModel.getActiveAttendanceForOther(etEnrol.text.trim().toString())
+//            }
 
         }
-
-
     }
 
     private fun subscribeToObserve() {
@@ -130,6 +134,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 )
             }
         ) { user ->
+//            Log.i("updateUI", user.byteArray+", "+user.uid)
             updateUI(user)
         })
 
@@ -174,17 +179,17 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     )
                     val distanceInMeters = results[0]
                     Log.d("TAG_LOCATION", "subscribeToObserve: $distanceInMeters")
-                    if (distanceInMeters <= ALLOWED_RADIUS) {
-                        findNavController().navigate(
-                            StudentHomeFragmentDirections
-                                .actionStudentHomeFragmentToTakeAttendanceFragment(
-                                    uid = uid,
-                                    attendanceUid = it.uid
-                                )
-                        )
-                    } else {
-                        snackbar("Outside class")
-                    }
+//                    if (distanceInMeters <= ALLOWED_RADIUS) {
+//                        findNavController().navigate(
+//                            StudentHomeFragmentDirections
+//                                .actionStudentHomeFragmentToTakeAttendanceFragment(
+//                                    uid = uid,
+//                                    attendanceUid = it.uid
+//                                )
+//                        )
+//                    } else {
+//                        snackbar("Outside class")
+//                    }
 
                 } else {
                     curLocation = getLocation()
@@ -203,17 +208,17 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     parentLayout = binding.parentLayout,
                     loading = binding.lottieAnimation
                 )
-                when (it) {
-                    "emptyEnrolment" -> {
-                        binding.etEnrol.error = "Please enter enrolment number"
-                    }
-                    "enrolment" -> {
-                        binding.etEnrol.error = "Enrolment number should be of length 11"
-                    }
-                    else -> {
-                        snackbar(it)
-                    }
-                }
+//                when (it) {
+//                    "emptyEnrolment" -> {
+//                        binding.etEnrol.error = "Please enter enrolment number"
+//                    }
+//                    "enrolment" -> {
+//                        binding.etEnrol.error = "Enrolment number should be of length 11"
+//                    }
+//                    else -> {
+//                        snackbar(it)
+//                    }
+//                }
             },
             onLoading = {
                 showProgress(
@@ -242,17 +247,17 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         results
                     )
                     val distanceInMeters = results[0]
-                    if (distanceInMeters <= ALLOWED_RADIUS) {
-                        findNavController().navigate(
-                            StudentHomeFragmentDirections
-                                .actionStudentHomeFragmentToTakeAttendanceFragment(
-                                    uid = it.first,
-                                    attendanceUid = attendance.uid
-                                )
-                        )
-                    } else {
-                        snackbar("Outside class")
-                    }
+//                    if (distanceInMeters <= ALLOWED_RADIUS) {
+//                        findNavController().navigate(
+//                            StudentHomeFragmentDirections
+//                                .actionStudentHomeFragmentToTakeAttendanceFragment(
+//                                    uid = it.first,
+//                                    attendanceUid = attendance.uid
+//                                )
+//                        )
+//                    } else {
+//                        snackbar("Outside class")
+//                    }
 
                 } else {
                     curLocation = getLocation()
@@ -268,10 +273,11 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private fun updateUI(user: Student) {
         binding.apply {
             uid = user.uid
+
             tvName.text = user.name
             val decodedByteArray: ByteArray = Base64.decode(user.byteArray, Base64.DEFAULT)
             glide.load(decodedByteArray).into(ivImage)
-            tvClass.text = "Class : ${user.lecture} \t Lab : ${user.lab}"
+//            tvClass.text = "Class : ${user.lecture} \t Lab : ${user.lab}"
         }
         showProgress(
             activity = requireActivity(),
