@@ -39,7 +39,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private lateinit var binding: FragmentTakeAttendanceBinding
     private lateinit var viewModel: TakeAttendanceViewModel
-    private val args: TakeAttendanceFragmentArgs by navArgs()
+//    private val args: TakeAttendanceFragmentArgs by navArgs()
 
     private lateinit var frameAnalyser: FrameAnalyserAttendance
     private lateinit var faceNetModel: FaceNetModel
@@ -68,7 +68,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             onDenied = {
                 requestPermission()
             })
-        viewModel.getStudent(args.uid)
+//        viewModel.getStudent(args.uid)
         binding.apply {
 
             bboxOverlay.setWillNotDraw(false)

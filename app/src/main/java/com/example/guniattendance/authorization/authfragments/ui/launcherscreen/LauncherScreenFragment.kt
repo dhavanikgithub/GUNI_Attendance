@@ -1,5 +1,7 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,8 +18,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.uvpce.attendance_moodle_api_library.repo.ClientAPI
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
@@ -27,6 +31,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
+        val progressDialog = ProgressDialog(activity)
         binding.apply {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
@@ -34,23 +39,28 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     context?.let { snackbar("Enrollment number is empty!") }
                 }else {
                     studentEnrolment = et1Enrollment.text.toString()
+                    // Coroutins on backgroud thread
                     MainScope().launch {
+//                        progressDialog.setTitle("Validation")
+                        progressDialog.setMessage("Verifying Enrollment...")
+                        progressDialog.show()
                         try{
-                            var result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(studentEnrolment)
-//                            Log.i("Error","log1")
-                            if (result.hasUserUploadImg) {
-//                                Log.i("Error","log2")
+                            var result =
+                                context?.let { it1 ->
+                                    MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(
+                                        it1,studentEnrolment)
+                                }
+                            progressDialog.dismiss()
+                            if (result!!.hasUserUploadImg) {
                                 findNavController().navigate(LauncherScreenFragmentDirections
-                                    .actionLauncherScreenFragmentToLoginFragment())
+                                    .actionLauncherScreenFragmentToStudentRegisterFragment())
                             }
                             else {
-//                                Log.i("Error","log3")
-                                findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToScannerFragment())
-//                                Intent(context, ScannerActivity::class.java).also { startActivity(it) }
+                                findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment())
                             }
+
                         } catch (ex:Exception){
                             snackbar("Invalid Enrollment Number "+ex.message)
-                            Log.i("Error-LauScFra","Invalid Enrollment Number "+ex.message)
                         }
                     }
                 }

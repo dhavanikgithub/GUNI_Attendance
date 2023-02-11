@@ -25,11 +25,15 @@ import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragmentDirections
 import com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeViewModel
+import com.example.guniattendance.utils.BasicUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.jianastrero.capiche.doIHave
+import com.uvpce.attendance_moodle_api_library.model.QRMessageData
+import org.json.JSONException
 
 class ScannerFragment : Fragment(R.layout.fragment_scanner) {
 
+    private val TAG = "ScannerFragment"
     private lateinit var binding: FragmentScannerBinding
     private lateinit var viewModel: ScannerViewModel
     private val handler = Handler(Looper.getMainLooper())
@@ -56,15 +60,31 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                 codeScanner.decodeCallback = DecodeCallback {
                     handler.post(Runnable {
                         // Edited by Jaydeepsinh
-                        val encryptedMsg = it.text
-                        val encodedData = encryptedMsg.split("+")[0]
+
+                        //val encodedData = encryptedMsg.split("+")[0]
                         //Code to Next Activity i.e. StudentHome Should be here
                         //val navHostFragment: NavHostFragment = FragmentManager.findFragment(view) as NavHostFragment
-                        Toast.makeText(context, encryptedMsg, Toast.LENGTH_SHORT).show()
+                        try {
+                            val encryptedMsg = it.text
+                            try {
+
+                                val qRmsg = QRMessageData.getQRMessageObject(encryptedMsg)
+                                findNavController().navigate(
+                                    ScannerFragmentDirections.actionScannerFragmentToAttendanceInfoFragment()                                )
+                            }catch (e:JSONException){
+                                BasicUtils.errorDialogBox(requireContext(),"QR Scan Error","Retry to scan QR code again")
+                                Log.e(TAG, "onViewCreated: JsonException:$encryptedMsg", e)
+                            }
+                        }
+                        catch (e:Exception){
+                            BasicUtils.errorDialogBox(requireContext(),"Error","Error:${e}")
+                            Log.e(TAG, "onViewCreated: Exception while generating QRMessage object:$e", e)
+                        }
+
+                        //Toast.makeText(context, qRmsg.toString(), Toast.LENGTH_SHORT).show()
+
                        // binding.fragFlayout.visibility = View.VISIBLE
-                            findNavController().navigate(
-                                ScannerFragmentDirections.actionScannerFragmentToStudentHomeFragment3()
-                            )
+
 
                     })
                 }

@@ -1,6 +1,7 @@
 package com.example.guniattendance.authorization.authfragments.ui.registerstudent
 
 import android.Manifest
+import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -18,6 +19,7 @@ import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragmentDirections
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
@@ -74,7 +76,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             val enrol = LauncherScreenFragment.studentEnrolment
             enrollmentText.setText(enrol)
             enrollmentText.isEnabled = false
-
+            val progressDialog = ProgressDialog(activity)
             MainScope().launch {
                 try {
                     var result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
@@ -128,8 +130,15 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             btnRegister.setOnClickListener {
                 MainScope().launch {
                     try{
+                        progressDialog.setMessage("Updating Profile Picture....")
+                        progressDialog.setCancelable(false)
+                        progressDialog.show()
+
                         var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        progressDialog.dismiss()
                         Log.i("Successfully updated the profile picture:", res.toString(4))
+
+
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
 //                        BasicUtils.errorDialogBox()
