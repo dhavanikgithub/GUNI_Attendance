@@ -36,6 +36,7 @@ import com.google.mlkit.common.sdkinternal.ModelInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import com.uvpce.attendance_moodle_api_library.model.MoodleBasicUrl
+import com.uvpce.attendance_moodle_api_library.model.QRMessageData
 import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
 import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,10 +109,21 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 //                    startActivity(it)
 //                    requireActivity().finish()
 //                }
-                try{
-                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToScannerFragment())
-                } catch (e: Exception){
-                    Log.e("","Navigate Error"+ e.toString(),e)
+//                try{
+//
+//
+//                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToScannerFragment())
+//                } catch (e: Exception){
+//                    Log.e("","Navigate Error"+ e.toString(),e)
+//                }
+//                val objMessage = MoodleConfig.getModelRepo(requireContext()).getMessage()
+//                Log.i(TAG, "onCreate: Get Message of USerName:${stu.username} message:${objMessage}")
+                MainScope().launch {
+                    val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userid = userInfo.id)
+                    val bundle = Bundle()
+                    bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+                    bundle.putString("userId",userInfo.id)
+                    findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                 }
 
             }

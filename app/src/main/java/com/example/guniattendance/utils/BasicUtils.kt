@@ -2,7 +2,6 @@ package com.example.guniattendance.utils
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 
 class BasicUtils {
     companion object{
@@ -16,9 +15,9 @@ class BasicUtils {
             alertDialog.setTitle(title)
             alertDialog.setMessage(message)
             alertDialog.setCancelable(false)
-            alertDialog.setPositiveButton("OK", DialogInterface.OnClickListener {
-                    dialog, _ -> dialog.dismiss()
-            })
+            alertDialog.setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
 
             alertDialog.create().show()
         }

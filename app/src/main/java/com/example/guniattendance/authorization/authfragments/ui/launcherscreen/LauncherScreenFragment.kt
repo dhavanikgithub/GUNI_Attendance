@@ -1,15 +1,17 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
-import android.Manifest.permission
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.view.KeyEvent
 import android.view.View
-import android.widget.LinearLayout
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -18,56 +20,95 @@ import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.utils.CustomProgressDialog
+import com.example.guniattendance.utils.hideKeyboard
 import com.example.guniattendance.utils.snackbar
+
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
     lateinit var progressBar: ProgressBar
+    private var progressDialog: CustomProgressDialog? = null
+
     companion object{
         lateinit var studentEnrolment: String
+    }
+
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        if(!checkPermission())
+        {
+            requestPermission()
+        }
+        super.onViewStateRestored(savedInstanceState)
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
+        if(progressDialog==null)
+        {
+            progressDialog = CustomProgressDialog(requireContext())
+        }
+
+
         binding.apply {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
+            btnCheckEnrol.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+
+                    btnCheckEnrol.performClick()
+                }
+                false
+            })
             btnCheckEnrol.setOnClickListener{
-                if(checkPermission()){
-                    if(et1Enrollment.text.toString().isEmpty()){
-                        context?.let { snackbar("Enrollment number is empty!") }
-                    }else {
-                        studentEnrolment = et1Enrollment.text.toString()
+                hideKeyboard(requireActivity())
+//                progressLayout.visibility = View.VISIBLE
+
+                if(et1Enrollment.text.toString().isEmpty())
+                {
+                   snackbar("Enrollment number is empty!")
+                }
+                else
+                {
+                    studentEnrolment = et1Enrollment.text.toString()
+                    val pattern = Regex("^[0-9]{11}$")
+                    if (pattern.containsMatchIn(studentEnrolment))
+                    {
                         // Coroutins on backgroud thread
-                        MainScope().launch {
-                            try{
-                                progressLayout.visibility = View.VISIBLE
-//                                progressBar.visibility  = View.VISIBLE
-                                var result =
-                                    context?.let { it1 ->
-                                        MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(
-                                            it1,studentEnrolment)
-                                    }
-                                if ((result!!.hasUserUploadImg) && (progressLayout.visibility == View.VISIBLE)) {
-                                    progressLayout.visibility = View.GONE
-//                                    progressBar.visibility = View.GONE
-                                    findNavController().navigate(LauncherScreenFragmentDirections
-                                        .actionLauncherScreenFragmentToStudentRegisterFragment())
+                        progressDialog!!.start("Verifying Enrollment....")
+                        MainScope().launch{
+                            try {
+                                val result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(requireContext(), studentEnrolment)
+                                progressDialog!!.stop()
+                                //progressLayout.visibility = View.GONE
+                                if (result.hasUserUploadImg)
+                                {
+                                    findNavController().navigate(
+                                        LauncherScreenFragmentDirections
+                                            .actionLauncherScreenFragmentToStudentRegisterFragment()
+                                    )
                                 }
-                                else {
-                                    progressLayout.visibility = View.GONE
-//                                    progressBar.visibility = View.GONE
+                                else
+                                {
                                     findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment())
                                 }
-
-                            } catch (ex:Exception){
-                                snackbar("Invalid Enrollment Number "+ex.message)
+                            }
+                            catch (ex: Exception)
+                            {
+                                snackbar("Invalid Enrollment Number " + ex.message)
+                            }
+                            finally
+                            {
+                                progressDialog!!.stop()
                             }
                         }
                     }
-                } else{
-                    requestPermission()
+                    else
+                    {
+                        snackbar("Invalid Enrollment Number")
+                    }
                 }
             }
             settingsBtn.setOnClickListener{
@@ -75,49 +116,130 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     startActivity(it)
                 }
             }
-
         }
-
     }
 
-    private fun checkPermission(): Boolean{
+    override fun onDestroy()
+    {
+        DownloadModel.destroyObject()
+        super.onDestroy()
+    }
+
+    override fun onDestroyView()
+    {
+        DownloadModel.destroyObject()
+        super.onDestroyView()
+    }
+
+
+    fun checkPermission(): Boolean
+    {
         // ContextCompat.checkSelfPermission() - is used to check the dangerous permission.
         val cameraPermission =
-            ContextCompat.checkSelfPermission(requireContext(), permission.CAMERA)
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+        val readStoragePermission =
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+        val accessFinePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+        val accessCoarsePermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+        val internetPermission = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.INTERNET)
+
         // if permission is already granted, then its 0, if not then its -1. So if cameraPermission is 0 then it's true, other wise its false.
-        return cameraPermission == PackageManager.PERMISSION_GRANTED
+        if(
+            cameraPermission == PackageManager.PERMISSION_GRANTED
+            &&
+            readStoragePermission == PackageManager.PERMISSION_GRANTED
+            &&
+            accessFinePermission  == PackageManager.PERMISSION_GRANTED
+            &&
+            accessCoarsePermission == PackageManager.PERMISSION_GRANTED
+            &&
+            internetPermission == PackageManager.PERMISSION_GRANTED
+        )
+        {
+            return true
+        }
+        return false
+
     }
 
-    private fun requestPermission(){
+    private fun requestPermission()
+    {
         val PERMISSION_CODE = 200
-//        ActivityCompat.requestPermissions(this, arrayOf(permission.CAMERA), PERMISSION_CODE)
-//        ContextCompat.requestPermission(arrayOf(permission.CAMERA), PERMISSION_CODE)
-        requestPermissions(arrayOf(permission.CAMERA, permission.READ_EXTERNAL_STORAGE, permission.WRITE_EXTERNAL_STORAGE), PERMISSION_CODE)
+
+        requestPermissions(arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.INTERNET), PERMISSION_CODE)
     }
 
+    private fun checkUserRequestedDontAskAgain():Boolean
+    {
+        val rationalFlagREAD =
+            shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
+        val rationalFlagCAMERA =
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+        val rationalFlagINTERNET =
+            shouldShowRequestPermissionRationale(Manifest.permission.INTERNET)
+        val rationalFlagLOCATIONCOARSE =
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
+        val rationalFlagLOCATIONFINE =
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (!rationalFlagREAD
+            &&
+            !rationalFlagCAMERA
+            &&
+            !rationalFlagINTERNET
+            &&
+            !rationalFlagLOCATIONCOARSE
+            &&
+            !rationalFlagLOCATIONFINE)
+        {
+            return false
+        }
+        return true
+    }
+
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.size > 0) {
+        if (grantResults.isNotEmpty())
+        {
             val cameraPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED
-            if (cameraPermission) {
-                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+            val readStoragePermission = grantResults[1] == PackageManager.PERMISSION_GRANTED
+            val accessFinePermission = grantResults[2] == PackageManager.PERMISSION_GRANTED
+            val accessCoarsePermission = grantResults[3] == PackageManager.PERMISSION_GRANTED
+            val internetPermission = grantResults[4] == PackageManager.PERMISSION_GRANTED
+            if (!cameraPermission || !readStoragePermission || !accessFinePermission || !accessCoarsePermission || !internetPermission)
+            {
+                if(!checkUserRequestedDontAskAgain())
+                {
+                    val alertDialogBuilder = AlertDialog.Builder(requireContext())
+                    alertDialogBuilder
+                        .setMessage("Click Settings to manually set permissions.")
+                        .setCancelable(false)
+                        .setPositiveButton("SETTINGS")
+                        { dialog, id ->
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri = Uri.fromParts("package",requireContext().packageName,null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
+
+                    val alertDialog = alertDialogBuilder.create()
+                    alertDialog.show()
+                }
+                else
+                {
+                    requestPermission()
+                }
             }
         }
     }
 
-    override fun onDestroy() {
-        DownloadModel.destroyObject()
-        super.onDestroy()
-    }
-
-    override fun onDestroyView() {
-        DownloadModel.destroyObject()
-        super.onDestroyView()
-    }
 }

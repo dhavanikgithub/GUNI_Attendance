@@ -53,7 +53,7 @@ class DownloadModel(val activity: Activity,
             startDownload("https://raw.githubusercontent.com/ParthBhuva97/assets/main/facenet.tflite","facenet.tflite")
             currentFile = File("/storage/emulated/0/Download/facenet.tflite")
             newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/facenet.tflite")
-            currentFile!!.renameTo(newFile)
+            currentFile!!.renameTo(newFile!!)
         }
         else{
             Toast.makeText(activity,"Assets Found", Toast.LENGTH_SHORT).show()
@@ -70,7 +70,7 @@ class DownloadModel(val activity: Activity,
             currentFile = File("/storage/emulated/0/Download/mask_detector.tflite")
 
             newFile = File("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite")
-            currentFile!!.renameTo(newFile)
+            currentFile!!.renameTo(newFile!!)
         }
         else{
             Toast.makeText(activity,"Assets Found", Toast.LENGTH_SHORT).show()

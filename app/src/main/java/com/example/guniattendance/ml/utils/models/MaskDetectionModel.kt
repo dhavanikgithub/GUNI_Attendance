@@ -70,7 +70,7 @@ class MaskDetectionModel(
         val t1 = System.currentTimeMillis()
         val modelOutputs = Array(1) { FloatArray(numClasses) }
         interpreter.run(inputs, modelOutputs)
-        Log.i(
+        Log.e(
             "Performance",
             "Mask detection model inference speed in ms : ${System.currentTimeMillis() - t1}"
         )

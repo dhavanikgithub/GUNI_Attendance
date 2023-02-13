@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
 
     }
 
-    fun sentHttpRequest(url: String): Boolean?{
+    fun sentHttpRequest(url: String): Boolean{
         val url = URL(url)
         val con = url.openConnection() as HttpURLConnection
         con.requestMethod = "POST"
@@ -69,7 +69,7 @@ class LoginViewModel @Inject constructor(
             response.append('\r')
         }
         rd.close()
-        var res = response.toString()
+        val res = response.toString()
         if(res.indexOf("token") != -1){
             return true
         }

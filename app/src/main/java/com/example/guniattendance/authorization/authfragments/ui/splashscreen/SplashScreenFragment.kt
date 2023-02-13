@@ -1,5 +1,6 @@
 package com.example.guniattendance.authorization.authfragments.ui.splashscreen
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageInfo
@@ -24,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+
 
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
@@ -101,6 +103,11 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         }
 
     }
+
+
+
+
+
 
     private fun showTheDialog(newAppLink: String, versionFromRemoteConfig: String) {
         val dialog: AlertDialog = AlertDialog.Builder(requireContext())

@@ -15,6 +15,7 @@ import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFra
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragmentDirections
 import com.example.guniattendance.utils.snackbar
 import com.uvpce.attendance_moodle_api_library.model.QRMessageData
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 
 
@@ -29,7 +30,8 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     var userId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val  txt = arguments?.getString("qrData")
+//        val  txt = arguments?.getString("qrData")
+        var  txt = requireArguments().getString("msgData")
         userId = arguments?.getString("userId")!!
         txt.let {
             if (it != "") {

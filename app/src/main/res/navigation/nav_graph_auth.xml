@@ -75,6 +75,9 @@
         <action
             android:id="@+id/action_studentHomeFragment_to_scannerFragment"
             app:destination="@id/scannerFragment" />
+        <action
+            android:id="@+id/action_studentHomeFragment_to_attendanceInfoFragment"
+            app:destination="@id/attendanceInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/attendanceInfoFragment"
