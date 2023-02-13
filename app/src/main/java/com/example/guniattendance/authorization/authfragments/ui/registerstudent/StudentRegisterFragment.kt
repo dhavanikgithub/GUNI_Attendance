@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -19,14 +20,20 @@ import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
+import com.example.guniattendance.ml.google.FaceDetectorProcessor
+import com.example.guniattendance.ml.google.support.GraphicOverlay
+import com.example.guniattendance.ml.google.support.PreferenceUtils
 import com.example.guniattendance.ml.utils.FileReader
 import com.example.guniattendance.ml.utils.FrameAnalyserAttendance
 import com.example.guniattendance.ml.utils.models.FaceNetModel
+import com.example.guniattendance.ml.utils.models.Models
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
 import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.google.android.gms.tasks.OnCompleteListener
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
 import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -45,12 +52,12 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private var curImageUri: Uri = Uri.EMPTY
     private var sem = 0
     lateinit var userid: String
+    lateinit var userName: String
     private lateinit var userInfo: BaseUserInfo
     private var imgURL: String = ""
     private lateinit var faceNetModel: FaceNetModel
     private lateinit var frameAnalyser: FrameAnalyserAttendance
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -58,25 +65,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         subscribeToObserve()
 
         binding = FragmentStudentRegisterBinding.bind(view)
-
-//        val semesters = requireActivity().resources.getStringArray(R.array.semester)
-//        val arrayAdapterSem = ArrayAdapter(
-//            requireContext(),
-//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//            semesters
-//        )
-//
-//        val branch = requireActivity().resources.getStringArray(R.array.branch)
-//        val arrayAdapterBranch = ArrayAdapter(
-//            requireContext(),
-//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//            branch
-//        )
-
-
-
-
-
         binding.apply {
             //Setting automatically the values of fields..
             val enrol = LauncherScreenFragment.studentEnrolment
@@ -87,6 +75,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 try {
                     var result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
                     userid = result.id
+                    userName = result.username
                     nameText.setText(result.lastname)
                     nameText.isEnabled = false
 
@@ -98,88 +87,56 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
             }
 
-
-
-//            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
-//
-//            autoCompleteTvSem.setAdapter(arrayAdapterSem)
-//
-//            autoCompleteTvSem.setOnItemClickListener { _, _, i, _ ->
-//
-//                autoCompleteTvClass.setText("")
-//                autoCompleteTvLab.setText("")
-//
-//                sem = i + 1
-//
-//                val classes = DATA[i].second
-//                val labs = DATA[i].third
-//
-//                val arrayAdapterClass = ArrayAdapter(
-//                    requireContext(),
-//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//                    classes
-//                )
-//
-//                val arrayAdapterLabs = ArrayAdapter(
-//                    requireContext(),
-//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//                    labs
-//                )
-//
-//                autoCompleteTvClass.setAdapter(arrayAdapterClass)
-//                autoCompleteTvLab.setAdapter(arrayAdapterLabs)
-//
-//                tlClass.isVisible = true
-//                tlLab.isVisible = true
-//            }
-
             btnRegister.setOnClickListener {
                 MainScope().launch {
 
                     try{
-                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
-                        Log.i("Successfully updated the profile picture:", res.toString(4))
-//                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
-//                        userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
-//                        imgURL = userInfo.imageUrl
-//                        images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
-//                        faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
-//                        frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
-//                        fileReader = FileReader(faceNetModel)
-//                        var fileReader = FileReader(FaceNetModel())
-//                        fileReader.run(images, fileReaderCallback)
+                        //var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        //Log.i("Successfully updated the profile picture:", res.toString(4))
+                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+                        //userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                        //imgURL = userInfo.imageUrl
+                        //images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
+                        images.add(Pair(userName,BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)))
+                        faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
+                        //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
+                        val fileReader = FileReader(faceNetModel)
+                        fileReader.runToDetectFaces(images, fileReaderCallback)
+                        /*try {
+                            val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(requireContext())
+                            val processor = FaceDetectorProcessor(requireContext(), faceDetectorOptions) {
+                                Toast.makeText(
+                                    context,
+                                    "Image Processed: Face Detected: ${it.isNotEmpty()}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                            //processor.processBitmap()
+
+                            processor.detectInImage(
+                                BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)).addOnSuccessListener {
+                                Toast.makeText(
+                                    context,
+                                    "detectInImage:Image Processed: Face Detected: ${it.isNotEmpty()}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                context,
+                                "Can not create image processor: " + e.localizedMessage,
+                                Toast.LENGTH_LONG
+                            ).show()
+
+                        }*/
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
 //                        BasicUtils.errorDialogBox()
                     }
                 }
-
-//                viewModel.register(
-//                    enrolment = enrollmentText.text?.trim().toString(),
-//                    name = nameText.text?.trim().toString(),
-//                    email = emailText.text?.trim().toString(),
-////                    phone = phoneText.text?.trim().toString(),
-////                    branch = autoCompleteTvBranch.text?.trim().toString(),
-////                    sem = sem,
-////                    pin = pinView.text.toString(),
-////                    lec = autoCompleteTvClass.text?.trim().toString(),
-////                    lab = autoCompleteTvLab.text?.trim().toString()
-//                )
             }
-//            val storeArray=ArrayList<String>()
-//            storeArray.add(enrollmentText.text.toString())
-//            storeArray.add(nameText.text.toString())
-//            storeArray.add(emailText.text.toString())
-//            storeArray.add(phoneText.text.toString())
-//            storeArray.add(autoCompleteTvBranch.text.toString())
-//            storeArray.add(sem.toString())
-//            storeArray.add(pinView.text.toString())
-//            storeArray.add(autoCompleteTvClass.text.toString())
-//            storeArray.add(autoCompleteTvLab.text.toString())
-
-
-
-
             ivImage.setOnClickListener {
                 requireActivity().doIHave(
                     Manifest.permission.CAMERA,
@@ -194,7 +151,15 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         }
 
     }
-
+    private val fileReaderCallback = object : FileReader.ProcessCallback {
+        override fun onProcessCompleted(
+            data: ArrayList<Pair<String, FloatArray>>,
+            numImagesWithNoFaces: Int
+        ) {
+            Toast.makeText(context, "Image Processed: Face Detected: ${data.size > 0}", Toast.LENGTH_SHORT).show()
+            //frameAnalyser.run(data, frameAnalyserCallback)
+        }
+    }
     private fun requestPermission() {
         requireActivity().iNeed(
             Manifest.permission.CAMERA,
@@ -256,33 +221,12 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     "email" -> {
                         binding.emailText.error = "Enter a valid email"
                     }
-//                    "emptyPhone" -> {
-//                        binding.phoneText.error = "Phone number cannot be empty"
-//                    }
-//                    "phone" -> {
-//                        binding.phoneText.error = "Enter a valid phone number"
-//                    }
-//                    "emptyBranch" -> {
-//                        binding.autoCompleteTvBranch.error = "Please enter branch"
-//                    }
                     "name" -> {
                         binding.nameText.error = "Name cannot be empty"
                     }
-//                    "sem" -> {
-//                        binding.autoCompleteTvSem.error = "Please select semester"
-//                    }
-//                    "pin" -> {
-//                        snackbar("Pin should be of 6 length")
-//                    }
                     "uri" -> {
                         snackbar("Capture your image!")
                     }
-//                    "emptyLec" -> {
-//                        binding.autoCompleteTvClass.error = "Please enter your class"
-//                    }
-//                    "emptyLab" -> {
-//                        binding.autoCompleteTvLab.error = "Please enter your lab"
-//                    }
                     else -> snackbar(it)
                 }
             },

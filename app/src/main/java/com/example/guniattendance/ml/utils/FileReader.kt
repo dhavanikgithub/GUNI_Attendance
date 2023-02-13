@@ -17,9 +17,11 @@ import kotlinx.coroutines.withContext
 class FileReader(private var faceNetModel: FaceNetModel) {
 
     private val realTimeOpts = FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
-        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
-        .setContourMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+        .setMinFaceSize(0.1F)
         .build()
     // realTimeOpts = Options
     // Instance of Face Detector
@@ -106,22 +108,24 @@ class FileReader(private var faceNetModel: FaceNetModel) {
 
     private fun detectFaceFromImg(name: String, image: Bitmap) {
         // InputImage obj with array
-        val inputImage = InputImage.fromByteArray(
+        /*val inputImage = InputImage.fromByteArray(
             BitmapUtils.bitmapToNV21ByteArray(image),
             image.width,
             image.height,
             0,
             InputImage.IMAGE_FORMAT_NV21
-        )
+        )*/
         Log.i(TAG, "detectFaceFromImg: input name=$name & image.width=${image.width}")
 
         // Process the image
-        detector.process(inputImage)
+        detector.process(InputImage.fromBitmap(image,0))
             .addOnSuccessListener { faces ->
                 // Task completed successfully
                 if (faces.size != 0) {
                     Log.i(TAG, "detectFaceFromImg: face size:${faces.size}")
                     coroutineScope.launch {
+                        val embedding = getEmbedding(image, faces[0].boundingBox)
+                        imageData.add(Pair(name, embedding))
                         callback.onProcessCompleted(imageData, numImagesWithNoFaces)
                         reset()
                     }
