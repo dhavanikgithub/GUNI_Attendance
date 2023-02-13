@@ -7,6 +7,7 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -26,6 +27,7 @@ import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.Constants.ALLOWED_RADIUS
+import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
@@ -60,6 +62,8 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     lateinit var imgURL:String
     private lateinit var imgToken: BaseUserInfo
     private lateinit var attRepo: AttendanceRepository
+    private var progressDialog: CustomProgressDialog? = null
+    val TAG = "StudentHomeFragment"
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,6 +74,11 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         binding = FragmentStudentHomeBinding.bind(view)
 
+        if(progressDialog==null)
+        {
+            progressDialog = CustomProgressDialog(requireContext())
+        }
+        progressDialog!!.start("Details Fetching...")
         requireActivity().doIHave(
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             onGranted = {
@@ -89,12 +98,14 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 //            }
 
             MainScope().launch {
+
                 userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
                 imgURL = userInfo.imageUrl
                 ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
                 tvName.text = userInfo.firstname+" "+userInfo.lastname
                 tvEnrollNo.text = LauncherScreenFragment.studentEnrolment
                 tvEmailId.text = userInfo.emailAddress
+                progressDialog!!.stop()
             }
 
             btnSetting.setOnClickListener{
@@ -118,12 +129,23 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 //                }
 //                val objMessage = MoodleConfig.getModelRepo(requireContext()).getMessage()
 //                Log.i(TAG, "onCreate: Get Message of USerName:${stu.username} message:${objMessage}")
+                progressDialog!!.start("Preparing for attendance...")
                 MainScope().launch {
-                    val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userid = userInfo.id)
-                    val bundle = Bundle()
-                    bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-                    bundle.putString("userId",userInfo.id)
-                    findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+                    try{
+                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userid = userInfo.id)
+                        val bundle = Bundle()
+                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+                        bundle.putString("userId",userInfo.id)
+                        progressDialog!!.stop()
+                        findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+                    }
+                    catch(ex:Exception)
+                    {
+                        Log.e(TAG,"getMessage Error: ${ex}")
+                    }
+                    finally {
+                        progressDialog!!.stop()
+                    }
                 }
 
             }
