@@ -55,7 +55,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     // Dhavanik's Moodle Library
-    implementation 'com.github.dhavanikgithub:attendance_moodle_api_lib:1.5.5'
+    implementation 'com.github.dhavanikgithub:attendance_moodle_api_lib:1.5.8'
 
     //ZXING Library for QR Scanner
     implementation 'com.google.zxing:core:3.4.0'

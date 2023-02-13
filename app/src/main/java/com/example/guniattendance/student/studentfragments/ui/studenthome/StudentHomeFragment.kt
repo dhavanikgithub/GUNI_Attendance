@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,16 +21,26 @@ import com.bumptech.glide.RequestManager
 import com.example.guniattendance.R
 import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.AuthActivity
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
+import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.Constants.ALLOWED_RADIUS
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
+import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
 import com.google.firebase.auth.FirebaseAuth
+import com.google.mlkit.common.sdkinternal.ModelInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.model.MoodleBasicUrl
+import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
+import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -44,6 +55,11 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
     private var curLocation: Location? = null
+    private lateinit var userInfo: BaseUserInfo
+    lateinit var imgURL:String
+    private lateinit var imgToken: BaseUserInfo
+    private lateinit var attRepo: AttendanceRepository
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,11 +80,21 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         viewModel.getUser()
 
+
+
         binding.apply {
 //            layoutTakeAttendance.setOnClickListener {
 //                viewModel.getActiveAttendance()
 //            }
-            
+
+            MainScope().launch {
+                userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                imgURL = userInfo.imageUrl
+                ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
+                tvName.text = userInfo.firstname+" "+userInfo.lastname
+                tvEnrollNo.text = LauncherScreenFragment.studentEnrolment
+                tvEmailId.text = userInfo.emailAddress
+            }
 
             btnSetting.setOnClickListener{
                 Toast.makeText(context,"Settings",Toast.LENGTH_SHORT).show()

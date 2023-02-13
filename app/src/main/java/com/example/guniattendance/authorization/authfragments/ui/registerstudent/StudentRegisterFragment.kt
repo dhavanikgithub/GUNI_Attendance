@@ -19,10 +19,15 @@ import com.canhub.cropper.options
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
+import com.example.guniattendance.ml.utils.FileReader
+import com.example.guniattendance.ml.utils.FrameAnalyserAttendance
+import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
+import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
@@ -40,6 +45,10 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private var curImageUri: Uri = Uri.EMPTY
     private var sem = 0
     lateinit var userid: String
+    private lateinit var userInfo: BaseUserInfo
+    private var imgURL: String = ""
+    private lateinit var faceNetModel: FaceNetModel
+    private lateinit var frameAnalyser: FrameAnalyserAttendance
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,7 +78,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
 
         binding.apply {
-
             //Setting automatically the values of fields..
             val enrol = LauncherScreenFragment.studentEnrolment
             enrollmentText.setText(enrol)
@@ -127,15 +135,23 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
             btnRegister.setOnClickListener {
                 MainScope().launch {
+
                     try{
                         var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
-
+//                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+//                        userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+//                        imgURL = userInfo.imageUrl
+//                        images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
+//                        faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
+//                        frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
+//                        fileReader = FileReader(faceNetModel)
+//                        var fileReader = FileReader(FaceNetModel())
+//                        fileReader.run(images, fileReaderCallback)
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
 //                        BasicUtils.errorDialogBox()
                     }
-
                 }
 
 //                viewModel.register(

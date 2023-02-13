@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
 import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.utils.BasicUtils
 import com.uvpce.attendance_moodle_api_library.model.QRMessageData
 import org.json.JSONException
@@ -53,9 +54,8 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                             try {
                                 val qRmsg = QRMessageData.getQRMessageObject(encryptedMsg)
                                 Log.i("qRMessageData", qRmsg.toString())
-                                val bundle = bundleOf("qrData" to qRmsg)
-                                findNavController().navigate(
-                                    ScannerFragmentDirections.actionScannerFragmentToAttendanceInfoFragment())
+                                val bundle = bundleOf("qrData" to qRmsg.toString(),"userId" to LauncherScreenFragment.studentEnrolment)
+                                findNavController().navigate(R.id.action_scannerFragment_to_attendanceInfoFragment, bundle)
                             }catch (e: JSONException){
                                 BasicUtils.errorDialogBox(requireContext(),"QR Scan Error","Retry to scan QR code again")
                                 Log.e(TAG, "onViewCreated: JsonException:$encryptedMsg", e)

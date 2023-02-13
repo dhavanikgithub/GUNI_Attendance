@@ -14,6 +14,8 @@ import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragmentDirections
 import com.example.guniattendance.utils.snackbar
+import com.uvpce.attendance_moodle_api_library.model.QRMessageData
+import java.text.SimpleDateFormat
 
 
 class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
@@ -23,12 +25,16 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     private lateinit var viewModel: AttendanceInfoViewModel
     lateinit var QRBtn: AppCompatButton
 
+    private var qrData:QRMessageData? = null
+    var userId = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val  txt = arguments?.getString("qrData")
+        userId = arguments?.getString("userId")!!
         txt.let {
-            if (it != null) {
-                snackbar(it)
+            if (it != "") {
+                qrData = QRMessageData.fromJsonObject(it!!)
+                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -44,10 +50,25 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                 it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_scannerFragment)
             }
             attendanceBtn.setOnClickListener {
-                it.findNavController().navigate(AttendanceInfoFragmentDirections.actionAttendanceInfoFragmentToTakeAttendanceFragment())
+                val bundle = Bundle()
+                bundle.putString("userId",userId)
+                it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
             }
+            txtQRInfo.text = getQRText(qrData!!)
         }
     }
-
+    fun getQRText(data: QRMessageData):String{
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+        val simpleTimeFormat = SimpleDateFormat("hh:mm a")
+        return "Course: ${data.courseName} (" +
+                "Group: ${data.groupName})\n\n" +
+                "Session Date:${simpleDateFormat.format(data.sessionStartDate*1000)}\n" +
+                " From:${simpleTimeFormat.format(data.sessionStartDate*1000)}" +
+                " To:${simpleTimeFormat.format(data.sessionEndDate*1000)}\n\n"+
+                "Attendance Date:${simpleDateFormat.format(data.attendanceStartDate*1000)}\n" +
+                " From:${simpleTimeFormat.format(data.attendanceStartDate*1000)}"+
+                " To:${simpleTimeFormat.format(data.attendanceEndDate*1000)}\n" +
+                "Duration: ${data.attendanceDuration}mins"
+    }
 
 }

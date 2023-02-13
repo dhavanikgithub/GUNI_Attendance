@@ -70,6 +70,7 @@
                 android:layout_margin="20dp"
                 android:gravity="center"
                 android:text="@string/student_name"
+                android:textAllCaps="false"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/iv_image" />
@@ -92,6 +93,7 @@
                 android:layout_margin="20dp"
                 android:gravity="center"
                 android:text="Email Id"
+                android:textAllCaps="false"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/tv_enrollNo"

@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.app.ActivityCompat
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
+    lateinit var progressBar: ProgressBar
     companion object{
         lateinit var studentEnrolment: String
     }
@@ -39,19 +42,22 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                         // Coroutins on backgroud thread
                         MainScope().launch {
                             try{
+                                progressLayout.visibility = View.VISIBLE
+//                                progressBar.visibility  = View.VISIBLE
                                 var result =
                                     context?.let { it1 ->
                                         MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(
                                             it1,studentEnrolment)
                                     }
-//                            Thread.sleep(5000)
-                                if (result!!.hasUserUploadImg) {
+                                if ((result!!.hasUserUploadImg) && (progressLayout.visibility == View.VISIBLE)) {
+                                    progressLayout.visibility = View.GONE
+//                                    progressBar.visibility = View.GONE
                                     findNavController().navigate(LauncherScreenFragmentDirections
                                         .actionLauncherScreenFragmentToStudentRegisterFragment())
-//                                txtView.setText(result.hasUserUploadImg.toString())
-//                                findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment3())
                                 }
                                 else {
+                                    progressLayout.visibility = View.GONE
+//                                    progressBar.visibility = View.GONE
                                     findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment())
                                 }
 

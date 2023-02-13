@@ -65,6 +65,7 @@ class FrameAnalyserAttendance(
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(image: ImageProxy) {
+        Log.i(TAG, "analyze: isProcessing = $isProcessing & faceList=${faceList.size}")
         // If the previous frame is still being processed, then skip this frame
         if (isProcessing || faceList.size == 0) {
             image.close()
@@ -99,10 +100,11 @@ class FrameAnalyserAttendance(
     interface ResultCallback {
         fun onResultGot(name: String)
     }
-
+val TAG = "FrameAnalyserAttendance"
     private suspend fun runModel(faces: List<Face>, cameraFrameBitmap: Bitmap) {
         withContext(Dispatchers.Default) {
             val predictions = ArrayList<Prediction>()
+            Log.i(TAG, "runModel: Total Faces:${faces.size}")
             for (face in faces) {
                 try {
                     // Crop the frame using face.boundingBox.
@@ -204,7 +206,7 @@ class FrameAnalyserAttendance(
                     }
                 } catch (e: Exception) {
                     // If any exception occurs with this box and continue with the next boxes.
-                    Log.e("Model", "Exception in FrameAnalyser : ${e.message}")
+                    Log.e("Model", "Exception in FrameAnalyser : ${e}",e)
                     continue
                 }
             }

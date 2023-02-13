@@ -1,6 +1,7 @@
 package com.example.guniattendance.student.studentfragments.ui.takeattendance
 
 import android.Manifest
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -54,6 +55,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
     private val useGpu = true
 
     private val modelInfo = Models.FACENET
+    var userId:String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,6 +82,9 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
             frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
             fileReader = FileReader(faceNetModel)
+            userId = arguments?.getString("userId")!!
+            Log.i(TAG, "onViewCreated: $userId")
+            viewModel.getStudent(requireContext(), userId)
         }
     }
 
@@ -142,6 +147,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 parentLayout = binding.parentLayout,
                 loading = binding.lottieAnimation
             )
+            Log.i(TAG, "subscribeToObserve: studentStatusList:before start")
             start(it)
         })
     }
@@ -194,11 +200,11 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
         val enrolNo = student.username
 
-        val decodedByteArray: ByteArray = Utility().convertUrlToBase64(student.imageUrl).toByteArray()
-        val bitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
+        //val decodedByteArray: ByteArray = Utility().convertUrlToBase64(student.imageUrl).toByteArray()
+        //val bitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
 
         val images = java.util.ArrayList<Pair<String, Bitmap>>()
-        images.add(Pair(enrolNo, bitmap))
+        images.add(Pair(enrolNo, Utility().convertUrlToBitmap(student.imageUrl)!!))
         fileReader.run(images, fileReaderCallback)
     }
 
