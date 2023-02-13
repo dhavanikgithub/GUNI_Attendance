@@ -147,7 +147,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 parentLayout = binding.parentLayout,
                 loading = binding.lottieAnimation
             )
-            Log.i(TAG, "subscribeToObserve: studentStatusList:before start")
+            Log.i(TAG, "subscribeToObserve: ")
             start(it)
         })
     }

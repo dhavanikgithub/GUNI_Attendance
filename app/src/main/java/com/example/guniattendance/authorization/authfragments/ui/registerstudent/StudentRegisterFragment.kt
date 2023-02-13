@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -22,6 +23,7 @@ import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
 import com.example.guniattendance.ml.utils.FileReader
 import com.example.guniattendance.ml.utils.FrameAnalyserAttendance
 import com.example.guniattendance.ml.utils.models.FaceNetModel
+import com.example.guniattendance.ml.utils.models.Models
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
 import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
@@ -49,6 +51,8 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private var imgURL: String = ""
     private lateinit var faceNetModel: FaceNetModel
     private lateinit var frameAnalyser: FrameAnalyserAttendance
+    private var modelInfo = Models.FACENET
+    private val useGpu = true
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,19 +63,19 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
         binding = FragmentStudentRegisterBinding.bind(view)
 
-//        val semesters = requireActivity().resources.getStringArray(R.array.semester)
-//        val arrayAdapterSem = ArrayAdapter(
-//            requireContext(),
-//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//            semesters
-//        )
-//
-//        val branch = requireActivity().resources.getStringArray(R.array.branch)
-//        val arrayAdapterBranch = ArrayAdapter(
-//            requireContext(),
-//            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//            branch
-//        )
+       /* val semesters = requireActivity().resources.getStringArray(R.array.semester)
+        val arrayAdapterSem = ArrayAdapter(
+            requireContext(),
+            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+            semesters
+        )
+
+        val branch = requireActivity().resources.getStringArray(R.array.branch)
+        val arrayAdapterBranch = ArrayAdapter(
+            requireContext(),
+            androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+            branch
+        )*/
 
 
 
@@ -100,85 +104,80 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
 
 
-//            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
-//
-//            autoCompleteTvSem.setAdapter(arrayAdapterSem)
-//
-//            autoCompleteTvSem.setOnItemClickListener { _, _, i, _ ->
-//
-//                autoCompleteTvClass.setText("")
-//                autoCompleteTvLab.setText("")
-//
-//                sem = i + 1
-//
-//                val classes = DATA[i].second
-//                val labs = DATA[i].third
-//
-//                val arrayAdapterClass = ArrayAdapter(
-//                    requireContext(),
-//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//                    classes
-//                )
-//
-//                val arrayAdapterLabs = ArrayAdapter(
-//                    requireContext(),
-//                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
-//                    labs
-//                )
-//
-//                autoCompleteTvClass.setAdapter(arrayAdapterClass)
-//                autoCompleteTvLab.setAdapter(arrayAdapterLabs)
-//
-//                tlClass.isVisible = true
-//                tlLab.isVisible = true
-//            }
+/*            autoCompleteTvBranch.setAdapter(arrayAdapterBranch)
+
+            autoCompleteTvSem.setAdapter(arrayAdapterSem)
+
+            autoCompleteTvSem.setOnItemClickListener { _, _, i, _ ->
+
+                autoCompleteTvClass.setText("")
+                autoCompleteTvLab.setText("")
+
+                sem = i + 1
+
+                val classes = DATA[i].second
+                val labs = DATA[i].third
+
+                val arrayAdapterClass = ArrayAdapter(
+                    requireContext(),
+                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+                    classes
+                )
+
+                val arrayAdapterLabs = ArrayAdapter(
+                    requireContext(),
+                    androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item,
+                    labs
+                )
+
+                autoCompleteTvClass.setAdapter(arrayAdapterClass)
+                autoCompleteTvLab.setAdapter(arrayAdapterLabs)
+
+                tlClass.isVisible = true
+                tlLab.isVisible = true
+            }*/
 
             btnRegister.setOnClickListener {
                 MainScope().launch {
-
                     try{
-                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
-                        Log.i("Successfully updated the profile picture:", res.toString(4))
-//                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
-//                        userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
-//                        imgURL = userInfo.imageUrl
-//                        images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
-//                        faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
-//                        frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
-//                        fileReader = FileReader(faceNetModel)
-//                        var fileReader = FileReader(FaceNetModel())
-//                        fileReader.run(images, fileReaderCallback)
+//                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+//                        Log.i("Successfully updated the profile picture:", res.toString(4))
+
+                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+                        userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                        imgURL = userInfo.imageUrl
+                        images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
+                        faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
+                        val fileReader = FileReader(faceNetModel)
+                        fileReader.runToDetectFaces(images, fileReaderCallback)
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
 //                        BasicUtils.errorDialogBox()
                     }
                 }
 
-//                viewModel.register(
-//                    enrolment = enrollmentText.text?.trim().toString(),
-//                    name = nameText.text?.trim().toString(),
-//                    email = emailText.text?.trim().toString(),
-////                    phone = phoneText.text?.trim().toString(),
-////                    branch = autoCompleteTvBranch.text?.trim().toString(),
-////                    sem = sem,
-////                    pin = pinView.text.toString(),
-////                    lec = autoCompleteTvClass.text?.trim().toString(),
-////                    lab = autoCompleteTvLab.text?.trim().toString()
-//                )
+/*                viewModel.register(
+                    enrolment = enrollmentText.text?.trim().toString(),
+                    name = nameText.text?.trim().toString(),
+                    email = emailText.text?.trim().toString(),
+                    phone = phoneText.text?.trim().toString(),
+                    branch = autoCompleteTvBranch.text?.trim().toString(),
+                    sem = sem,
+                    pin = pinView.text.toString(),
+                    lec = autoCompleteTvClass.text?.trim().toString(),
+                    lab = autoCompleteTvLab.text?.trim().toString()
+                )*/
             }
-//            val storeArray=ArrayList<String>()
-//            storeArray.add(enrollmentText.text.toString())
-//            storeArray.add(nameText.text.toString())
-//            storeArray.add(emailText.text.toString())
-//            storeArray.add(phoneText.text.toString())
-//            storeArray.add(autoCompleteTvBranch.text.toString())
-//            storeArray.add(sem.toString())
-//            storeArray.add(pinView.text.toString())
-//            storeArray.add(autoCompleteTvClass.text.toString())
-//            storeArray.add(autoCompleteTvLab.text.toString())
-
-
-
+/*            val storeArray=ArrayList<String>()
+            storeArray.add(enrollmentText.text.toString())
+            storeArray.add(nameText.text.toString())
+            storeArray.add(emailText.text.toString())
+            storeArray.add(phoneText.text.toString())
+            storeArray.add(autoCompleteTvBranch.text.toString())
+            storeArray.add(sem.toString())
+            storeArray.add(pinView.text.toString())
+            storeArray.add(autoCompleteTvClass.text.toString())
+            storeArray.add(autoCompleteTvLab.text.toString())*/
 
             ivImage.setOnClickListener {
                 requireActivity().doIHave(
@@ -194,7 +193,16 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         }
 
     }
-
+    private val fileReaderCallback = object : FileReader.ProcessCallback {
+        override fun onProcessCompleted(
+            data: ArrayList<Pair<String, FloatArray>>,
+            numImagesWithNoFaces: Int
+        ) {
+            val TAG = "onProcessCompleted"
+            Toast.makeText(requireContext(), "List = ${data.size}, $numImagesWithNoFaces", Toast.LENGTH_LONG).show()
+            Log.i(TAG, "onProcessCompleted: ${data.size}, $numImagesWithNoFaces")
+        }
+    }
     private fun requestPermission() {
         requireActivity().iNeed(
             Manifest.permission.CAMERA,
@@ -319,5 +327,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             )
         })
     }
+
+
 
 }

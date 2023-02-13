@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.Log
 import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.FaceContour
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
@@ -16,8 +17,12 @@ import kotlinx.coroutines.withContext
 class FileReader(private var faceNetModel: FaceNetModel) {
 
     private val realTimeOpts = FaceDetectorOptions.Builder()
-        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+        .setContourMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
         .build()
+    // realTimeOpts = Options
+    // Instance of Face Detector
     private val detector = FaceDetection.getClient(realTimeOpts)
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private var numImagesWithNoFaces = 0
@@ -50,6 +55,7 @@ class FileReader(private var faceNetModel: FaceNetModel) {
     // Crop faces and produce embeddings ( using FaceNet ) from given image.
     // Store the embedding in imageData
     private fun scanImage(name: String, image: Bitmap) {
+        // Create InputImage obj
         val inputImage = InputImage.fromByteArray(
             BitmapUtils.bitmapToNV21ByteArray(image),
             image.width,
@@ -76,7 +82,7 @@ class FileReader(private var faceNetModel: FaceNetModel) {
                         }
                     }
                 } else {
-
+                    
                     // The image contains no faces, proceed to the next one.
                     numImagesWithNoFaces += 1
                     if (imageCounter + 1 != numImages) {
@@ -90,7 +96,16 @@ class FileReader(private var faceNetModel: FaceNetModel) {
             }
     }
 
+    fun runToDetectFaces(data: ArrayList<Pair<String, Bitmap>>, callback: ProcessCallback) {
+        Log.i(TAG, "run: data size:${data.size}")
+        numImages = data.size
+        this.data = data
+        this.callback = callback
+        detectFaceFromImg(data[imageCounter].first, data[imageCounter].second)
+    }
+
     private fun detectFaceFromImg(name: String, image: Bitmap) {
+        // InputImage obj with array
         val inputImage = InputImage.fromByteArray(
             BitmapUtils.bitmapToNV21ByteArray(image),
             image.width,
@@ -98,16 +113,20 @@ class FileReader(private var faceNetModel: FaceNetModel) {
             0,
             InputImage.IMAGE_FORMAT_NV21
         )
-        Log.i(TAG, "scanImage: input name=$name & image.width=${image.width}")
+        Log.i(TAG, "detectFaceFromImg: input name=$name & image.width=${image.width}")
+
+        // Process the image
         detector.process(inputImage)
             .addOnSuccessListener { faces ->
+                // Task completed successfully
                 if (faces.size != 0) {
-                    Log.i(TAG, "scanImage: face size:${faces.size}")
+                    Log.i(TAG, "detectFaceFromImg: face size:${faces.size}")
                     coroutineScope.launch {
                         callback.onProcessCompleted(imageData, numImagesWithNoFaces)
                         reset()
                     }
                 } else {
+                    Log.i(TAG, "detectFaceFromImg: else condition")
                     // The image contains no faces, proceed to the next one.
                     numImagesWithNoFaces += 1
                     if (imageCounter + 1 != numImages) {
@@ -118,7 +137,15 @@ class FileReader(private var faceNetModel: FaceNetModel) {
                     }
                 }
             }
+            .addOnFailureListener {e ->
+                // Task failed
+                Log.i(TAG, "detectFaceFromImg: addOnFailureListener ${e.message}")
+            }
     }
+
+
+
+
     // Suspend function for running the FaceNet model
     private suspend fun getEmbedding(image: Bitmap, bbox: Rect) =
         withContext(Dispatchers.Default) {
@@ -129,13 +156,12 @@ class FileReader(private var faceNetModel: FaceNetModel) {
                 )
             )
         }
-
-
     private fun reset() {
         imageCounter = 0
         numImages = 0
         numImagesWithNoFaces = 0
         data.clear()
     }
+
 
 }
