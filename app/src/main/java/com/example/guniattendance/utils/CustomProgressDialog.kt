@@ -3,12 +3,14 @@ package com.example.guniattendance.utils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.view.LayoutInflater
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -32,7 +34,7 @@ class CustomProgressDialog(context: Context) {
     }
 
     init {
-        val inflater = (context as Activity).layoutInflater
+        val inflater =  LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.progress_dialog_view, null)
 
         cpTitle = view.findViewById(R.id.cp_title)

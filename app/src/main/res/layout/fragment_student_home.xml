@@ -24,30 +24,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <View
-                android:id="@+id/profile_back"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@drawable/top_view"
-                android:elevation="-1dp"
-                app:layout_constraintHeight_percent="0.5"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+<!--            <View-->
+<!--                android:id="@+id/profile_back"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:background="@drawable/top_view"-->
+<!--                android:elevation="-1dp"-->
+<!--                app:layout_constraintHeight_percent="0.5"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent" />-->
 
             <ImageView
                 android:id="@+id/guni_logo"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_260sdp"
                 android:layout_height="80dp"
                 android:src="@drawable/guni_logo"
+                android:layout_marginTop="@dimen/_30sdp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_image"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:layout_marginTop="36dp"
                 android:adjustViewBounds="true"
                 android:background="@color/lightBackground"
                 android:clickable="true"
@@ -63,62 +65,162 @@
                 app:strokeColor="#2D89EF"
                 app:strokeWidth="2dp" />
 
-            <TextView
-                android:id="@+id/tv_name"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/data_main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="@string/student_name"
-                android:textAllCaps="false"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/iv_image" />
-
-            <TextView
-                android:id="@+id/tv_enrollNo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="@string/enrolment_number"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"  />
-
-            <TextView
-                android:id="@+id/tv_email_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:gravity="center"
-                android:text="Email Id"
-                android:textAllCaps="false"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/tv_enrollNo"
+                android:layout_marginTop="@dimen/_20sdp"
+                app:layout_constraintTop_toBottomOf="@id/iv_image"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="@dimen/_10sdp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="100">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="65">
+                            <TextView
+                                android:id="@+id/title_stud_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/_14sdp"
+                                android:text="Full Name: "
+                                android:gravity="left"
+                                android:textStyle="bold"
+                                android:textAllCaps="false"
+                                android:padding="@dimen/_5sdp"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="35">
+                            <TextView
+                                android:id="@+id/tv_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="left"
+                                android:textAllCaps="false"
+                                android:textSize="@dimen/_14sdp"
+                                android:padding="@dimen/_5sdp"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="100">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="65">
+                            <TextView
+                                android:id="@+id/title_stud_enrno"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/_14sdp"
+                                android:text="Enrollment: "
+                                android:gravity="left"
+                                android:textStyle="bold"
+                                android:textAllCaps="false"
+                                android:padding="@dimen/_5sdp"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="35">
+                            <TextView
+                                android:id="@+id/tv_enrollNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/_14sdp"
+                                android:textStyle="bold"
+                                android:padding="@dimen/_5sdp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="100">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="65">
+                            <TextView
+                                android:id="@+id/title_stud_email"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/_14sdp"
+                                android:text="Email: "
+                                android:gravity="left"
+                                android:textStyle="bold"
+                                android:textAllCaps="false"
+                                android:padding="@dimen/_5sdp"
+                                />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_weight="35">
+                            <TextView
+                                android:id="@+id/tv_email_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAllCaps="false"
+                                android:textSize="@dimen/_14sdp"
+                                android:padding="@dimen/_5sdp"/>
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="50dp"
+                android:layout_marginTop="@dimen/_70sdp"
+                android:layout_marginHorizontal="@dimen/_40sdp"
                 android:background="@drawable/button_background"
                 android:letterSpacing="0.16"
                 android:text="@string/setting"
-                app:layout_constraintTop_toBottomOf="@id/tv_email_id" />
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintTop_toBottomOf="@id/data_main_layout" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_sign_out"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="50dp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:layout_marginHorizontal="@dimen/_40sdp"
                 android:background="@drawable/button_background"
                 android:letterSpacing="0.16"
                 android:text="@string/take_attendance"
+                android:textSize="@dimen/_12sdp"
                 app:layout_constraintTop_toBottomOf="@id/btn_setting"
+                android:layout_marginBottom="@dimen/_50sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
