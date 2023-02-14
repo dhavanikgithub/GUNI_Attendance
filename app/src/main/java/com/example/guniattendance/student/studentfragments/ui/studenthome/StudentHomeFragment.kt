@@ -102,7 +102,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
                 imgURL = userInfo.imageUrl
                 ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
-                tvName.text = userInfo.firstname+" "+userInfo.lastname
+                tvName.text = userInfo.lastname
                 tvEnrollNo.text = LauncherScreenFragment.studentEnrolment
                 tvEmailId.text = userInfo.emailAddress
                 progressDialog!!.stop()
@@ -114,15 +114,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 startActivity(i)
             }
 
-            btnSignOut.setOnClickListener {
+            btnTakeAttendance.setOnClickListener {
 //                FirebaseAuth.getInstance().signOut()
 //                Intent(requireActivity(), AuthActivity::class.java).also {
 //                    startActivity(it)
 //                    requireActivity().finish()
 //                }
 //                try{
-//
-//
 //                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToScannerFragment())
 //                } catch (e: Exception){
 //                    Log.e("","Navigate Error"+ e.toString(),e)
@@ -132,10 +130,12 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 progressDialog!!.start("Preparing for attendance...")
                 MainScope().launch {
                     try{
-                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userid = userInfo.id)
+                        Log.i(TAG, "userInfo: ${userInfo.id}")
+//                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
                         val bundle = Bundle()
-                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-                        bundle.putString("userId",userInfo.id)
+//                        Log.i(TAG, "messageData: $messageData")
+//                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+//                        bundle.putString("userId",userInfo.id)
                         progressDialog!!.stop()
                         findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                     }

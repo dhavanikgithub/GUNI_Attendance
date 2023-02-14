@@ -53,18 +53,24 @@ class FrameAnalyserAttendance(
     // Use this variable to enable/disable mask detection.
     private val isMaskDetectionOn = true
 
+    private var hasRun = false
+
 
     init {
         boundingBoxOverlay.drawMaskLabel = isMaskDetectionOn
     }
 
     fun run(data: ArrayList<Pair<String, FloatArray>>, callback: ResultCallback) {
+        hasRun = true
         faceList = data
+        Log.i(TAG, "faceList: ${faceList.size}, $faceList")
         this.callback = callback
     }
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(image: ImageProxy) {
+        if(!hasRun)
+            return
         Log.i(TAG, "analyze: isProcessing = $isProcessing & faceList=${faceList.size}")
         // If the previous frame is still being processed, then skip this frame
         if (isProcessing || faceList.size == 0) {
@@ -78,6 +84,7 @@ class FrameAnalyserAttendance(
                 BitmapUtils.imageToBitmap(image.image!!, image.imageInfo.rotationDegrees)
 
             // Configure frameHeight and frameWidth for output2overlay transformation matrix.
+            Log.i(TAG, "width: ${frameBitmap.width}, ${frameBitmap.height}")
             if (!boundingBoxOverlay.areDimsInit) {
                 boundingBoxOverlay.frameHeight = frameBitmap.height
                 boundingBoxOverlay.frameWidth = frameBitmap.width

@@ -4,11 +4,13 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.util.Size
 import android.view.View
+import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -19,12 +21,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentTakeAttendanceBinding
 import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.example.guniattendance.ml.utils.models.Models
 import com.example.guniattendance.ml.utils.FileReader
 import com.example.guniattendance.ml.utils.FrameAnalyserAttendance
+import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
@@ -33,8 +38,11 @@ import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
 import com.google.common.util.concurrent.ListenableFuture
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
 import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 
@@ -61,10 +69,12 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[TakeAttendanceViewModel::class.java]
+        Log.i(TAG, "onViewCreated: 1")
         subscribeToObserve()
+        Log.i(TAG, "onViewCreated: 9")
 
         binding = FragmentTakeAttendanceBinding.bind(view)
-
+/*
         requireActivity().doIHave(
             Manifest.permission.CAMERA,
             onGranted = {
@@ -73,26 +83,40 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             onDenied = {
                 requestPermission()
             })
-//        viewModel.getStudent(args.uid)
+        viewModel.getStudent(args.uid)
+        showProgress(
+            activity = requireActivity(),
+            bool = true,
+            parentLayout = binding.parentLayout,
+            loading = binding.lottieAnimation
+        )*/
+        requestPermission()
         binding.apply {
-
+            Log.i(TAG, "onViewCreated: 10")
             bboxOverlay.setWillNotDraw(false)
             bboxOverlay.setZOrderOnTop(true)
 
             faceNetModel = FaceNetModel(requireContext(), modelInfo, useGpu)
             frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
             fileReader = FileReader(faceNetModel)
-            userId = arguments?.getString("userId")!!
-            Log.i(TAG, "onViewCreated: $userId")
-            viewModel.getStudent(requireContext(), userId)
+            MainScope().launch {
+                Log.i(TAG, "onViewCreated: 11")
+                //var result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                viewModel.getStudent(requireContext(), LauncherScreenFragment.studentEnrolment)
+            }
+
+//            userId = arguments?.getString("userId")!!
+//            Log.i(TAG, "onViewCreated: $userId")
+
         }
     }
 
     private fun subscribeToObserve() {
-
+        Log.i(TAG, "subscribeToObserve: 2")
         viewModel.removeObservers()
+        Log.i(TAG, "subscribeToObserve: 4")
 
-        viewModel.attendanceStatus.observe(viewLifecycleOwner, EventObserver(
+        /*viewModel.attendanceStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 showProgress(
                     activity = requireActivity(),
@@ -119,11 +143,12 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 loading = binding.lottieAnimation
             )
             snackbar("Attendance added for $it")
-            findNavController().navigateUp()
-        })
+//            findNavController().navigateUp()
+        })*/
 
         viewModel.studentListStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
+                Log.i(TAG, "subscribeToObserve: 5")
                 showProgress(
                     activity = requireActivity(),
                     bool = true,
@@ -133,6 +158,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 snackbar(it)
             },
             onLoading = {
+                Log.i(TAG, "subscribeToObserve: 6")
                 showProgress(
                     activity = requireActivity(),
                     bool = true,
@@ -141,14 +167,19 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 )
             }
         ) {
+            Log.i(TAG, "subscribeToObserve: 7")
             showProgress(
                 activity = requireActivity(),
                 bool = false,
                 parentLayout = binding.parentLayout,
                 loading = binding.lottieAnimation
             )
-            Log.i(TAG, "subscribeToObserve: ")
+            Log.i(TAG, "subscribeToObserve: 8")
             start(it)
+            MainScope().launch {
+                faceProcessing(it)
+            }
+
         })
     }
 
@@ -204,7 +235,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         //val bitmap = BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
 
         val images = java.util.ArrayList<Pair<String, Bitmap>>()
-        images.add(Pair(enrolNo, Utility().convertUrlToBitmap(student.imageUrl)!!))
+        images.add(Pair(enrolNo, viewModel.repo!!.getURLtoBitmap(student.imageUrl)!!))
         fileReader.run(images, fileReaderCallback)
     }
 
@@ -213,8 +244,10 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             data: ArrayList<Pair<String, FloatArray>>,
             numImagesWithNoFaces: Int
         ) {
-
-            frameAnalyser.run(data, frameAnalyserCallback)
+            //requestPermission()
+            Log.i(TAG, "onProcessCompleted: ${data.size}")
+            if(data.size > 0)
+                frameAnalyser.run(data, frameAnalyserCallback)
         }
     }
 
@@ -232,6 +265,36 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 )
 //                viewModel.addAttendance(args.attendanceUid, name)
             }
+        }
+    }
+
+    private suspend fun faceProcessing(student: BaseUserInfo){
+        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+
+//        images.add(Pair(student.username,Utility().convertUrlToBitmap(student.imageUrl)!!))
+        images.add(Pair(student.username,MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(student.imageUrl)!!))
+        faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
+        //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
+
+        val fileReader = FileReader(faceNetModel)
+        Log.i(TAG, "faceProcessing: ${images.size}")
+        fileReader.runToDetectFaces(images, fileReaderCallback1)
+    }
+    private val fileReaderCallback1 = object : FileReader.ProcessCallback {
+        override fun onProcessCompleted(
+            data: ArrayList<Pair<String, FloatArray>>,
+            numImagesWithNoFaces: Int
+        ) {
+            //Toast.makeText(context, "Image Processed: Face Detected: ${data.size > 0}", Toast.LENGTH_SHORT).show()
+            if(data.size > 0)
+            {
+                Toast.makeText(requireContext(),"Successfully detect face",Toast.LENGTH_LONG).show()
+            }
+            else{
+                BasicUtils.errorDialogBox(requireContext(),"Error","Face is not detected in image.")
+
+            }
+            //frameAnalyser.run(data, frameAnalyserCallback)
         }
     }
 }

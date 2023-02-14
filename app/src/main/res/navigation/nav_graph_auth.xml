@@ -42,6 +42,11 @@
         <action
             android:id="@+id/action_studentRegisterFragment_to_appPinFragment"
             app:destination="@id/appPinFragment" />
+        <action
+            android:id="@+id/action_studentRegisterFragment_to_studentHomeFragment"
+            app:destination="@id/studentHomeFragment" />
+
+
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

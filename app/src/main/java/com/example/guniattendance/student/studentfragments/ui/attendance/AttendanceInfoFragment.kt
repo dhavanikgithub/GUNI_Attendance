@@ -31,14 +31,14 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val  txt = arguments?.getString("qrData")
-        var  txt = requireArguments().getString("msgData")
-        userId = arguments?.getString("userId")!!
-        txt.let {
-            if (it != "") {
-                qrData = QRMessageData.fromJsonObject(it!!)
-                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
-            }
-        }
+//        var  txt = requireArguments().getString("msgData")
+//        userId = arguments?.getString("userId")!!
+//        txt.let {
+//            if (it != "") {
+//                qrData = QRMessageData.fromJsonObject(it!!)
+//                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
+//            }
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,10 +53,10 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
             }
             attendanceBtn.setOnClickListener {
                 val bundle = Bundle()
-                bundle.putString("userId",userId)
+//                bundle.putString("userId",userId)
                 it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
             }
-            txtQRInfo.text = getQRText(qrData!!)
+//            txtQRInfo.text = getQRText(qrData!!)
         }
     }
     fun getQRText(data: QRMessageData):String{

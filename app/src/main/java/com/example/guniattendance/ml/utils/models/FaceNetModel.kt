@@ -1,5 +1,6 @@
 package com.example.guniattendance.ml.utils.models
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
@@ -62,19 +63,20 @@ class FaceNetModel @Inject constructor(
 
     // Gets an face embedding using FaceNet.
     fun getFaceEmbedding(image: Bitmap): FloatArray {
+        Log.i(TAG, "getFaceEmbedding: 4")
         return runFaceNet(convertBitmapToBuffer(image))[0]
     }
 
 
     // Run the FaceNet model.
     private fun runFaceNet(inputs: Any): Array<FloatArray> {
+        Log.i(TAG, "runFaceNet: 5")
         val t1 = System.currentTimeMillis()
         val faceNetModelOutputs = Array(1) { FloatArray(embeddingDim) }
+        // interpreter.run() - takes one input returns one output
+        Log.i(TAG, "runFaceNet: $faceNetModelOutputs, ${faceNetModelOutputs.size}")
         interpreter.run(inputs, faceNetModelOutputs)
-        Log.i(
-            "Performance",
-            "${model.name} Inference Speed in ms : ${System.currentTimeMillis() - t1}"
-        )
+        Log.i("Performance", "${model.name} Inference Speed in ms : ${System.currentTimeMillis() - t1}")
         return faceNetModelOutputs
     }
 

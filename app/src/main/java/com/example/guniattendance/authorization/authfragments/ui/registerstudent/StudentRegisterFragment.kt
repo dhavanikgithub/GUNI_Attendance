@@ -1,6 +1,7 @@
 package com.example.guniattendance.authorization.authfragments.ui.registerstudent
 
 import android.Manifest
+import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -91,17 +92,14 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 MainScope().launch {
 
                     try{
-                        //var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
-                        //Log.i("Successfully updated the profile picture:", res.toString(4))
-                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
-                        //userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
-                        //imgURL = userInfo.imageUrl
-                        //images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
-                        images.add(Pair(userName,BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)))
-                        faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
-                        //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
-                        val fileReader = FileReader(faceNetModel)
-                        fileReader.runToDetectFaces(images, fileReaderCallback)
+                        if(curImageUri == Uri.EMPTY)
+                        {
+                            BasicUtils.errorDialogBox(requireContext(),"Error","Upload Image")
+                            return@launch
+                        }
+                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        Log.i("Successfully updated the profile picture:", res.toString(4))
+
                         /*try {
                             val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(requireContext())
                             val processor = FaceDetectorProcessor(requireContext(), faceDetectorOptions) {
@@ -121,18 +119,22 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
-
-
                         } catch (e: Exception) {
                             Toast.makeText(
                                 context,
                                 "Can not create image processor: " + e.localizedMessage,
                                 Toast.LENGTH_LONG
                             ).show()
-
                         }*/
+                        try{
+                            findNavController().navigate(StudentRegisterFragmentDirections.actionStudentRegisterFragmentToStudentHomeFragment())
+                        } catch (e: Exception){
+                            Log.e(TAG, "StudentRegisterFragment: ${e.message}", )
+                        }
+
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
+                        Log.e(TAG, "onViewCreated: ${e.message}", )
 //                        BasicUtils.errorDialogBox()
                     }
                 }
@@ -151,15 +153,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         }
 
     }
-    private val fileReaderCallback = object : FileReader.ProcessCallback {
-        override fun onProcessCompleted(
-            data: ArrayList<Pair<String, FloatArray>>,
-            numImagesWithNoFaces: Int
-        ) {
-            Toast.makeText(context, "Image Processed: Face Detected: ${data.size > 0}", Toast.LENGTH_SHORT).show()
-            //frameAnalyser.run(data, frameAnalyserCallback)
-        }
-    }
+
     private fun requestPermission() {
         requireActivity().iNeed(
             Manifest.permission.CAMERA,
@@ -195,14 +189,44 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         )
     }
 
+    private fun faceProcessing(callback:FileReader.ProcessCallback){
+        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+
+        images.add(Pair(userName,BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)))
+        faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
+        //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
+        Log.i(TAG, "curImageUri: $curImageUri")
+        val fileReader = FileReader(faceNetModel)
+        Log.i(TAG, "onViewCreated: ${images.size}")
+        fileReader.runToDetectFaces(images, callback)
+    }
+    private val fileReaderCallback = object : FileReader.ProcessCallback {
+        override fun onProcessCompleted(
+            data: ArrayList<Pair<String, FloatArray>>,
+            numImagesWithNoFaces: Int
+        ) {
+            Toast.makeText(context, "Image Processed: Face Detected: ${data.size > 0}", Toast.LENGTH_SHORT).show()
+            if(data.size > 0)
+            {
+                glide.load(curImageUri).into(binding.ivImage)
+            }
+            else{
+                BasicUtils.errorDialogBox(requireContext(),"Error","Face is not detected in image.")
+                curImageUri = Uri.EMPTY
+            }
+            //frameAnalyser.run(data, frameAnalyserCallback)
+        }
+    }
     private fun subscribeToObserve() {
         viewModel.curImageUri.observe(viewLifecycleOwner) {
             binding.tvCaptureImage.isVisible = it == Uri.EMPTY
             if (it == Uri.EMPTY) {
+
                 binding.ivImage.setImageResource(R.drawable.ic_round_person_24)
             } else {
                 curImageUri = it
-                glide.load(curImageUri).into(binding.ivImage)
+                faceProcessing(fileReaderCallback)
+
             }
         }
 
