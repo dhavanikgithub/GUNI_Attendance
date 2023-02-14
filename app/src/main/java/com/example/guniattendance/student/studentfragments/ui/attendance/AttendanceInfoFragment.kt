@@ -31,14 +31,14 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val  txt = arguments?.getString("qrData")
-//        var  txt = requireArguments().getString("msgData")
-//        userId = arguments?.getString("userId")!!
-//        txt.let {
-//            if (it != "") {
-//                qrData = QRMessageData.fromJsonObject(it!!)
-//                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
-//            }
-//        }
+        val  txt = requireArguments().getString("msgData")
+        userId = arguments?.getString("userId")!!
+        txt.let {
+            if (it != "") {
+                qrData = QRMessageData.fromJsonObject(it!!)
+                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
