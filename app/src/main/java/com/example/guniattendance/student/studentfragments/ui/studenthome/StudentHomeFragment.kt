@@ -122,18 +122,18 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 MainScope().launch {
                     try{
                         Log.i(TAG, "userInfo: ${userInfo.id}")
-//                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
+                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
                         val bundle = Bundle()
-//                        Log.i(TAG, "messageData: $messageData")
-//                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-//                        bundle.putString("userId",userInfo.id)
+                        Log.i(TAG, "messageData: $messageData")
+                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+                        bundle.putString("userId",userInfo.id)
                         progressDialog!!.stop()
                         findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                     }
                     catch(ex:Exception)
                     {
                         snackbar("Message not found!")
-                        Log.e(TAG,"getMessage Error: ${ex}")
+                        Log.e(TAG,"getMessage Error: $ex")
                     }
                     finally {
                         progressDialog!!.stop()
