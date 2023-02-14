@@ -2,42 +2,70 @@ package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.KeyEvent
 import android.view.View
-import android.view.ViewGroup
-import android.view.Window
 import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
-import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.hideKeyboard
+import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
+import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
 
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
+    lateinit var progressBar: ProgressBar
     private var progressDialog: CustomProgressDialog? = null
 
     companion object{
         lateinit var studentEnrolment: String
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = FragmentLauncherScreenBinding.inflate(layoutInflater)
+        val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
+        val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?)
-    {
+        MainScope().launch {
+            if(checkboxCheck){
+                showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
+                MoodleConfig.getModelRepo(requireContext())
+                val url = ModelRepository.getStoredMoodleUrl(requireContext()).url
+                showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
+                android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
+                    .setMessage(url)
+                    .setPositiveButton("Continue"){ dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Change URL"){ dialog, _ ->
+                        findNavController().navigate(
+                            LauncherScreenFragmentDirections
+                                .actionLauncherScreenFragmentToSettingFragment()
+                        )
+                        dialog.dismiss()
+                    }
+                    .create().show()
+            }
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
         if(!checkPermission())
         {
             requestPermission()
@@ -49,28 +77,33 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         binding = FragmentLauncherScreenBinding.bind(view)
         if(progressDialog==null)
         {
-            progressDialog = CustomProgressDialog(requireContext(),requireActivity())
+            progressDialog = CustomProgressDialog(requireContext(), requireActivity())
         }
 
+//        requireActivity().onBackPressedDispatcher.addCallback(activity){
+//            requireActivity().finish()
+//        }
 
         binding.apply {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
-            et1Enrollment.setOnKeyListener { v, keyCode, event ->
+            /*tnCheckEnrol.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
 
                     btnCheckEnrol.performClick()
                 }
                 false
-            }
+            })*/
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
-                studentEnrolment = et1Enrollment.text.toString()
-                if(studentEnrolment.isEmpty())
+//                progressLayout.visibility = View.VISIBLE
+
+                if(et1Enrollment.text.toString().isEmpty())
                 {
                    snackbar("Enrollment number is empty!")
                 }
                 else
                 {
+                    studentEnrolment = et1Enrollment.text.toString()
                     val pattern = Regex("^[0-9]{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
@@ -80,6 +113,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             try {
                                 val result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(requireContext(), studentEnrolment)
                                 progressDialog!!.stop()
+                                //progressLayout.visibility = View.GONE
                                 if (result.hasUserUploadImg)
                                 {
                                     findNavController().navigate(
@@ -94,7 +128,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             }
                             catch (ex: Exception)
                             {
-                                progressDialog!!.stop()
                                 snackbar("Invalid Enrollment Number " + ex.message)
                             }
                             finally
@@ -110,9 +143,9 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                 }
             }
             settingsBtn.setOnClickListener{
-                Intent(context,SettingsActivity::class.java).also{
-                    startActivity(it)
-                }
+                findNavController().navigate(
+                    LauncherScreenFragmentDirections.actionLauncherScreenFragmentToSettingFragment()
+                )
             }
         }
     }

@@ -143,9 +143,6 @@ class FileReader(private var faceNetModel: FaceNetModel) {
                 if (faces.size != 0) {
                     Log.i(TAG, "scanImage: face size:${faces.size}")
                     coroutineScope.launch {
-                        val embedding = getEmbedding(image, faces[0].boundingBox)
-                        imageData.add(Pair(name, embedding))
-                        Log.i(TAG, "detectFaceFromImg: face size:${faces.size}")
                         /*
                         boundingBox - In object detection, we usually use a bounding box to describe the spatial
                         location of an object. The bounding box is rectangular, which is determined
@@ -153,6 +150,9 @@ class FileReader(private var faceNetModel: FaceNetModel) {
                         such coordinates of the lower-right corner.
                         */
                         // Embedding stored, now proceed to the next image.
+                        val embedding = getEmbedding(image, faces[0].boundingBox)
+                        imageData.add(Pair(name, embedding))
+                        Log.i(TAG, "detectFaceFromImg: face size:${faces.size}")
                         if (imageCounter + 1 != numImages) {
                             imageCounter += 1
                             scanImage(data[imageCounter].first, data[imageCounter].second)

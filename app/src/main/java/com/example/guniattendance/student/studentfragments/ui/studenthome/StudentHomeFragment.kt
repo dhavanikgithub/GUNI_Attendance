@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.example.guniattendance.R
-import com.example.guniattendance.SettingsActivity
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
@@ -29,7 +28,6 @@ import com.example.guniattendance.utils.snackbar
 import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.model.QRMessageData
 import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
@@ -100,9 +98,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSetting.setOnClickListener{
-                Toast.makeText(context,"Settings",Toast.LENGTH_SHORT).show()
-                val i = Intent(context, SettingsActivity::class.java)
-                startActivity(i)
+                findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToSettingFragment())
             }
 
             btnTakeAttendance.setOnClickListener {

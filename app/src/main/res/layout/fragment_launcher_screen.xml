@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_background">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_animation" />
+
     <LinearLayout
         android:id="@+id/progressLayout"
         android:visibility="gone"
@@ -73,7 +82,7 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_check_enrol"
-        android:layout_width="@dimen/_70sdp"
+        android:layout_width="@dimen/_100sdp"
         android:layout_height="wrap_content"
         android:background="@drawable/button_background"
         android:padding="@dimen/_10sdp"
@@ -87,17 +96,6 @@
         app:layout_constraintStart_toEndOf="@id/settings_btn"
         />
 
-<!--    <ImageView-->
-<!--        android:id="@+id/image"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/btn_check_enrol"-->
-<!--        android:layout_marginTop="100dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        >-->
-
-<!--    </ImageView>-->
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/settings_btn"
@@ -114,30 +112,6 @@
         app:layout_constraintEnd_toStartOf="@id/btn_check_enrol"
         app:layout_constraintTop_toTopOf="@id/btn_check_enrol"
         app:layout_constraintVertical_bias="0.35" />
-
-<!--    <TextView-->
-<!--        android:id="@+id/txtView"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        tools:layout_editor_absoluteX="96dp"-->
-<!--        tools:layout_editor_absoluteY="298dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/t1_enrollment"/>-->
-
-    <!--    <TextView-->
-<!--        android:id="@+id/btn_login"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:clickable="true"-->
-<!--        android:focusable="true"-->
-<!--        android:gravity="center"-->
-<!--        android:letterSpacing="0.15"-->
-<!--        android:text="@string/already_user_nlogin_here"-->
-<!--        android:textSize="16sp"-->
-<!--        android:textStyle="bold"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/btn_register_student"-->
-<!--        app:layout_constraintVertical_bias="0.7" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

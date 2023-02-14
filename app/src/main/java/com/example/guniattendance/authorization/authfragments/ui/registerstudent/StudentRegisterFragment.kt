@@ -217,7 +217,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         images.add(Pair(userName,BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)))
         faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
         //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
-        Log.i(TAG, "curImageUri: $curImageUri")
         val fileReader = FileReader(faceNetModel)
         Log.i(TAG, "onViewCreated: ${images.size}")
         fileReader.runToDetectFaces(images, callback)
@@ -243,7 +242,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         viewModel.curImageUri.observe(viewLifecycleOwner) {
             binding.tvCaptureImage.isVisible = it == Uri.EMPTY
             if (it == Uri.EMPTY) {
-
                 binding.ivImage.setImageResource(R.drawable.ic_round_person_24)
             } else {
                 curImageUri = it

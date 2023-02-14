@@ -34,6 +34,11 @@
         <action
             android:id="@+id/action_launcherScreenFragment_to_studentHomeFragment"
             app:destination="@id/studentHomeFragment" />
+        <action
+            android:id="@+id/action_launcherScreenFragment_to_SettingFragment"
+            app:destination="@id/settingFragment" />
+
+
     </fragment>
     <fragment
         android:id="@+id/studentRegisterFragment"
@@ -83,6 +88,9 @@
         <action
             android:id="@+id/action_studentHomeFragment_to_attendanceInfoFragment"
             app:destination="@id/attendanceInfoFragment" />
+        <action
+            android:id="@+id/action_studentHomeFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/attendanceInfoFragment"
@@ -102,5 +110,15 @@
     <fragment
         android:id="@+id/takeAttendanceFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment"
-        android:label="TakeAttendanceFragment" />
+        android:label="TakeAttendanceFragment" >
+
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingFragment"
+        android:label="SettingFragment" >
+        <action
+            android:id="@+id/action_settingFragment_to_launcherScreenFragment"
+            app:destination="@id/launcherScreenFragment" />
+    </fragment>
 </navigation>
