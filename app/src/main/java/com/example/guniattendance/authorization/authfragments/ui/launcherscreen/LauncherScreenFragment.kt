@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
-    lateinit var progressBar: ProgressBar
     private var progressDialog: CustomProgressDialog? = null
 
     companion object{
@@ -37,7 +36,8 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     }
 
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+    override fun onViewStateRestored(savedInstanceState: Bundle?)
+    {
         if(!checkPermission())
         {
             requestPermission()
@@ -49,30 +49,28 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         binding = FragmentLauncherScreenBinding.bind(view)
         if(progressDialog==null)
         {
-            progressDialog = CustomProgressDialog(requireContext())
+            progressDialog = CustomProgressDialog(requireContext(),requireActivity())
         }
 
 
         binding.apply {
             DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
-            btnCheckEnrol.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            et1Enrollment.setOnKeyListener { v, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER) {
 
                     btnCheckEnrol.performClick()
                 }
                 false
-            })
+            }
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
-//                progressLayout.visibility = View.VISIBLE
-
-                if(et1Enrollment.text.toString().isEmpty())
+                studentEnrolment = et1Enrollment.text.toString()
+                if(studentEnrolment.isEmpty())
                 {
                    snackbar("Enrollment number is empty!")
                 }
                 else
                 {
-                    studentEnrolment = et1Enrollment.text.toString()
                     val pattern = Regex("^[0-9]{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
@@ -82,7 +80,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             try {
                                 val result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(requireContext(), studentEnrolment)
                                 progressDialog!!.stop()
-                                //progressLayout.visibility = View.GONE
                                 if (result.hasUserUploadImg)
                                 {
                                     findNavController().navigate(
@@ -97,6 +94,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             }
                             catch (ex: Exception)
                             {
+                                progressDialog!!.stop()
                                 snackbar("Invalid Enrollment Number " + ex.message)
                             }
                             finally

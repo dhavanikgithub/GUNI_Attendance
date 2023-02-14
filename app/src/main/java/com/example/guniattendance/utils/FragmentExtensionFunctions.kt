@@ -32,13 +32,13 @@ fun showProgress(
 ) {
     progressBar.isVisible = bool
     if (bool) {
-        parentLayout.alpha = 0.2f
+//        parentLayout.alpha = 0.2f
         activity.window!!.setFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
     } else {
-        parentLayout.alpha = 1f
+//        parentLayout.alpha = 1f
         activity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -51,13 +51,13 @@ fun showProgress(
 ) {
     loading.isVisible = bool
     if (bool) {
-        parentLayout.alpha = 0.5f
+//        parentLayout.alpha = 0.5f
         activity.window!!.setFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
     } else {
-        parentLayout.alpha = 1f
+//        parentLayout.alpha = 1f
         activity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
@@ -65,7 +65,7 @@ fun showProgress(
 
 fun Fragment.snackbar(text: String) {
     Snackbar.make(
-        requireView(),
+        requireParentFragment().requireView(),
         text,
         Snackbar.LENGTH_LONG
     ).show()

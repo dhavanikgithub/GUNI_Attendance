@@ -58,11 +58,16 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private var imgURL: String = ""
     private lateinit var faceNetModel: FaceNetModel
     private lateinit var frameAnalyser: FrameAnalyserAttendance
+    private var progressDialog: CustomProgressDialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[StudentRegisterViewModel::class.java]
+        if(progressDialog==null)
+        {
+            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+        }
         subscribeToObserve()
 
         binding = FragmentStudentRegisterBinding.bind(view)
@@ -74,7 +79,8 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
             MainScope().launch {
                 try {
-                    var result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
+                    progressDialog!!.start("Preparing Info....")
+                    val result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
                     userid = result.id
                     userName = result.username
                     nameText.setText(result.lastname)
@@ -84,6 +90,9 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     emailText.isEnabled = false
                 } catch (e: java.lang.Exception) {
                     activity?.let { BasicUtils.errorDialogBox(it, "getUserInfo Error","getUserInfo Error, Contact Administrator!"+e.message) }
+                }
+                finally {
+                    progressDialog!!.stop()
                 }
 
             }
@@ -97,9 +106,19 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                             BasicUtils.errorDialogBox(requireContext(),"Error","Upload Image")
                             return@launch
                         }
-                        var res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        progressDialog!!.start("Uploading....")
+                        val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
-
+                        progressDialog!!.stop()
+                        val images = java.util.ArrayList<Pair<String, Bitmap>>()
+                        //userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                        //imgURL = userInfo.imageUrl
+                        //images.add(Pair(userid, Utility().convertUrlToBitmap(imgURL)!!))
+                        images.add(Pair(userName,BitmapUtils.getBitmapFromUri(requireContext().contentResolver, curImageUri)))
+                        faceNetModel = FaceNetModel(requireContext(), Models.FACENET, true)
+                        //frameAnalyser = FrameAnalyserAttendance(requireContext(), bboxOverlay, faceNetModel)
+                        val fileReader = FileReader(faceNetModel)
+                        fileReader.runToDetectFaces(images, fileReaderCallback)
                         /*try {
                             val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(requireContext())
                             val processor = FaceDetectorProcessor(requireContext(), faceDetectorOptions) {
@@ -119,12 +138,15 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
+
+
                         } catch (e: Exception) {
                             Toast.makeText(
                                 context,
                                 "Can not create image processor: " + e.localizedMessage,
                                 Toast.LENGTH_LONG
                             ).show()
+
                         }*/
                         try{
                             findNavController().navigate(StudentRegisterFragmentDirections.actionStudentRegisterFragmentToStudentHomeFragment())
@@ -232,12 +254,13 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 
         viewModel.registerStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = false,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = false,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.stop()
                 when (it) {
                     "emptyEmail" -> {
                         binding.emailText.error = "Email cannot be empty"
@@ -255,12 +278,13 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 }
             },
             onLoading = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = true,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = true,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.start("Preparing....")
             }
         ) {
 //            binding.apply {
@@ -274,12 +298,13 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //                pinView.setText("")
 //            }
 
-            showProgress(
-                activity = requireActivity(),
-                bool = false,
-                parentLayout = binding.parentLayout,
-                loading = binding.lottieAnimation
-            )
+//            showProgress(
+//                activity = requireActivity(),
+//                bool = false,
+//                parentLayout = binding.parentLayout,
+//                loading = binding.lottieAnimation
+//            )
+            progressDialog!!.stop()
 
             findNavController().navigate(
                 StudentRegisterFragmentDirections

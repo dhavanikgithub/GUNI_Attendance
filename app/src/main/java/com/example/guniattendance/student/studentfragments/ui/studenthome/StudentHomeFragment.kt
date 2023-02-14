@@ -7,40 +7,30 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.example.guniattendance.R
 import com.example.guniattendance.SettingsActivity
-import com.example.guniattendance.authorization.AuthActivity
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
-import com.example.guniattendance.utils.Constants.ALLOWED_RADIUS
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
 import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
-import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
-import com.google.firebase.auth.FirebaseAuth
-import com.google.mlkit.common.sdkinternal.ModelInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.model.MoodleBasicUrl
 import com.uvpce.attendance_moodle_api_library.model.QRMessageData
 import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
-import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -76,7 +66,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         if(progressDialog==null)
         {
-            progressDialog = CustomProgressDialog(requireContext())
+            progressDialog = CustomProgressDialog(requireContext(),requireActivity())
         }
         progressDialog!!.start("Details Fetching...")
         requireActivity().doIHave(
@@ -99,6 +89,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
             MainScope().launch {
 
+                progressDialog!!.start("Details Fetching...")
                 userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
                 imgURL = userInfo.imageUrl
                 ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
@@ -141,6 +132,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     }
                     catch(ex:Exception)
                     {
+                        snackbar("Message not found!")
                         Log.e(TAG,"getMessage Error: ${ex}")
                     }
                     finally {
@@ -173,6 +165,10 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
     private fun subscribeToObserve() {
 
+        if(progressDialog==null)
+        {
+            progressDialog = CustomProgressDialog(requireContext(),requireActivity())
+        }
         viewModel.removeObservers()
 
         viewModel.userStatus.observe(viewLifecycleOwner, EventObserver(
@@ -183,15 +179,17 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     parentLayout = binding.parentLayout,
                     loading = binding.lottieAnimation
                 )
+                progressDialog!!.stop()
                 snackbar(error)
             },
             onLoading = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = true,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = true,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.start("userStatus observe....")
             }
         ) { user ->
 //            Log.i("updateUI", user.byteArray+", "+user.uid)
@@ -200,29 +198,32 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         viewModel.attendanceStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = false,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = false,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.stop()
                 snackbar(it)
             },
             onLoading = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = true,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = true,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.start("attendanceStatus observe....")
             }
         ) {
-            showProgress(
-                activity = requireActivity(),
-                bool = false,
-                parentLayout = binding.parentLayout,
-                loading = binding.lottieAnimation
-            )
+//            showProgress(
+//                activity = requireActivity(),
+//                bool = false,
+//                parentLayout = binding.parentLayout,
+//                loading = binding.lottieAnimation
+//            )
+            progressDialog!!.stop()
             if (it.uid != "") {
                 if (curLocation != null) {
                     Log.d(
@@ -262,12 +263,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         viewModel.attendanceStatusForOther.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = false,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = false,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.stop()
 //                when (it) {
 //                    "emptyEnrolment" -> {
 //                        binding.etEnrol.error = "Please enter enrolment number"
@@ -281,20 +283,22 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 //                }
             },
             onLoading = {
-                showProgress(
-                    activity = requireActivity(),
-                    bool = true,
-                    parentLayout = binding.parentLayout,
-                    loading = binding.lottieAnimation
-                )
+//                showProgress(
+//                    activity = requireActivity(),
+//                    bool = true,
+//                    parentLayout = binding.parentLayout,
+//                    loading = binding.lottieAnimation
+//                )
+                progressDialog!!.start("attendanceStatusForOther observe....")
             }
         ) {
-            showProgress(
-                activity = requireActivity(),
-                bool = false,
-                parentLayout = binding.parentLayout,
-                loading = binding.lottieAnimation
-            )
+//            showProgress(
+//                activity = requireActivity(),
+//                bool = false,
+//                parentLayout = binding.parentLayout,
+//                loading = binding.lottieAnimation
+//            )
+            progressDialog!!.stop()
             val attendance = it.second
             if (attendance.uid != "") {
                 if (curLocation != null) {
@@ -307,6 +311,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         results
                     )
                     val distanceInMeters = results[0]
+
 //                    if (distanceInMeters <= ALLOWED_RADIUS) {
 //                        findNavController().navigate(
 //                            StudentHomeFragmentDirections
@@ -339,12 +344,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             glide.load(decodedByteArray).into(ivImage)
 //            tvClass.text = "Class : ${user.lecture} \t Lab : ${user.lab}"
         }
-        showProgress(
-            activity = requireActivity(),
-            bool = false,
-            parentLayout = binding.parentLayout,
-            loading = binding.lottieAnimation
-        )
+//        showProgress(
+//            activity = requireActivity(),
+//            bool = false,
+//            parentLayout = binding.parentLayout,
+//            loading = binding.lottieAnimation
+//        )
+        progressDialog!!.stop()
     }
 
     private fun requestPermission() {

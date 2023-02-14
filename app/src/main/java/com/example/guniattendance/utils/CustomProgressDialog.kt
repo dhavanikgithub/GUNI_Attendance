@@ -11,13 +11,14 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.guniattendance.R
 
-class CustomProgressDialog(context: Context) {
+class CustomProgressDialog(context: Context,val reqActivity:Activity) {
 
     private var dialog: CustomDialog
     private var cpTitle: TextView
@@ -26,10 +27,15 @@ class CustomProgressDialog(context: Context) {
 
     fun start(title: String = "") {
         cpTitle.text = title
+        reqActivity.window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
         dialog.show()
     }
 
     fun stop() {
+        reqActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         dialog.dismiss()
     }
 
