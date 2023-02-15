@@ -121,8 +121,8 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
                         val bundle = Bundle()
                         Log.i(TAG, "messageData: $messageData")
-                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-                        bundle.putString("userId",userInfo.id)
+//                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+//                        bundle.putString("userId",userInfo.id)
                         progressDialog!!.stop()
                         findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                     }

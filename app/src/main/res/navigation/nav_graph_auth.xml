@@ -63,6 +63,9 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_appPinFragment"
             app:destination="@id/appPinFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment_self"
+            app:destination="@id/splashScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/scannerFragment"

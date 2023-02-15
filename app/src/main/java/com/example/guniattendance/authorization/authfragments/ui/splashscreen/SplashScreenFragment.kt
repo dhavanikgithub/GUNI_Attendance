@@ -2,12 +2,14 @@ package com.example.guniattendance.authorization.authfragments.ui.splashscreen
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -16,7 +18,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragmentDirections
 import com.example.guniattendance.data.entity.Faculty
+import com.example.guniattendance.utils.PermissionsUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -33,10 +37,26 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     private val faculties = FirebaseFirestore.getInstance().collection("faculty")
     private lateinit var progress: LottieAnimationView
+//    private lateinit var permissionsUtils: PermissionsUtils = true
 
     override fun onResume() {
         super.onResume()
-
+        if(!PermissionsUtils.isOnline(requireContext())){
+            Log.i(ContentValues.TAG, "onCreate: 2")
+            android.app.AlertDialog.Builder(requireActivity()).setTitle("No Internet")
+                .setMessage("Your devices is not connected to internet. " +
+                        "Please check your internet connection and try again..")
+                .setPositiveButton("Settings"){ dialog, _ ->
+                    startActivity(Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS
+                     ))
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Retry"){ dialog, _ ->
+                    findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentSelf())
+                    dialog.dismiss()
+                }
+                .create().show()
+        }
         val defaultsRate: HashMap<String, Any> = HashMap()
         defaultsRate["new_version_code"] = java.lang.String.valueOf(getVersionCode())
 
