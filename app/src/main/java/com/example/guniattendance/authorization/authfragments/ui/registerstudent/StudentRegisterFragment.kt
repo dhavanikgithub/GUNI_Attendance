@@ -94,7 +94,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 finally {
                     progressDialog!!.stop()
                 }
-
             }
 
             btnRegister.setOnClickListener {
@@ -107,7 +106,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                             return@launch
                         }
                         progressDialog!!.start("Uploading....")
-                        val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(userid,curImageUri)
+                        val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(requireContext(),userid,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
                         progressDialog!!.stop()
                         val images = java.util.ArrayList<Pair<String, Bitmap>>()

@@ -41,7 +41,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
 //                Log.i(TAG, "onCreate: 1")
                 showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
                 MoodleConfig.getModelRepo(requireContext())
-                val url = ModelRepository.getStoredMoodleUrl(requireContext()).url
+                val url = ModelRepository.getMoodleUrlObject(requireContext()).url
                 showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
                 android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
                     .setMessage(url)

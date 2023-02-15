@@ -29,6 +29,8 @@ import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
+import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
+import com.uvpce.attendance_moodle_api_library.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -52,7 +54,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private lateinit var attRepo: AttendanceRepository
     private var progressDialog: CustomProgressDialog? = null
     val TAG = "StudentHomeFragment"
-
+    private lateinit var repo:ModelRepository
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,9 +88,9 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 //            }
 
             MainScope().launch {
-
                 progressDialog!!.start("Details Fetching...")
-                userInfo = MoodleConfig.getModelRepo(requireContext()).getUserInfo(LauncherScreenFragment.studentEnrolment)
+                repo = MoodleConfig.getModelRepo(requireContext())
+                userInfo = repo.getUserInfo(LauncherScreenFragment.studentEnrolment)
                 imgURL = userInfo.imageUrl
                 ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
                 tvName.text = userInfo.lastname
@@ -98,7 +100,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSetting.setOnClickListener{
-                findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToSettingFragment())
+                //findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToSettingFragment())
             }
 
             btnTakeAttendance.setOnClickListener {
@@ -137,25 +139,6 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 }
 
             }
-
-//            tvTakeOtherAttendance.setOnClickListener {
-//                layoutTakeOtherAttendance.isVisible = true
-//                layoutTakeAttendance.isVisible = false
-//                tvGoBack.isVisible = true
-//                tvTakeOtherAttendance.isVisible = false
-//            }
-//
-//            tvGoBack.setOnClickListener {
-//                layoutTakeOtherAttendance.isVisible = false
-//                layoutTakeAttendance.isVisible = true
-//                tvGoBack.isVisible = false
-//                tvTakeOtherAttendance.isVisible = true
-//            }
-//
-//            btnTakeOtherAttendance.setOnClickListener {
-//                viewModel.getActiveAttendanceForOther(etEnrol.text.trim().toString())
-//            }
-
         }
     }
 

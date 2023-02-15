@@ -3,20 +3,15 @@ package com.example.guniattendance.moodle
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 
 class MoodleConfig {
-
     companion object{
-        var url = "http://202.131.126.214"
-        private lateinit var reslt: ModelRepository
-        suspend fun getModelRepo(context: Context):ModelRepository {
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-            url = sharedPreferences.getString("ServerList", "202.131.126.214")!!
 
-            reslt = ModelRepository.getModelRepo(context)
-            return reslt
+        suspend fun getModelRepo(context: Context):ModelRepository {
+            return ModelRepository.getModelRepo(context)
+        }
+        suspend fun refreshModelRepo(context: Context){
+            ModelRepository.getModelRepo(context)
         }
     }
 
