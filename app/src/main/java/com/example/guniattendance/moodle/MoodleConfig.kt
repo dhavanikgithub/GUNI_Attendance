@@ -2,7 +2,8 @@ package com.example.guniattendance.moodle
 
 import android.content.Context
 import androidx.preference.PreferenceManager
-import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
+
 
 class MoodleConfig {
     companion object{

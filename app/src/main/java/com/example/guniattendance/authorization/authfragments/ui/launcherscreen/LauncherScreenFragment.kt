@@ -16,7 +16,7 @@ import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
-import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

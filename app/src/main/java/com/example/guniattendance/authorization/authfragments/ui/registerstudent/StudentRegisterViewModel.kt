@@ -12,7 +12,7 @@ import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.utils.Events
 import com.example.guniattendance.utils.Resource
 import com.google.firebase.firestore.FirebaseFirestore
-import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
+import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

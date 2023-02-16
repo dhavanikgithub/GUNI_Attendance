@@ -25,12 +25,12 @@ import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
-import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.repo.AttendanceRepository
-import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
-import com.uvpce.attendance_moodle_api_library.util.Utility
+import com.guni.uvpce.moodleapplibrary.repo.AttendanceRepository
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

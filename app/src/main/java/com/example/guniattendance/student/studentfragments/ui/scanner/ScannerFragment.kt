@@ -18,7 +18,7 @@ import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.utils.BasicUtils
-import com.uvpce.attendance_moodle_api_library.model.QRMessageData
+import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import org.json.JSONException
 
 

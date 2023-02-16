@@ -33,13 +33,12 @@ import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
-import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
-import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
 import com.google.common.util.concurrent.ListenableFuture
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
-import com.uvpce.attendance_moodle_api_library.util.Utility
+import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
+import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

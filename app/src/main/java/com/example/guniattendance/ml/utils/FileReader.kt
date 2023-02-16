@@ -8,7 +8,7 @@ import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
+import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
 import kotlinx.coroutines.*
 
 class FileReader(private var faceNetModel: FaceNetModel) {

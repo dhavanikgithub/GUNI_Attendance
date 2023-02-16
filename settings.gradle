@@ -10,7 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://jitpack.io'
+            credentials { username 'jp_2pinjfs9rjsgquj2q2t7oekjmf' }
+        }
     }
 }
 rootProject.name = "GUNI Attendance"

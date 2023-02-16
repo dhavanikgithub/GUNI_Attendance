@@ -14,7 +14,7 @@ import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragmentDirections
 import com.example.guniattendance.utils.snackbar
-import com.uvpce.attendance_moodle_api_library.model.QRMessageData
+import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 

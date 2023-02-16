@@ -14,8 +14,8 @@ import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentSettingsBinding
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
-import com.uvpce.attendance_moodle_api_library.model.MoodleBasicUrl
-import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.model.MoodleBasicUrl
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

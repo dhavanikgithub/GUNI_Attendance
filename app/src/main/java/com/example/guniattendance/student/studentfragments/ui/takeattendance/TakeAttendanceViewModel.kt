@@ -11,9 +11,8 @@ import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.student.repository.StudentRepository
 import com.example.guniattendance.utils.Events
 import com.example.guniattendance.utils.Resource
-import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
-import com.example.guniattendancefaculty.moodle.model.MoodleUserInfo
-import com.uvpce.attendance_moodle_api_library.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

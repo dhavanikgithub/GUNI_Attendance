@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentLoginBinding
 import com.example.guniattendance.utils.*
-import com.uvpce.attendance_moodle_api_library.repo.ClientAPI
+import com.guni.uvpce.moodleapplibrary.repo.ClientAPI
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 

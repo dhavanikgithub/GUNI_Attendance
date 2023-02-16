@@ -30,12 +30,12 @@ import com.example.guniattendance.ml.utils.models.FaceNetModel
 import com.example.guniattendance.ml.utils.models.Models
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
-import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.google.android.gms.tasks.OnCompleteListener
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.uvpce.attendance_moodle_api_library.util.BitmapUtils
-import com.uvpce.attendance_moodle_api_library.util.Utility
+import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
+import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.MainScope
