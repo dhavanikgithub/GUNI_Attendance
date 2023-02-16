@@ -125,6 +125,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             catch (ex: Exception)
                             {
                                 snackbar("Invalid Enrollment Number " + ex.message)
+                                Log.e(TAG, "onViewCreated: Invalid Enrollment Number:$ex", ex)
                             }
                             finally
                             {
