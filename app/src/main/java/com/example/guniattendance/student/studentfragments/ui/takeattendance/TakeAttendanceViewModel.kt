@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.student.repository.StudentRepository
 import com.example.guniattendance.utils.Events
@@ -23,7 +22,7 @@ class TakeAttendanceViewModel @Inject constructor(
     private val repository: StudentRepository
 ) : ViewModel() {
 
-    var repo :ModelRepository? = null
+    var repo : ModelRepository? = null
     //private val _attendanceStatus = MutableLiveData<Events<Resource<String>>>()
     //val attendanceStatus: LiveData<Events<Resource<String>>> = _attendanceStatus
 

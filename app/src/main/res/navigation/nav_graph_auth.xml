@@ -115,6 +115,9 @@
         android:name="com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment"
         android:label="TakeAttendanceFragment" >
 
+        <action
+            android:id="@+id/action_takeAttendanceFragment_self"
+            app:destination="@id/takeAttendanceFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"

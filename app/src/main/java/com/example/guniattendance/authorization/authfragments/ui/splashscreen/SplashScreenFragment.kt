@@ -57,35 +57,43 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
                 }
                 .create().show()
         }
-        val defaultsRate: HashMap<String, Any> = HashMap()
-        defaultsRate["new_version_code"] = java.lang.String.valueOf(getVersionCode())
-
-        val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(10) // change to 3600 on published app
-            .build()
-
-        firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
-        firebaseRemoteConfig.setDefaultsAsync(defaultsRate)
-
-        firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(
-            requireActivity()
-        ) { task ->
-            if (task.isSuccessful) {
-                val newVersionCode: String =
-                    firebaseRemoteConfig.getString("new_version_code")
-                val newAppLink: String = firebaseRemoteConfig.getString("new_app_link")
-                if (newVersionCode.toInt() > getVersionCode()) {
-                    progress.isVisible = false
-                    showTheDialog(
-                        newAppLink,
-                        newVersionCode
-                    )
-                } else {
-                    goAhead()
-                }
-            } else Log.e("MYLOG", "mFirebaseRemoteConfig.fetchAndActivate() NOT Successful")
+        else{
+            findNavController().navigate(
+                SplashScreenFragmentDirections
+                    .actionSplashScreenFragmentToLauncherScreenFragment()
+            )
         }
+
+
+//        val defaultsRate: HashMap<String, Any> = HashMap()
+//        defaultsRate["new_version_code"] = java.lang.String.valueOf(getVersionCode())
+//
+//        val firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+//        val configSettings = FirebaseRemoteConfigSettings.Builder()
+//            .setMinimumFetchIntervalInSeconds(10) // change to 3600 on published app
+//            .build()
+//
+//        firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
+//        firebaseRemoteConfig.setDefaultsAsync(defaultsRate)
+//
+//        firebaseRemoteConfig.fetchAndActivate().addOnCompleteListener(
+//            requireActivity()
+//        ) { task ->
+//            if (task.isSuccessful) {
+//                val newVersionCode: String =
+//                    firebaseRemoteConfig.getString("new_version_code")
+//                val newAppLink: String = firebaseRemoteConfig.getString("new_app_link")
+//                if (newVersionCode.toInt() > getVersionCode()) {
+//                    progress.isVisible = false
+//                    showTheDialog(
+//                        newAppLink,
+//                        newVersionCode
+//                    )
+//                } else {
+//                    goAhead()
+//                }
+//            } else Log.e("MYLOG", "mFirebaseRemoteConfig.fetchAndActivate() NOT Successful")
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -96,7 +104,6 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
     }
 
     private fun goAhead() {
-
         if (FirebaseAuth.getInstance().currentUser != null) {
 
             CoroutineScope(Dispatchers.Main).launch {

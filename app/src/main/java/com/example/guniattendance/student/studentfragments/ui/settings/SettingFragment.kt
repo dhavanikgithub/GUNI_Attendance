@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
-//import com.example.guniattendance.SettingsActivity.SettingsFragmentDirections
 import com.example.guniattendance.databinding.FragmentSettingsBinding
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
@@ -38,11 +37,11 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
 
-        val savedURLPref: SharedPreferences = requireActivity().getSharedPreferences("savedURL", 0)
-        val savedURLEditor: SharedPreferences.Editor = savedURLPref.edit()
+        val savedURLPref = requireActivity().getSharedPreferences("savedURL", 0)
+        val savedURLEditor = savedURLPref.edit()
 
-        val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
-        val checkboxToggleEditor: SharedPreferences.Editor = checkboxTogglePref.edit()
+        val checkboxTogglePref = requireActivity().getSharedPreferences("buttonToggle", 0)
+        val checkboxToggleEditor = checkboxTogglePref.edit()
 
         lateinit var urlList: List<MoodleBasicUrl>
 
@@ -99,13 +98,15 @@ class SettingFragment : Fragment() {
 
                 if(s1UrlList.selectedItem != null)
                 {
-                    savedURLEditor.putString("url", s1UrlList.selectedItem.toString())
-                    savedURLEditor.apply()
+                    val selectedURL = s1UrlList.selectedItem.toString()
                     for (i in urlList.indices)
                     {
-                        if(urlList[i].url==s1UrlList.selectedItem.toString())
+                        if(urlList[i].url==selectedURL)
                         {
                             ModelRepository.setMoodleUrlSetting(requireContext(), urlList[i])
+                            savedURLEditor.putString("url", urlList[i].url)
+                            savedURLEditor.putString("id",urlList[i].id)
+                            savedURLEditor.apply()
                             showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                             findNavController().navigate(
                                 SettingFragmentDirections.actionSettingFragmentToLauncherScreenFragment()

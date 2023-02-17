@@ -1,14 +1,11 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
-import android.Manifest
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
@@ -22,9 +19,7 @@ import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
-    lateinit var progressBar: ProgressBar
     private var progressDialog: CustomProgressDialog? = null
-//    private lateinit var permissionsUtils: PermissionsUtils
 
     companion object{
         lateinit var studentEnrolment: String
@@ -38,13 +33,22 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
         MainScope().launch {
             if(checkboxCheck){
-//                Log.i(TAG, "onCreate: 1")
                 showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
+//                val savedURLPref = requireActivity().getSharedPreferences("savedURL", 0)
                 MoodleConfig.getModelRepo(requireContext())
-                val url = ModelRepository.getMoodleUrlObject(requireContext()).url
+                val url = ModelRepository.getMoodleUrlObject(requireContext())
+
+//                val url = MoodleBasicUrl(savedURLPref.getString("id","")!!,savedURLPref.getString("url","")!!)
+//                if(url.id=="" || url.url=="")
+//                {
+//                    findNavController().navigate(
+//                        LauncherScreenFragmentDirections
+//                            .actionLauncherScreenFragmentToSettingFragment()
+//                    )
+//                }
                 showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
                 android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
-                    .setMessage(url)
+                    .setMessage(url.toString())
                     .setPositiveButton("Continue"){ dialog, _ ->
                         dialog.dismiss()
                     }
@@ -75,22 +79,14 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             progressDialog = CustomProgressDialog(requireContext(), requireActivity())
         }
 
-//        requireActivity().onBackPressedDispatcher.addCallback(activity){
-//            requireActivity().finish()
-//        }
+        requireActivity().onBackPressedDispatcher.addCallback{
+            requireActivity().finish()
+        }
 
         binding.apply {
-            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
-            /*tnCheckEnrol.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-                if (keyCode == KeyEvent.KEYCODE_ENTER) {
-
-                    btnCheckEnrol.performClick()
-                }
-                false
-            })*/
+//            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
-//                progressLayout.visibility = View.VISIBLE
 
                 if(et1Enrollment.text.toString().isEmpty())
                 {
@@ -102,14 +98,13 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     val pattern = Regex("^[0-9]{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
-                        // Coroutins on backgroud thread
+
                         progressDialog!!.start("Verifying Enrollment....")
                         MainScope().launch{
                             try {
                                 Log.i(TAG, "onViewCreated: $studentEnrolment")
-                                val result = MoodleConfig.getModelRepo(requireActivity()).isStudentRegisterForFace(requireContext(), studentEnrolment)
+                                val result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(requireContext(), studentEnrolment)
                                 progressDialog!!.stop()
-                                //progressLayout.visibility = View.GONE
                                 if (result.hasUserUploadImg)
                                 {
                                     findNavController().navigate(

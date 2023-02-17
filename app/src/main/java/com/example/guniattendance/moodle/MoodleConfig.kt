@@ -8,7 +8,7 @@ import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 class MoodleConfig {
     companion object{
 
-        suspend fun getModelRepo(context: Context):ModelRepository {
+        suspend fun getModelRepo(context: Context): ModelRepository {
             return ModelRepository.getModelRepo(context)
         }
         suspend fun refreshModelRepo(context: Context){

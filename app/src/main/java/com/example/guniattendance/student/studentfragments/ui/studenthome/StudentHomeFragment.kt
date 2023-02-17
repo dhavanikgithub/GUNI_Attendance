@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -11,7 +12,6 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -21,16 +21,16 @@ import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.
 import com.example.guniattendance.data.entity.Student
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.utils.*
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
+import com.guni.uvpce.moodleapplibrary.model.QRMessageData
+import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.EventObserver
 import com.example.guniattendance.utils.showProgress
 import com.example.guniattendance.utils.snackbar
-import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import com.guni.uvpce.moodleapplibrary.repo.AttendanceRepository
-import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
-import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -50,12 +50,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private var curLocation: Location? = null
     private lateinit var userInfo: BaseUserInfo
     lateinit var imgURL:String
-    private lateinit var imgToken: BaseUserInfo
-    private lateinit var attRepo: AttendanceRepository
     private var progressDialog: CustomProgressDialog? = null
     val TAG = "StudentHomeFragment"
-    private lateinit var repo:ModelRepository
+    var profileImage: Bitmap? = null
 
+    private lateinit var repo: ModelRepository
+
+    @SuppressLint("ResourceType")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,7 +69,6 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
         {
             progressDialog = CustomProgressDialog(requireContext(),requireActivity())
         }
-        progressDialog!!.start("Details Fetching...")
         requireActivity().doIHave(
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             onGranted = {
@@ -92,7 +92,8 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 repo = MoodleConfig.getModelRepo(requireContext())
                 userInfo = repo.getUserInfo(LauncherScreenFragment.studentEnrolment)
                 imgURL = userInfo.imageUrl
-                ivImage.setImageBitmap(MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL))
+                profileImage = MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL)
+                ivImage.setImageBitmap(profileImage)
                 tvName.text = userInfo.lastname
                 tvEnrollNo.text = LauncherScreenFragment.studentEnrolment
                 tvEmailId.text = userInfo.emailAddress
@@ -100,7 +101,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSetting.setOnClickListener{
-                //findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToSettingFragment())
+                findNavController().navigate(R.layout.fragment_settings)
             }
 
             btnTakeAttendance.setOnClickListener {
@@ -121,20 +122,19 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     try{
                         Log.i(TAG, "userInfo: ${userInfo.id}")
                         val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
+                        progressDialog!!.stop()
                         val bundle = Bundle()
                         Log.i(TAG, "messageData: $messageData")
-//                        bundle.putString("msgData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-//                        bundle.putString("userId",userInfo.id)
-                        progressDialog!!.stop()
+                        bundle.putString("attendanceData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
+                        bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
+                        bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
                         findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                     }
                     catch(ex:Exception)
                     {
+                        progressDialog!!.stop()
                         snackbar("Message not found!")
                         Log.e(TAG,"getMessage Error: $ex")
-                    }
-                    finally {
-                        progressDialog!!.stop()
                     }
                 }
 
@@ -289,7 +289,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         curLocation!!.longitude,
                         results
                     )
-                    val distanceInMeters = results[0]
+//                    val distanceInMeters = results[0]
 
 //                    if (distanceInMeters <= ALLOWED_RADIUS) {
 //                        findNavController().navigate(
@@ -356,7 +356,6 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 curLocation = p0
             }
 
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }

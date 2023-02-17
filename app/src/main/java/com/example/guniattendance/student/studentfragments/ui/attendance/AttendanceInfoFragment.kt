@@ -1,19 +1,30 @@
 package com.example.guniattendance.student.studentfragments.ui.attendance
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.ContentValues
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.apppin.AppPinFragmentArgs
+import com.example.guniattendance.authorization.authfragments.ui.splashscreen.SplashScreenFragmentDirections
 import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment
 import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragmentDirections
+import com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragmentDirections
+import com.example.guniattendance.utils.AccessMapLocation
+import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -25,18 +36,21 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     private lateinit var qRMsgData: String
     private lateinit var viewModel: AttendanceInfoViewModel
     lateinit var QRBtn: AppCompatButton
-
-    private var qrData:QRMessageData? = null
-    var userId = ""
+    var attendanceData:String?=null
+    private var qrData: QRMessageData? = null
+    var profileImage: String? = null
+    private lateinit var userInfo: JSONObject
+    private var progressDialog: CustomProgressDialog? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val  txt = arguments?.getString("qrData")
-        val  txt = requireArguments().getString("msgData")
-        userId = arguments?.getString("userId")!!
-        txt.let {
+        attendanceData = requireArguments().getString("attendanceData")
+        userInfo = JSONObject(requireArguments().getString("userInfo")!!)
+        profileImage=requireArguments().getString("profileImage")
+
+        attendanceData.let {
             if (it != "") {
                 qrData = QRMessageData.fromJsonObject(it!!)
-                Toast.makeText(requireContext(), it,Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -47,18 +61,57 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
 
         binding = FragmentAttendanceInfoBinding.bind(view)
 
+        if(progressDialog==null)
+        {
+            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+        }
         binding.apply {
             QRBtn.setOnClickListener{
                 it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_scannerFragment)
             }
             attendanceBtn.setOnClickListener {
-                val bundle = Bundle()
-//                bundle.putString("userId",userId)
-                it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
+                try{
+                    progressDialog!!.start("Checking Range....")
+                    val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
+                    progressDialog!!.stop()
+                    if(applicableLocation)
+                    {
+                        val bundle = Bundle()
+                        bundle.putString("profileImage",profileImage)
+                        bundle.putString("userInfo",userInfo.toString())
+                        bundle.putString("attendanceData",attendanceData)
+                        it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
+                    }
+                    else{
+                        val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+                            setTitle( "Location")
+                            setMessage( "Sorry, you can't mark your attendance because you're outside." )
+                            setCancelable( false )
+                            setPositiveButton( "Retry" ) { dialog, _ ->
+                                dialog.dismiss()
+                                attendanceBtn.performClick()
+                            }
+                            setNegativeButton( "Close" ) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            create()
+                        }
+                        alertDialog.show()
+                    }
+                }
+                catch (e:Exception)
+                {
+                    progressDialog!!.stop()
+                    snackbar("Error in fetch Location")
+                    Log.e(ContentValues.TAG,"Location Error: $e")
+                }
+
+
             }
-//            txtQRInfo.text = getQRText(qrData!!)
+            txtQRInfo.text = getQRText(qrData!!)
         }
     }
+    @SuppressLint("SimpleDateFormat")
     fun getQRText(data: QRMessageData):String{
         val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
         val simpleTimeFormat = SimpleDateFormat("hh:mm a")
