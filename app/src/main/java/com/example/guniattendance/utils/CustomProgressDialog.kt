@@ -27,15 +27,11 @@ class CustomProgressDialog(context: Context,val reqActivity:Activity) {
 
     fun start(title: String = "") {
         cpTitle.text = title
-        reqActivity.window.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
         dialog.show()
     }
 
     fun stop() {
-        reqActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
         dialog.dismiss()
     }
 
@@ -60,8 +56,22 @@ class CustomProgressDialog(context: Context,val reqActivity:Activity) {
 //        cpTitle.setTextColor(Color.WHITE)
 
         // Custom Dialog initialization
+
         dialog = CustomDialog(context)
         dialog.setContentView(view)
+        dialog.setCancelable(false)
+//        dialog.setOnShowListener {
+//            reqActivity.window.setFlags(
+//                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//            )
+//        }
+//        dialog.setOnCancelListener {
+//            reqActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+//        }
+//        dialog.setOnDismissListener {
+//            reqActivity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+//        }
     }
 
     private fun setColorFilter(drawable: Drawable, color: Int) {

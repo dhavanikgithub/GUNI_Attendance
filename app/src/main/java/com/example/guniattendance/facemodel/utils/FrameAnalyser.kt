@@ -1,32 +1,17 @@
-/*
- * Copyright 2021 Shubham Panchal
- * Licensed under the Apache License, Version 2.0 (the "License");
- * You may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.ml.quaterion.facenetdetection
+package com.example.guniattendance.facemodel.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.example.guniattendance.facemodel.FaceNetModel
+import com.example.guniattendance.facemodel.MaskDetectionModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.ml.quaterion.facenetdetection.model.FaceNetModel
-import com.ml.quaterion.facenetdetection.model.MaskDetectionModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,9 +20,9 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Analyser class to process frames and produce detections.
-class FrameAnalyser( private var context: Context ,
-                     private var boundingBoxOverlay: BoundingBoxOverlay ,
-                     private var model: FaceNetModel
+class FrameAnalyser(private var context: Context,
+                    private var boundingBoxOverlay: BoundingBoxOverlay,
+                    private var model: FaceNetModel
                      ) : ImageAnalysis.Analyzer {
 
     private val realTimeOpts = FaceDetectorOptions.Builder()

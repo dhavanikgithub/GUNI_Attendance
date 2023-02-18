@@ -1,11 +1,12 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.app.AlertDialog
 import android.content.ContentValues.TAG
 import android.content.SharedPreferences
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
@@ -13,9 +14,10 @@ import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
+import com.guni.uvpce.moodleapplibrary.model.MoodleBasicUrl
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
@@ -29,26 +31,22 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onCreate(savedInstanceState)
 
         binding = FragmentLauncherScreenBinding.inflate(layoutInflater)
+        if(progressDialog==null)
+        {
+            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+        }
         val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
         val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
         MainScope().launch {
             if(checkboxCheck){
-                showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
-//                val savedURLPref = requireActivity().getSharedPreferences("savedURL", 0)
+                //showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
+                progressDialog!!.start("Connection in progress...")
                 MoodleConfig.getModelRepo(requireContext())
                 val url = ModelRepository.getMoodleUrlObject(requireContext())
-
-//                val url = MoodleBasicUrl(savedURLPref.getString("id","")!!,savedURLPref.getString("url","")!!)
-//                if(url.id=="" || url.url=="")
-//                {
-//                    findNavController().navigate(
-//                        LauncherScreenFragmentDirections
-//                            .actionLauncherScreenFragmentToSettingFragment()
-//                    )
-//                }
-                showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
-                android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
-                    .setMessage(url.toString())
+                //showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
+                progressDialog!!.stop()
+                AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
+                    .setMessage(url.url)
                     .setPositiveButton("Continue"){ dialog, _ ->
                         dialog.dismiss()
                     }
@@ -79,10 +77,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             progressDialog = CustomProgressDialog(requireContext(), requireActivity())
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback{
-            requireActivity().finish()
-        }
-
         binding.apply {
 //            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
@@ -98,7 +92,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     val pattern = Regex("^[0-9]{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
-
                         progressDialog!!.start("Verifying Enrollment....")
                         MainScope().launch{
                             try {

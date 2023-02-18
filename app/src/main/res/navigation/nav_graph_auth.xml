@@ -37,6 +37,9 @@
         <action
             android:id="@+id/action_launcherScreenFragment_to_SettingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_launcherScreenFragment_self"
+            app:destination="@id/launcherScreenFragment" />
 
 
     </fragment>

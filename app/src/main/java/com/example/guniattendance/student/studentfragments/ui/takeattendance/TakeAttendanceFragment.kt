@@ -1,25 +1,14 @@
 package com.example.guniattendance.student.studentfragments.ui.takeattendance
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Base64
-import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -31,23 +20,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentTakeAttendanceBinding
-import com.example.guniattendance.utils.AccessMapLocation
+import com.example.guniattendance.facemodel.FaceNetModel
+import com.example.guniattendance.facemodel.Models
+import com.example.guniattendance.facemodel.utils.FileReader
+import com.example.guniattendance.facemodel.utils.FrameAnalyser
+import com.example.guniattendance.facemodel.utils.Logger
 import com.example.guniattendance.utils.ImageUtils
-import com.example.guniattendance.utils.snackbar
 import com.google.common.util.concurrent.ListenableFuture
-import com.ml.quaterion.facenetdetection.FileReader
-import com.ml.quaterion.facenetdetection.FrameAnalyser
-import com.ml.quaterion.facenetdetection.Logger
-import com.ml.quaterion.facenetdetection.model.FaceNetModel
-import com.ml.quaterion.facenetdetection.model.Models
-import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
-import com.jianastrero.capiche.doIHave
-import com.jianastrero.capiche.iNeed
-import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
-import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -136,7 +117,8 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider) },
-            ContextCompat.getMainExecutor(requireContext()) )
+            ContextCompat.getMainExecutor(requireContext())
+        )
     }
 
     private fun bindPreview(cameraProvider : ProcessCameraProvider) {

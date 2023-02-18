@@ -101,5 +101,6 @@
     <string name="activity_scan_barcode_from_file_change_image">Choose another image</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="setting_url_dialog_checkbox">Show URL Dialog Box everytime when app is launched?</string>
 
 </resources>
