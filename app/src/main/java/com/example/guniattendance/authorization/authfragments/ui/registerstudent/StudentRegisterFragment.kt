@@ -102,7 +102,6 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
                         Log.e(TAG, "onViewCreated: ${e.message}", )
-//                        BasicUtils.errorDialogBox()
                     }
                 }
             }
@@ -163,69 +162,8 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                 binding.ivImage.setImageResource(R.drawable.ic_round_person_24)
             } else {
                 curImageUri = it
-
             }
         }
-
-        viewModel.registerStatus.observe(viewLifecycleOwner, EventObserver(
-            onError = {
-//                showProgress(
-//                    activity = requireActivity(),
-//                    bool = false,
-//                    parentLayout = binding.parentLayout,
-//                    loading = binding.lottieAnimation
-//                )
-                progressDialog!!.stop()
-                when (it) {
-                    "emptyEmail" -> {
-                        binding.emailText.error = "Email cannot be empty"
-                    }
-                    "email" -> {
-                        binding.emailText.error = "Enter a valid email"
-                    }
-                    "name" -> {
-                        binding.nameText.error = "Name cannot be empty"
-                    }
-                    "uri" -> {
-                        snackbar("Capture your image!")
-                    }
-                    else -> snackbar(it)
-                }
-            },
-            onLoading = {
-//                showProgress(
-//                    activity = requireActivity(),
-//                    bool = true,
-//                    parentLayout = binding.parentLayout,
-//                    loading = binding.lottieAnimation
-//                )
-                progressDialog!!.start("Preparing....")
-            }
-        ) {
-//            binding.apply {
-//                emailText.setText("")
-//                nameText.setText("")
-//                autoCompleteTvSem.setText("")
-//                autoCompleteTvLab.setText("")
-//                autoCompleteTvLab.setText("")
-//                enrollmentText.setText("")
-//                phoneText.setText("")
-//                pinView.setText("")
-//            }
-
-//            showProgress(
-//                activity = requireActivity(),
-//                bool = false,
-//                parentLayout = binding.parentLayout,
-//                loading = binding.lottieAnimation
-//            )
-            progressDialog!!.stop()
-
-            findNavController().navigate(
-                StudentRegisterFragmentDirections
-                    .actionStudentRegisterFragmentToAppPinFragment("student")
-            )
-        })
     }
 
 }

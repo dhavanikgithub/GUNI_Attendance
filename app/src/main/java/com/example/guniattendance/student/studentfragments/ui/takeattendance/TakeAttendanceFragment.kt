@@ -1,25 +1,15 @@
 package com.example.guniattendance.student.studentfragments.ui.takeattendance
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.util.Base64
 import android.util.Log
 import android.util.Size
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -34,36 +24,31 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentTakeAttendanceBinding
-import com.example.guniattendance.utils.AccessMapLocation
-import com.example.guniattendance.utils.ImageUtils
-import com.example.guniattendance.utils.snackbar
+import com.example.guniattendance.facemodel.FaceNetModel
+import com.example.guniattendance.facemodel.Models
+import com.example.guniattendance.facemodel.utils.FileReader
+import com.example.guniattendance.facemodel.utils.FrameAnalyser
+import com.example.guniattendance.facemodel.utils.Logger
+import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.utils.*
 import com.google.common.util.concurrent.ListenableFuture
-import com.ml.quaterion.facenetdetection.FileReader
-import com.ml.quaterion.facenetdetection.FrameAnalyser
-import com.ml.quaterion.facenetdetection.Logger
-import com.ml.quaterion.facenetdetection.model.FaceNetModel
-import com.ml.quaterion.facenetdetection.model.Models
-import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
-import com.jianastrero.capiche.doIHave
-import com.jianastrero.capiche.iNeed
-import com.guni.uvpce.moodleapplibrary.util.BitmapUtils
-import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.io.ObjectOutputStream
+import java.util.*
 import java.util.concurrent.Executors
+import java.util.zip.Deflater
+import java.util.zip.DeflaterOutputStream
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private lateinit var binding: FragmentTakeAttendanceBinding
     private lateinit var viewModel: TakeAttendanceViewModel
-    private val SERIALIZED_DATA_FILENAME = "image_data"
     private lateinit var previewView : PreviewView
     private lateinit var frameAnalyser  : FrameAnalyser
     private lateinit var faceNetModel : FaceNetModel
@@ -75,10 +60,11 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
     var profileImage:Bitmap? = null
     private lateinit var userInfo:JSONObject
     var attendanceData:JSONObject?=null
+    val TAG = "TakeAttendanceFragment"
+
     companion object {
 
         lateinit var logTextView : TextView
-
         fun setMessage( message : String ) {
             logTextView.text = message
         }
@@ -98,6 +84,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         logTextView=binding.logTextview
         previewView=binding.previewView
         logTextView.movementMethod = ScrollingMovementMethod()
+
         // Necessary to keep the Overlay above the PreviewView so that the boxes are visible.
         val boundingBoxOverlay = binding.bboxOverlay
 
@@ -122,6 +109,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 //val myBitmap = BitmapFactory.decodeResource(getResources(), R.raw.myphoto)
                 images.add(Pair(userInfo.getString("lastname"), profileImage!!))
                 fileReader.run( images , fileReaderCallback )
+
                 Logger.log( "Detecting faces in ${images.size} images ..." )
             }
 
@@ -136,7 +124,9 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
             bindPreview(cameraProvider) },
-            ContextCompat.getMainExecutor(requireContext()) )
+            ContextCompat.getMainExecutor(requireContext())
+        )
+
     }
 
     private fun bindPreview(cameraProvider : ProcessCameraProvider) {
@@ -151,6 +141,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
             .build()
         imageFrameAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), frameAnalyser )
         cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview , imageFrameAnalysis  )
+
     }
 
     private fun requestCameraPermission() {
@@ -185,20 +176,53 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private val fileReaderCallback = object : FileReader.ProcessCallback {
         override fun onProcessCompleted(data: ArrayList<Pair<String, FloatArray>>, numImagesWithNoFaces: Int) {
-            frameAnalyser.faceList = data
-            saveSerializedImageData( data )
-            Logger.log( "Images parsed. Found $numImagesWithNoFaces images with no faces." )
+//            frameAnalyser.faceList = data
+//            Logger.log( "Images parsed. Found $numImagesWithNoFaces images with no faces." )
+            frameAnalyser.run(data, frameAnalyserCallback)
         }
     }
 
+    private val frameAnalyserCallback = object : FrameAnalyser.ResultCallback {
+        override fun onResultGot(name: String) {
+            Log.d("TAG_ATTENDANCE", "onResultGot: here")
+            requireActivity().runOnUiThread {
+                cameraProviderFuture.get().unbindAll()
+                Log.d("TAG_ATTENDANCE", "onResultGot: $name")
+                Log.i(TAG,"User Info: "+userInfo.toString(4))
+                Log.i(TAG,"Attendance Data: "+attendanceData!!.toString(4))
+                MainScope().launch {
+                    try{
+                        val moodleRepo = MoodleConfig.getModelRepo(requireContext())
 
-    private fun saveSerializedImageData(data : ArrayList<Pair<String,FloatArray>> ) {
-        val serializedDataFile = File( requireContext().filesDir , SERIALIZED_DATA_FILENAME )
-        ObjectOutputStream( FileOutputStream( serializedDataFile )  ).apply {
-            writeObject( data )
-            flush()
-            close()
+                        val res = moodleRepo.takePresentAttendance(compressString(attendanceData.toString()),userInfo.getString("userId"))
+                        if(res)
+                        {
+                            val bundle= Bundle()
+                            bundle.putString("userInfo",userInfo.toString())
+                            bundle.putString("attendanceData",attendanceData.toString())
+                            findNavController().navigate(R.id.successAttendanceFragment,bundle)
+                        }
+                        else{
+                            BasicUtils.errorDialogBox(requireContext(),"Attendance not taken","Your attendance is not marked, please try again!")
+                        }
+                    }
+                    catch (ex:Exception)
+                    {
+                        snackbar("${ex.message}")
+                        Log.e(TAG,"MarkAttendance Error: ${ex.message}")
+                    }
+                }
+
+            }
         }
     }
-
+    fun compressString(input: String): String {
+        val baos = ByteArrayOutputStream()
+        val deflater = Deflater(Deflater.BEST_COMPRESSION)
+        //deflater.level = Deflater.BEST_COMPRESSION
+        val dos = DeflaterOutputStream(baos, deflater)
+        dos.write(input.toByteArray())
+        dos.close()
+        return Base64.getEncoder().encodeToString(baos.toByteArray())
+    }
 }

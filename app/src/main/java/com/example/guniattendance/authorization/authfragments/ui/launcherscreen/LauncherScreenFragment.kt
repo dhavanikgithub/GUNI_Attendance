@@ -13,9 +13,11 @@ import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.*
+import com.guni.uvpce.moodleapplibrary.model.MoodleBasicUrl
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
@@ -29,37 +31,32 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onCreate(savedInstanceState)
 
         binding = FragmentLauncherScreenBinding.inflate(layoutInflater)
+        if(progressDialog==null)
+        {
+            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+        }
+
         val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
         val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
         MainScope().launch {
             if(checkboxCheck){
-                showProgress(requireActivity(), true, binding.parentLayout, binding.lottieAnimation)
-//                val savedURLPref = requireActivity().getSharedPreferences("savedURL", 0)
+                progressDialog!!.start("Please connection is establishing....")
                 MoodleConfig.getModelRepo(requireContext())
                 val url = ModelRepository.getMoodleUrlObject(requireContext())
-
-//                val url = MoodleBasicUrl(savedURLPref.getString("id","")!!,savedURLPref.getString("url","")!!)
-//                if(url.id=="" || url.url=="")
-//                {
-//                    findNavController().navigate(
-//                        LauncherScreenFragmentDirections
-//                            .actionLauncherScreenFragmentToSettingFragment()
-//                    )
-//                }
-                showProgress(requireActivity(), false, binding.parentLayout, binding.lottieAnimation)
+                progressDialog!!.stop()
                 android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
-                    .setMessage(url.toString())
-                    .setPositiveButton("Continue"){ dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("Change URL"){ dialog, _ ->
-                        findNavController().navigate(
-                            LauncherScreenFragmentDirections
-                                .actionLauncherScreenFragmentToSettingFragment()
-                        )
-                        dialog.dismiss()
-                    }
-                    .create().show()
+                        .setMessage(url.url)
+                        .setPositiveButton("Continue"){ dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .setNegativeButton("Change URL"){ dialog, _ ->
+                            findNavController().navigate(
+                                    LauncherScreenFragmentDirections
+                                            .actionLauncherScreenFragmentToSettingFragment()
+                            )
+                            dialog.dismiss()
+                        }
+                        .create().show()
             }
         }
     }
@@ -79,10 +76,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             progressDialog = CustomProgressDialog(requireContext(), requireActivity())
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback{
-            requireActivity().finish()
-        }
-
         binding.apply {
 //            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
@@ -98,7 +91,6 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                     val pattern = Regex("^[0-9]{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
-
                         progressDialog!!.start("Verifying Enrollment....")
                         MainScope().launch{
                             try {
@@ -119,12 +111,9 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             }
                             catch (ex: Exception)
                             {
+                                progressDialog!!.stop()
                                 snackbar("Invalid Enrollment Number " + ex.message)
                                 Log.e(TAG, "onViewCreated: Invalid Enrollment Number:$ex", ex)
-                            }
-                            finally
-                            {
-                                progressDialog!!.stop()
                             }
                         }
                     }

@@ -1,4 +1,4 @@
-package com.ml.quaterion.facenetdetection.model
+package com.example.guniattendance.facemodel
 
 class Models {
 

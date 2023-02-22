@@ -32,7 +32,6 @@ class AuthActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
                 R.id.splashScreenFragment,
-                R.id.appPinFragment,
                 R.id.launcherScreenFragment
             )
         ).build()

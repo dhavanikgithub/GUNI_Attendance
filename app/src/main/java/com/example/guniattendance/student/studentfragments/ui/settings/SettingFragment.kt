@@ -1,13 +1,13 @@
 package com.example.guniattendance.student.studentfragments.ui.settings
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentSettingsBinding
@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
-
+    private val TAG = "SettingFragment"
+    var selectedURL:String?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,11 +38,9 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
 
-        val savedURLPref = requireActivity().getSharedPreferences("savedURL", 0)
-        val savedURLEditor = savedURLPref.edit()
-
         val checkboxTogglePref = requireActivity().getSharedPreferences("buttonToggle", 0)
         val checkboxToggleEditor = checkboxTogglePref.edit()
+
 
         lateinit var urlList: List<MoodleBasicUrl>
 
@@ -70,56 +69,70 @@ class SettingFragment : Fragment() {
                         urlStringArrayList
                     )
                     adapter.setDropDownViewResource(R.layout.url_list_spinner_item)
-                    s1UrlList.adapter = adapter
+                    s1UrlList.setAdapter(adapter)
+                    s1UrlList.setText(urlStringArrayList[0],false)
 //                    val savedURL = ModelRepository.getStoredMoodleUrl(requireActivity()).url
 
-                    if (savedURLPref.contains("url")) {
-                        val setUrl = savedURLPref.getString("url", null)
+                    if (checkboxTogglePref.contains("url")) {
+                        val setUrl = checkboxTogglePref.getString("url", null)
                         if (setUrl != null) {
-                            s1UrlList.setSelection(adapter.getPosition(setUrl))
+                            s1UrlList.setText(setUrl,false)
                             showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                         }
                         showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                     }
                     showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                    selectedURL = s1UrlList.text.toString()
 
                 }
 
             }
+            s1UrlList.setOnItemClickListener { parent, view, position, id ->
+                selectedURL = parent.getItemAtPosition(position).toString()
+            }
             saveBtn.setOnClickListener {
-                showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
-                if(!toggleUrlDialog.isChecked){
-                    checkboxToggleEditor.putBoolean("buttonToggle", toggleUrlDialog.isChecked)
-                    checkboxToggleEditor.apply()
-                }else {
-                    checkboxToggleEditor.putBoolean("buttonToggle", toggleUrlDialog.isChecked)
-                    checkboxToggleEditor.apply()
-                }
-
-                if(s1UrlList.selectedItem != null)
-                {
-                    val selectedURL = s1UrlList.selectedItem.toString()
-                    for (i in urlList.indices)
-                    {
-                        if(urlList[i].url==selectedURL)
-                        {
-                            ModelRepository.setMoodleUrlSetting(requireContext(), urlList[i])
-                            savedURLEditor.putString("url", urlList[i].url)
-                            savedURLEditor.putString("id",urlList[i].id)
-                            savedURLEditor.apply()
-                            showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
-                            findNavController().navigate(
-                                SettingFragmentDirections.actionSettingFragmentToLauncherScreenFragment()
-                            )
-                            break
-                        }
+                MainScope().launch {
+                    showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
+                    if(!toggleUrlDialog.isChecked){
+                        checkboxToggleEditor.putBoolean("buttonToggle", toggleUrlDialog.isChecked)
+                        checkboxToggleEditor.apply()
+                    }else {
+                        checkboxToggleEditor.putBoolean("buttonToggle", toggleUrlDialog.isChecked)
+                        checkboxToggleEditor.apply()
                     }
 
+                    if(selectedURL != null)
+                    {
+                        for (i in urlList.indices)
+                        {
+                            if(urlList[i].url==selectedURL)
+                            {
+                                try
+                                {
+                                    ModelRepository.setMoodleUrlSetting(requireContext(), urlList[i])
+                                    checkboxToggleEditor.putString("url", urlList[i].url)
+                                    checkboxToggleEditor.apply()
+                                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                                    findNavController().navigate(
+                                        SettingFragmentDirections.actionSettingFragmentToLauncherScreenFragment()
+                                    )
+                                }
+                                catch (ex:Exception)
+                                {
+                                    Log.e(TAG,"$ex")
+                                    snackbar("Error in set url try again")
+                                }
+                                break
+                            }
+                        }
+
+                    }
+                    else{
+                        showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                        snackbar("URL not selected")
+                    }
                 }
-                else{
-                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
-                    snackbar("URL not selected")
-                }
+
             }
         }
     }

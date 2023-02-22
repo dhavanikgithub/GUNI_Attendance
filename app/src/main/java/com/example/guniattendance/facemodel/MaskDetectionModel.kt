@@ -1,4 +1,4 @@
-package com.ml.quaterion.facenetdetection.model
+package com.example.guniattendance.facemodel
 
 import android.content.Context
 import android.graphics.Bitmap

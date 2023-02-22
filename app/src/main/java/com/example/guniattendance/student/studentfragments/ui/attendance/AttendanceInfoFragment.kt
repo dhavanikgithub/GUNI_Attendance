@@ -3,35 +3,25 @@ package com.example.guniattendance.student.studentfragments.ui.attendance
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentValues
-import android.graphics.Bitmap
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.example.guniattendance.R
-import com.example.guniattendance.authorization.authfragments.ui.apppin.AppPinFragmentArgs
-import com.example.guniattendance.authorization.authfragments.ui.splashscreen.SplashScreenFragmentDirections
 import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
-import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment
-import com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragmentDirections
-import com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragmentDirections
 import com.example.guniattendance.utils.AccessMapLocation
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
-import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
+import com.guni.uvpce.moodleapplibrary.util.Utility
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 
 
 class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
-    private val args: AppPinFragmentArgs by navArgs()
     private lateinit var binding: FragmentAttendanceInfoBinding
     private lateinit var qRMsgData: String
     private lateinit var viewModel: AttendanceInfoViewModel
@@ -72,15 +62,36 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
             attendanceBtn.setOnClickListener {
                 try{
                     progressDialog!!.start("Checking Range....")
+                    Log.i("TAG","Dk3")
                     val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
+                    Log.i("TAG","Dk4")
                     progressDialog!!.stop()
                     if(applicableLocation)
                     {
-                        val bundle = Bundle()
-                        bundle.putString("profileImage",profileImage)
-                        bundle.putString("userInfo",userInfo.toString())
-                        bundle.putString("attendanceData",attendanceData)
-                        it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
+                        Log.i("TAG","Dk1")
+                        if(verifySession(qrData!!))
+                        {
+                            Log.i("TAG","Dk2")
+                            val bundle = Bundle()
+                            bundle.putString("profileImage",profileImage)
+                            bundle.putString("userInfo",userInfo.toString())
+                            bundle.putString("attendanceData",attendanceData)
+                            it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
+                        }
+                        else
+                        {
+                            val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+                                setTitle( "Session")
+                                setMessage( "Sorry, your attendance response time is over!" )
+                                setCancelable( false )
+                                setPositiveButton( "OK" ) { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                create()
+                            }
+                            alertDialog.show()
+                        }
+
                     }
                     else{
                         val alertDialog = AlertDialog.Builder( requireContext() ).apply {
@@ -124,6 +135,16 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                 " From:${simpleTimeFormat.format(data.attendanceStartDate*1000)}"+
                 " To:${simpleTimeFormat.format(data.attendanceEndDate*1000)}\n" +
                 "Duration: ${data.attendanceDuration}mins"
+    }
+
+    private fun verifySession(data:QRMessageData):Boolean{
+        val current = Utility().getCurrenMillis()/1000
+        if(data.sessionStartDate <= current  && data.sessionEndDate >= current){
+            if(data.attendanceStartDate <= current && data.attendanceEndDate >= current){
+                return true
+            }
+        }
+        return false
     }
 
 }
