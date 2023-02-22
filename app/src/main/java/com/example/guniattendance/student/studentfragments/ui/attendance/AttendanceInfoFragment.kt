@@ -62,16 +62,12 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
             attendanceBtn.setOnClickListener {
                 try{
                     progressDialog!!.start("Checking Range....")
-                    Log.i("TAG","Dk3")
                     val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
-                    Log.i("TAG","Dk4")
                     progressDialog!!.stop()
                     if(applicableLocation)
                     {
-                        Log.i("TAG","Dk1")
                         if(verifySession(qrData!!))
                         {
-                            Log.i("TAG","Dk2")
                             val bundle = Bundle()
                             bundle.putString("profileImage",profileImage)
                             bundle.putString("userInfo",userInfo.toString())

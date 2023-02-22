@@ -65,9 +65,9 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
     companion object {
 
         lateinit var logTextView : TextView
-        fun setMessage( message : String ) {
-            logTextView.text = message
-        }
+//        fun setMessage( message : String ) {
+//            logTextView.text = message
+//        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -106,11 +106,8 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         val images = ArrayList<Pair<String, Bitmap>>()
         try {
             MainScope().launch {
-                //val myBitmap = BitmapFactory.decodeResource(getResources(), R.raw.myphoto)
                 images.add(Pair(userInfo.getString("lastname"), profileImage!!))
                 fileReader.run( images , fileReaderCallback )
-
-                Logger.log( "Detecting faces in ${images.size} images ..." )
             }
 
         } catch (e: IOException) {
@@ -176,8 +173,6 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     private val fileReaderCallback = object : FileReader.ProcessCallback {
         override fun onProcessCompleted(data: ArrayList<Pair<String, FloatArray>>, numImagesWithNoFaces: Int) {
-//            frameAnalyser.faceList = data
-//            Logger.log( "Images parsed. Found $numImagesWithNoFaces images with no faces." )
             frameAnalyser.run(data, frameAnalyserCallback)
         }
     }
