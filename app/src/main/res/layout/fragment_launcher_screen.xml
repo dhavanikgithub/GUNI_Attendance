@@ -15,34 +15,35 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/loading_animation" />
 
+
     <LinearLayout
         android:id="@+id/progressLayout"
         android:visibility="gone"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
+        app:layout_constraintRight_toRightOf="parent"
+        >
         <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
             android:id="@+id/progressBar"
-            android:layout_width="35dp"
-            android:layout_height="25dp"
-            android:layout_marginHorizontal="15dp"
-            android:max="100"
-            android:progress="1" />
-
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="20dp"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:indeterminate="false"
+            android:progress="1"
+            android:max="100"/>
         <TextView
             android:layout_gravity="center_horizontal"
             android:id="@+id/progress_text"
             android:layout_width="wrap_content"
-            android:layout_marginHorizontal="5dp"
-            android:textSize="16sp"
-            android:text="Verifying the enrollment number..."
+            android:text="Text"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/parent_layout"
@@ -79,6 +80,7 @@
             android:inputType="number"
             android:maxLength="11" />
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_check_enrol"

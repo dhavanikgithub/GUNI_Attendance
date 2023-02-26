@@ -11,7 +11,10 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
+import java.io.RandomAccessFile
 import java.nio.ByteBuffer
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 
 // Mask Detection model
 // Source -> https://github.com/achen353/Face-Mask-Detector
@@ -48,7 +51,11 @@ class MaskDetectionModel( context: Context ) {
             }
             setUseXNNPACK(true)
         }
-        interpreter = Interpreter(FileUtil.loadMappedFile( context, modelName ) , interpreterOptions )
+//        interpreter = Interpreter(FileUtil.loadMappedFile( context, modelName ) , interpreterOptions )
+        val randomAccessFile = RandomAccessFile("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/mask_detector.tflite", "r")
+        val mappedByteBuffer: MappedByteBuffer = randomAccessFile.getChannel()
+            .map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length())
+        interpreter = Interpreter(mappedByteBuffer , interpreterOptions )
     }
 
 

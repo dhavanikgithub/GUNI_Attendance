@@ -15,7 +15,12 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import org.tensorflow.lite.support.tensorbuffer.TensorBufferFloat
+import java.io.File
+import java.io.RandomAccessFile
 import java.nio.ByteBuffer
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
+import java.nio.file.Paths
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -55,7 +60,11 @@ class FaceNetModel( context : Context ,
             setUseXNNPACK( useXNNPack )
             useNNAPI = true
         }
-        interpreter = Interpreter(FileUtil.loadMappedFile(context, model.assetsFilename ) , interpreterOptions )
+//        interpreter = Interpreter(FileUtil.loadMappedFile(context, model.assetsFilename ) , interpreterOptions )
+        val randomAccessFile = RandomAccessFile("/storage/emulated/0/Android/data/com.example.guniattendance/files/Download/facenet.tflite", "r")
+        val mappedByteBuffer: MappedByteBuffer = randomAccessFile.getChannel()
+            .map(FileChannel.MapMode.READ_ONLY, 0, randomAccessFile.length())
+        interpreter = Interpreter(mappedByteBuffer , interpreterOptions )
         Logger.log("Using ${model.name} model.")
     }
 
