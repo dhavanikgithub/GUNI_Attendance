@@ -134,6 +134,7 @@ class DownloadModel(val activity: Activity,
         val request = DownloadManager.Request(uri)
         request.setTitle(fileName) // Title of the Download Notification
         request.setDescription("Downloading")
+        request.setAllowedOverMetered(true)
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
         request.setDestinationInExternalFilesDir(
             context,
