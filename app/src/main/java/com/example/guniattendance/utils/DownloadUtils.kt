@@ -3,31 +3,28 @@ package com.example.guniattendance.utils
 import android.app.Activity
 import android.content.Context
 import android.view.View
-import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.downloader.*
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 
 class DownloadUtils(
-    val downloadingContentText:TextView,
-    val parentLayout:View,
-    val progressLayout:View,
-    val progressBar:ProgressBar,
-    val progressBarText:TextView,
+    private val downloadingContentText:TextView,
+    private val parentLayout:View,
+    private val progressLayout:View,
+    private val progressBar:ProgressBar,
+    private val progressBarText:TextView,
     val requireActivity:Activity,
-    val lifecycleScope:LifecycleCoroutineScope,
     val requireParentFragment:Fragment,
-    val downloading_content_statistic_text:TextView,
-    val requireContext:Context
+    private val downloading_content_statistic_text:TextView,
+    private val requireContext:Context,
+    val btnDownloadPause: AppCompatButton
     ) {
     private val file1Name="mask_detector.tflite"
     private val file2Name="facenet.tflite"
@@ -38,9 +35,37 @@ class DownloadUtils(
     private val file2DownloadUrl = "https://drive.google.com/uc?export=download&id=1HLuEmdLWRvJRbLHd59BWwLcSjBewUKWx"
     private val file1DownloadUrl = "https://drive.google.com/uc?export=download&id=1go10n_-KPU-tqEuEEPtT7FAyv0TgCYEr"
 
-    private var downloadId=-1
-    suspend fun start()
+    companion object{
+        var downloadId=-1
+    }
+    init {
+        btnDownloadPause.setOnClickListener {
+            when (btnDownloadPause.text) {
+                "Pause" -> {
+                    PRDownloader.pause(downloadId)
+                    btnDownloadPause.text="Resume"
+                    downloadingContentText.text = downloadingContentText.text.toString().replace("is downloading...","download paused")
+                }
+                "Resume" -> {
+                    PRDownloader.resume(downloadId)
+                    btnDownloadPause.text="Pause"
+                    downloadingContentText.text = downloadingContentText.text.toString().replace("download paused","is downloading...")
+                }
+                else -> {
+                    btnDownloadPause.text="Pause"
+                    checkDownload()
+                }
+            }
+        }
+    }
+    fun start()
     {
+        val config = PRDownloaderConfig.newBuilder()
+            .setDatabaseEnabled(true)
+            .setReadTimeout(30000)
+            .setConnectTimeout(30000)
+            .build()
+        PRDownloader.initialize(requireContext, config)
         if(!file1.exists())
         {
             RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
@@ -59,11 +84,7 @@ class DownloadUtils(
             RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else{
-            Snackbar.make(
-                requireParentFragment.requireView(),
-                "Assets Found",
-                Snackbar.LENGTH_LONG
-            ).show()
+            parentLayout.visibility=View.VISIBLE
         }
     }
     fun Long.formatBinarySize(): String {
@@ -101,44 +122,40 @@ class DownloadUtils(
             else -> "Bigger than 1024 TB"
         }
     }
-    private suspend fun RequireDownloadContent(contentURL:String, contentName:String, contentSavePath:String)
+    private fun RequireDownloadContent(contentURL:String, contentName:String, contentSavePath:String)
     {
         if(contentName==file1Name)
         {
-            downloadingContentText.text="Content 1 Downloading...."
+            downloadingContentText.text="Content 1 is downloading..."
         }
         else{
-            downloadingContentText.text="Content 2 Downloading...."
+            downloadingContentText.text="Content 2 is downloading..."
         }
         parentLayout.alpha=0.2f
-        requireActivity.window!!.setFlags(
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        )
+//        requireActivity.window!!.setFlags(
+//            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+//        )
         progressLayout.visibility= View.VISIBLE
         progressBar.progress=0
         progressBarText.text="0%"
         downloading_content_statistic_text.text="0/0"
-        val config = PRDownloaderConfig.newBuilder()
-            .setDatabaseEnabled(true)
-            .setReadTimeout(30000)
-            .setConnectTimeout(30000)
-            .build()
-        PRDownloader.initialize(requireContext, config)
+
+        parentLayout.visibility=View.GONE
         downloadId = PRDownloader.download(contentURL, contentSavePath, contentName)
             .build()
             .setOnStartOrResumeListener {
 
             }
             .setOnPauseListener {
-                MainScope().launch {
-                    checkDownload()
+                if(btnDownloadPause.text=="Pause")
+                {
+                    btnDownloadPause.text="Resume"
                 }
             }
             .setOnCancelListener {
-                MainScope().launch {
-                    checkDownload()
-                }
+                downloadingContentText.text="Downloading was canceled; please try again."
+                btnDownloadPause.text="Retry"
             }
             .setOnProgressListener { progress: Progress? ->
                 val persentage = progress!!.currentBytes*100/progress.totalBytes
@@ -147,7 +164,6 @@ class DownloadUtils(
                 downloading_content_statistic_text.text= "${downloadedSize}/${totalSize}"
                 progressBar.progress=persentage.toInt()
                 progressBarText.text= "$persentage%"
-
             }
             .start(object : OnDownloadListener {
                 override fun onDownloadComplete() {
@@ -171,21 +187,19 @@ class DownloadUtils(
                     }
                 }
                 override fun onError(error: Error) {
-                    MainScope().launch {
-                        checkDownload()
-                    }
+                    downloadingContentText.text="Downloading has an error"
+                    btnDownloadPause.text="Retry"
                 }
             })
-
     }
-    suspend fun checkDownload()
+
+    fun checkDownload()
     {
         if(!file1.exists())
         {
             RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(file1.length().toInt()!=4790720){
-            file1.delete()
             RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(!file2.exists())
@@ -194,17 +208,14 @@ class DownloadUtils(
         }
         else if(file2.length().toInt()!=23705216)
         {
-            file2.delete()
             RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else
         {
-            withContext(Dispatchers.Main)
-            {
                 progressLayout.visibility= View.GONE
                 parentLayout.alpha = 1f
-                requireActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
+                parentLayout.visibility=View.VISIBLE
+//                requireActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         }
     }
 }

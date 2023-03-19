@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
@@ -64,26 +63,24 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
 
-        val downloadUtils = DownloadUtils(
-            binding.downloadingContentText,
-            binding.parentLayout,
-            binding.progressLayout,
-            binding.progressBar,
-            binding.progressBarText,
-            requireActivity(),
-            lifecycleScope,
-            requireParentFragment(),
-            binding.downloadingContentStatisticText,
-            requireContext()
-        )
-        MainScope().launch {
-            downloadUtils.start()
-        }
-
-
 
         binding.apply {
 //            DownloadModel.getDownloadObject(requireActivity(),binding.progressLayout,binding.progressText,binding.progressBar,binding.parentLayout).startModelFile1Download()
+
+            val downloadUtils = DownloadUtils(
+                downloadingContentText,
+                parentLayout,
+                progressLayout,
+                progressBar,
+                progressBarText,
+                requireActivity(),
+                requireParentFragment(),
+                downloadingContentStatisticText,
+                requireContext(),
+                btnDownloadPause
+            )
+            downloadUtils.start()
+
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
                 if(et1Enrollment.text.toString().isEmpty())

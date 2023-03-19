@@ -76,12 +76,12 @@ class AccessMapLocation(val requireActivity:Activity) {
         }
         return try {
             locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
+                LocationManager.GPS_PROVIDER,
                 0L,
                 0f,
                 locationListener
             )
-            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         } catch (e: Exception) {
             Log.d("TAG_ERROR", "getLocation: ${e.message}")
             null

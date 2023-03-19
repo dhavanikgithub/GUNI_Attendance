@@ -67,6 +67,23 @@
             app:layout_constraintStart_toStartOf="@id/downloading_content_statistic_text"
             app:layout_constraintTop_toBottomOf="@id/downloading_content_statistic_text"
             android:layout_marginTop="20dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_download_pause"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_background"
+            android:letterSpacing="0.15"
+            android:padding="@dimen/_5sdp"
+            android:text="Pause"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="@+id/downloading_content_text"
+            app:layout_constraintStart_toStartOf="@+id/downloading_content_text"
+            app:layout_constraintTop_toBottomOf="@+id/downloading_content_text"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 <androidx.constraintlayout.widget.ConstraintLayout

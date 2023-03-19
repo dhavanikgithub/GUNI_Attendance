@@ -99,20 +99,12 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                             val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
                             progressDialog!!.stop()
                             fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
-                            if(verifySession(fullMessage!!))
-                            {
-                                val bundle = Bundle()
-                                Log.i(TAG, "messageData: $messageData")
-                                bundle.putString("attendanceData", fullMessage.toString())
-                                bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
-                                bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
-                                findNavController().navigate(R.id.attendanceInfoFragment,bundle)
-                            }
-                            else
-                            {
-                                snackbar("Attendance not longer responsible!")
-                            }
-
+                            val bundle = Bundle()
+                            Log.i(TAG, "messageData: $messageData")
+                            bundle.putString("attendanceData", fullMessage.toString())
+                            bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
+                            bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
+                            findNavController().navigate(R.id.attendanceInfoFragment,bundle)
                         }
                         catch(ex:Exception)
                         {
@@ -136,14 +128,5 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 }
             }
         }
-    }
-    private fun verifySession(data:QRMessageData):Boolean{
-        val current = Utility().getCurrenMillis()/1000
-        if(data.sessionStartDate <= current  && data.sessionEndDate >= current){
-            if(data.attendanceStartDate <= current && data.attendanceEndDate >= current){
-                return true
-            }
-        }
-        return false
     }
 }
