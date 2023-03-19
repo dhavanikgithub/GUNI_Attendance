@@ -1,29 +1,27 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
-import android.content.ContentValues.TAG
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
-import com.example.guniattendance.authorization.DownloadModel
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
-import com.example.guniattendance.utils.*
-import com.guni.uvpce.moodleapplibrary.model.MoodleBasicUrl
+import com.example.guniattendance.utils.CustomProgressDialog
+import com.example.guniattendance.utils.DownloadUtils
+import com.example.guniattendance.utils.hideKeyboard
+import com.example.guniattendance.utils.snackbar
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
     private var progressDialog: CustomProgressDialog? = null
-
+    private val TAG = "LauncherScreenFragment"
     companion object{
         lateinit var studentEnrolment: String
     }
@@ -41,7 +39,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
         MainScope().launch {
             if(checkboxCheck){
-                progressDialog!!.start("Please connection is establishing....")
+                progressDialog!!.start("Please wait connection is establishing....")
                 MoodleConfig.getModelRepo(requireContext())
                 val url = ModelRepository.getMoodleUrlObject(requireContext())
                 progressDialog!!.stop()
@@ -62,26 +60,32 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         }
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        if(!PermissionsUtils.checkPermission(requireContext()))
-        {
-            PermissionsUtils.requestPermission(requireActivity())
-        }
-        super.onViewStateRestored(savedInstanceState)
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
-        if(progressDialog==null)
-        {
-            progressDialog = CustomProgressDialog(requireContext(), requireActivity())
+
+        val downloadUtils = DownloadUtils(
+            binding.downloadingContentText,
+            binding.parentLayout,
+            binding.progressLayout,
+            binding.progressBar,
+            binding.progressBarText,
+            requireActivity(),
+            lifecycleScope,
+            requireParentFragment(),
+            binding.downloadingContentStatisticText,
+            requireContext()
+        )
+        MainScope().launch {
+            downloadUtils.start()
         }
 
+
+
         binding.apply {
-            DownloadModel.getDownloadObject(requireActivity(),progressLayout,progressText,progressBar,parentLayout).startModelFile1Download()
+//            DownloadModel.getDownloadObject(requireActivity(),binding.progressLayout,binding.progressText,binding.progressBar,binding.parentLayout).startModelFile1Download()
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
-
                 if(et1Enrollment.text.toString().isEmpty())
                 {
                    snackbar("Enrollment number is empty!")
@@ -131,30 +135,15 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             }
         }
     }
-
-    override fun onDestroy()
-    {
-        DownloadModel.destroyObject()
-        super.onDestroy()
-    }
-
-    override fun onDestroyView()
-    {
-        DownloadModel.destroyObject()
-        super.onDestroyView()
-    }
-
-
-
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        PermissionsUtils.onRequestPermissionResult(requireContext(), requireActivity(), grantResults)
-    }
-
+//    override fun onDestroy()
+//    {
+//        DownloadModel.destroyObject()
+//        super.onDestroy()
+//    }
+//
+//    override fun onDestroyView()
+//    {
+//        DownloadModel.destroyObject()
+//        super.onDestroyView()
+//    }
 }

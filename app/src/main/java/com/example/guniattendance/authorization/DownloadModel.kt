@@ -13,8 +13,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.example.guniattendance.utils.showProgress
-import com.google.firestore.v1.Cursor
-import com.google.firestore.v1.CursorOrBuilder
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -140,6 +138,7 @@ class DownloadModel(val activity: Activity,
             Environment.DIRECTORY_DOWNLOADS,
             fileName
         )
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
         val downloadId = downloadManager.enqueue(request)
         executor.execute {
             var progress = 0

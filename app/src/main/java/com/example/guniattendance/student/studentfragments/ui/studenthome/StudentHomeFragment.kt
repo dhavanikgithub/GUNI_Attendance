@@ -1,6 +1,7 @@
 package com.example.guniattendance.student.studentfragments.ui.studenthome
 
 
+import android.content.IntentSender
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +16,16 @@ import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.ImageUtils
 import com.example.guniattendance.utils.snackbar
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.tasks.Task
 import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
+import com.guni.uvpce.moodleapplibrary.util.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -33,6 +41,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private var progressDialog: CustomProgressDialog? = null
     val TAG = "StudentHomeFragment"
     var profileImage: Bitmap? = null
+    private var fullMessage: QRMessageData? =null
 
     private lateinit var repo: ModelRepository
 
@@ -67,34 +76,74 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSetting.setOnClickListener{
-                findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToSettingFragment())
+                findNavController().navigate(R.id.settingFragment)
             }
 
             btnTakeAttendance.setOnClickListener {
-                progressDialog!!.start("Preparing for attendance...")
-                MainScope().launch {
-                    try{
-                        Log.i(TAG, "userInfo: ${userInfo.id}")
-                        val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
-                        progressDialog!!.stop()
-                        val bundle = Bundle()
-                        Log.i(TAG, "messageData: $messageData")
-                        bundle.putString("attendanceData", QRMessageData.getQRMessageObject(messageData.fullMessage).toString())
-                        bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
-                        bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
-                        findNavController().navigate(R.id.attendanceInfoFragment,bundle)
-                    }
-                    catch(ex:Exception)
-                    {
-                        progressDialog!!.stop()
-                        snackbar("Attendance not longer responsible!")
-                        Log.e(TAG,"getMessage Error: $ex")
+
+                val locationRequest: LocationRequest = LocationRequest.create()
+                locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                locationRequest.interval = 10000
+                locationRequest.fastestInterval = 10000 / 2
+                val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
+                locationSettingsRequestBuilder.addLocationRequest(locationRequest)
+                locationSettingsRequestBuilder.setAlwaysShow(true)
+                val settingsClient = LocationServices.getSettingsClient(requireContext())
+                val task: Task<LocationSettingsResponse> =
+                    settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
+                task.addOnSuccessListener {
+                    progressDialog!!.start("Preparing for attendance...")
+                    MainScope().launch {
+                        try{
+                            Log.i(TAG, "userInfo: ${userInfo.id}")
+                            val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
+                            progressDialog!!.stop()
+                            fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
+                            if(verifySession(fullMessage!!))
+                            {
+                                val bundle = Bundle()
+                                Log.i(TAG, "messageData: $messageData")
+                                bundle.putString("attendanceData", fullMessage.toString())
+                                bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
+                                bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
+                                findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+                            }
+                            else
+                            {
+                                snackbar("Attendance not longer responsible!")
+                            }
+
+                        }
+                        catch(ex:Exception)
+                        {
+                            progressDialog!!.stop()
+                            snackbar("Attendance not longer responsible!")
+                            Log.e(TAG,"getMessage Error: $ex")
+                        }
                     }
                 }
-
+                task.addOnFailureListener(requireActivity()) { e ->
+                    if (e is ResolvableApiException) {
+                        try {
+                            e.startResolutionForResult(
+                                requireActivity(),
+                                0x1
+                            )
+                        } catch (sendIntentException: IntentSender.SendIntentException) {
+                            sendIntentException.printStackTrace()
+                        }
+                    }
+                }
             }
         }
     }
-
-
+    private fun verifySession(data:QRMessageData):Boolean{
+        val current = Utility().getCurrenMillis()/1000
+        if(data.sessionStartDate <= current  && data.sessionEndDate >= current){
+            if(data.attendanceStartDate <= current && data.attendanceEndDate >= current){
+                return true
+            }
+        }
+        return false
+    }
 }

@@ -16,6 +16,6 @@
     <fragment
         android:id="@+id/scannerFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"
-        android:label="fragment_scanner"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_scanner" />
 </navigation>

@@ -3,6 +3,7 @@ package com.example.guniattendance.student.studentfragments.ui.attendance
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.ContentValues
+import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,11 +11,18 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
 import com.example.guniattendance.utils.AccessMapLocation
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.tasks.Task
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import com.guni.uvpce.moodleapplibrary.util.Utility
 import org.json.JSONObject
@@ -31,6 +39,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     var profileImage: String? = null
     private lateinit var userInfo: JSONObject
     private var progressDialog: CustomProgressDialog? = null
+    private val TAG = "AttendanceInfoFragment"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        val  txt = arguments?.getString("qrData")
@@ -61,50 +70,83 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
             }
             attendanceBtn.setOnClickListener {
                 try{
-                    progressDialog!!.start("Checking Range....")
-                    val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
-                    progressDialog!!.stop()
-                    if(applicableLocation)
-                    {
-                        if(verifySession(qrData!!))
-                        {
-                            val bundle = Bundle()
-                            bundle.putString("profileImage",profileImage)
-                            bundle.putString("userInfo",userInfo.toString())
-                            bundle.putString("attendanceData",attendanceData)
-                            it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
-                        }
-                        else
-                        {
-                            val alertDialog = AlertDialog.Builder( requireContext() ).apply {
-                                setTitle( "Session")
-                                setMessage( "Sorry, your attendance response time is over!" )
-                                setCancelable( false )
-                                setPositiveButton( "OK" ) { dialog, _ ->
-                                    dialog.dismiss()
+                    val locationRequest: LocationRequest = LocationRequest.create()
+                    locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                    locationRequest.interval = 10000
+                    locationRequest.fastestInterval = 10000 / 2
+                    val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
+                    locationSettingsRequestBuilder.addLocationRequest(locationRequest)
+                    locationSettingsRequestBuilder.setAlwaysShow(true)
+                    val settingsClient = LocationServices.getSettingsClient(requireContext())
+                    val task: Task<LocationSettingsResponse> =
+                        settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
+                    task.addOnSuccessListener {
+                        progressDialog!!.start("Checking Range....")
+                        try{
+                            val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
+                            progressDialog!!.stop()
+                            if(applicableLocation)
+                            {
+                                if(verifySession(qrData!!))
+                                {
+                                    val bundle = Bundle()
+                                    bundle.putString("profileImage",profileImage)
+                                    bundle.putString("userInfo",userInfo.toString())
+                                    bundle.putString("attendanceData",attendanceData)
+                                    findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
                                 }
-                                create()
+                                else
+                                {
+                                    val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+                                        setTitle( "Session")
+                                        setMessage( "Sorry, your attendance response time is over!" )
+                                        setCancelable( false )
+                                        setPositiveButton( "OK" ) { dialog, _ ->
+                                            dialog.dismiss()
+                                        }
+                                        create()
+                                    }
+                                    alertDialog.show()
+                                }
+
                             }
-                            alertDialog.show()
+                            else{
+                                val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+                                    setTitle( "Location")
+                                    setMessage( "Sorry, you can't mark your attendance because you're outside." )
+                                    setCancelable( false )
+                                    setPositiveButton( "Retry" ) { dialog, _ ->
+                                        dialog.dismiss()
+                                        attendanceBtn.performClick()
+                                    }
+                                    setNegativeButton( "Close" ) { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    create()
+                                }
+                                alertDialog.show()
+                            }
+                        }
+                        catch (ex:Exception)
+                        {
+                            snackbar("${ex.message}")
+                            Log.e(TAG,ex.message.toString())
                         }
 
                     }
-                    else{
-                        val alertDialog = AlertDialog.Builder( requireContext() ).apply {
-                            setTitle( "Location")
-                            setMessage( "Sorry, you can't mark your attendance because you're outside." )
-                            setCancelable( false )
-                            setPositiveButton( "Retry" ) { dialog, _ ->
-                                dialog.dismiss()
-                                attendanceBtn.performClick()
+                    task.addOnFailureListener(requireActivity()) { e ->
+                        if (e is ResolvableApiException) {
+                            try {
+                                e.startResolutionForResult(
+                                    requireActivity(),
+                                    0x1
+                                )
+                            } catch (sendIntentException: IntentSender.SendIntentException) {
+                                sendIntentException.printStackTrace()
                             }
-                            setNegativeButton( "Close" ) { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            create()
                         }
-                        alertDialog.show()
                     }
+
                 }
                 catch (e:Exception)
                 {
@@ -112,8 +154,6 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                     snackbar("Error in fetch Location")
                     Log.e(ContentValues.TAG,"Location Error: $e")
                 }
-
-
             }
             txtQRInfo.text = getQRText(qrData!!)
         }

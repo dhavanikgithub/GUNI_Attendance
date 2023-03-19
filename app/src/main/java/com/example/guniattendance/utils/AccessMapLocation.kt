@@ -40,7 +40,7 @@ class AccessMapLocation(val requireActivity:Activity) {
             )
             val distanceInMeters = results[0]
 
-            return distanceInMeters <= 25
+            return distanceInMeters <= 40
 
         } else {
             curLocation = getLocation()

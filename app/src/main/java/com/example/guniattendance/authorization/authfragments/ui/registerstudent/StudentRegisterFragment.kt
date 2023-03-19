@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
@@ -96,12 +97,12 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                         try{
                             findNavController().navigate(StudentRegisterFragmentDirections.actionStudentRegisterFragmentToStudentHomeFragment())
                         } catch (e: Exception){
-                            Log.e(TAG, "StudentRegisterFragment: ${e.message}", )
+                            Log.e(TAG, "StudentRegisterFragment: ${e.message}")
                         }
 
                     } catch (e: Exception){
                         snackbar("Unknown Error, Contact Administrator!")
-                        Log.e(TAG, "onViewCreated: ${e.message}", )
+                        Log.e(TAG, "onViewCreated: ${e.message}")
                     }
                 }
             }
@@ -135,7 +136,10 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
             curImageUri = result.uriContent!!
+            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, curImageUri)
+            binding.ivImage.setImageBitmap(bitmap)
             viewModel.setCurrentImageUri(curImageUri)
+
         } else {
             val exception = result.error
             snackbar(exception.toString())
