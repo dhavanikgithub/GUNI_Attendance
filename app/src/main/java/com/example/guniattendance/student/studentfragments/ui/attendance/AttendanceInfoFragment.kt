@@ -10,7 +10,6 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentAttendanceInfoBinding
@@ -55,19 +54,29 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[AttendanceInfoViewModel::class.java]
 
         binding = FragmentAttendanceInfoBinding.bind(view)
+
+        /*val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                findNavController().navigate(AttendanceInfoFragmentDirections.actionAttendanceInfoFragmentToStudentHomeFragment())
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(callback)*/
 
         if(progressDialog==null)
         {
             progressDialog= CustomProgressDialog(requireContext(),requireActivity())
         }
         binding.apply {
-            QRBtn.setOnClickListener{
-                it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_scannerFragment)
-            }
+//            QRBtn.setOnClickListener{
+//                it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_scannerFragment)
+//            }
             attendanceBtn.setOnClickListener {
                 try{
                     val locationRequest: LocationRequest = LocationRequest.create()
@@ -83,7 +92,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                     task.addOnSuccessListener {
                         progressDialog!!.start("Checking Range....")
                         try{
-                            val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble())
+                            val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),qrData!!.locationRange)
                             progressDialog!!.stop()
                             if(applicableLocation)
                             {
@@ -129,9 +138,11 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                         }
                         catch (ex:Exception)
                         {
+                            progressDialog!!.stop()
                             snackbar("${ex.message}")
                             Log.e(TAG,ex.message.toString())
                         }
+                        progressDialog!!.stop()
 
                     }
                     task.addOnFailureListener(requireActivity()) { e ->

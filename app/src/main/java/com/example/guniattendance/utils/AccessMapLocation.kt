@@ -10,17 +10,22 @@ import android.location.LocationManager
 import android.util.Log
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AccessMapLocation(val requireActivity:Activity) {
     private var curLocation: Location? = null
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
-    fun markAttendance(Latitude:Double,Longitude:Double):Boolean
+    fun markAttendance(Latitude:Double,Longitude:Double,Range:Long):Boolean
     {
         requireActivity.doIHave(
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,
             onGranted = {
                 curLocation = getLocation()
+
             },
             onDenied = {
                 requestPermission()
@@ -40,7 +45,7 @@ class AccessMapLocation(val requireActivity:Activity) {
             )
             val distanceInMeters = results[0]
 
-            return distanceInMeters <= 40
+            return distanceInMeters <= Range.toFloat()
 
         } else {
             curLocation = getLocation()
@@ -74,18 +79,18 @@ class AccessMapLocation(val requireActivity:Activity) {
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }
-        return try {
+        try {
             locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0L,
-                0f,
+                LocationManager.NETWORK_PROVIDER,
+                1L,
+                0f  ,
                 locationListener
             )
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            val loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            return loc
         } catch (e: Exception) {
             Log.d("TAG_ERROR", "getLocation: ${e.message}")
-            null
+            return null
         }
-
     }
 }

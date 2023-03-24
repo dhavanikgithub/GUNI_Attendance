@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
@@ -63,6 +64,14 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
 
+//        val callback = object :OnBackPressedCallback(true)
+//        {
+//            override fun handleOnBackPressed() {
+//                requireActivity().finish()
+//            }
+//        }
+//
+//        requireActivity().onBackPressedDispatcher.addCallback(callback)
 
         binding.apply {
 //            DownloadModel.getDownloadObject(requireActivity(),binding.progressLayout,binding.progressText,binding.progressBar,binding.parentLayout).startModelFile1Download()
@@ -97,7 +106,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                         MainScope().launch{
                             try {
                                 Log.i(TAG, "onViewCreated: $studentEnrolment")
-                                val result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(requireContext(), studentEnrolment)
+                                val result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(studentEnrolment)
                                 progressDialog!!.stop()
                                 if (result.hasUserUploadImg)
                                 {

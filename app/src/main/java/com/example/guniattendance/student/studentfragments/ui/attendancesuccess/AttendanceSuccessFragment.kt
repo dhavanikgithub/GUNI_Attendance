@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.guniattendance.R
@@ -27,6 +28,7 @@ class AttendanceSuccessFragment : Fragment(R.layout.fragment_attendance_success)
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[AttendanceSuccessViewModel::class.java]
 

@@ -188,7 +188,7 @@ class DownloadUtils(
                 }
                 override fun onError(error: Error) {
                     downloadingContentText.text="Downloading has an error"
-                    btnDownloadPause.text="Retry"
+                        btnDownloadPause.text="Retry"
                 }
             })
     }

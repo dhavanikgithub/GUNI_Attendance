@@ -26,6 +26,9 @@
         <action
             android:id="@+id/action_studentRegisterFragment_to_studentHomeFragment"
             app:destination="@id/studentHomeFragment" />
+        <action
+            android:id="@+id/action_studentRegisterFragment_to_launcherScreenFragment"
+            app:destination="@id/launcherScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"
@@ -42,23 +45,11 @@
         android:id="@+id/scannerFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_scanner" >
-        <action
-            android:id="@+id/action_scannerFragment_to_attendanceInfoFragment"
-            app:destination="@id/attendanceInfoFragment">
-            <argument
-                android:name="qrData"
-                app:argType="string"
-                android:defaultValue="" />
-        </action>
-    </fragment>
+        tools:layout="@layout/fragment_scanner" />
     <fragment
         android:id="@+id/studentHomeFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragment"
         android:label="@string/app_name" >
-        <action
-            android:id="@+id/action_studentHomeFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment" />
         <action
             android:id="@+id/action_studentHomeFragment_to_attendanceInfoFragment"
             app:destination="@id/attendanceInfoFragment" />
@@ -72,13 +63,11 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_attendance_info" >
         <action
-            android:id="@+id/action_attendanceInfoFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment">
-
-        </action>
-        <action
             android:id="@+id/action_attendanceInfoFragment_to_takeAttendanceFragment"
             app:destination="@id/takeAttendanceFragment" />
+        <action
+            android:id="@+id/action_attendanceInfoFragment_to_studentHomeFragment"
+            app:destination="@id/studentHomeFragment" />
 
     </fragment>
     <fragment
@@ -110,5 +99,8 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_attendance_success">
 
+        <action
+            android:id="@+id/action_successAttendanceFragment_to_studentHomeFragment"
+            app:destination="@id/studentHomeFragment" />
     </fragment>
 </navigation>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -35,8 +36,18 @@ class SettingFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
+
+//        val callback = object : OnBackPressedCallback(true)
+//        {
+//            override fun handleOnBackPressed() {
+//                findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToLauncherScreenFragment())
+//            }
+//        }
+//
+//        requireActivity().onBackPressedDispatcher.addCallback(callback)
 
         val checkboxTogglePref = requireActivity().getSharedPreferences("buttonToggle", 0)
         val checkboxToggleEditor = checkboxTogglePref.edit()
@@ -45,6 +56,7 @@ class SettingFragment : Fragment() {
         lateinit var urlList: List<MoodleBasicUrl>
 
         binding.apply {
+            s1UrlList.keyListener=null
             MainScope().launch{
                 requireActivity().runOnUiThread {
                     showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)

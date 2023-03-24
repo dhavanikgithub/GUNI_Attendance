@@ -16,6 +16,7 @@
         android:name="android.hardware.camera"
         android:required="true" />
 
+
     <application
         android:name=".GUNIAttendanceSystem"
         android:allowBackup="true"
@@ -33,6 +34,7 @@
         <activity
             android:name=".student.StudentActivity"
             android:exported="false" />
+
         <activity
             android:name=".authorization.AuthActivity"
             android:exported="true">

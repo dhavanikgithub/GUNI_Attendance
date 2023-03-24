@@ -71,7 +71,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
                         { response ->
                             val jsonArray = JSONArray(response)
                             Log.i(TAG,jsonArray.toString(4))
-                            if(jsonArray.getJSONObject(0).getString("student")==applicationVersion)
+                            if(jsonArray.getJSONObject(0).getString("StudentAppVersion")==applicationVersion)
                             {
                                 MainScope().launch {
                                     findNavController().navigate(
@@ -103,11 +103,9 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         progress = view.findViewById(R.id.lottieAnimation)
-
     }
 
     override fun onDestroy() {

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +31,8 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
     private lateinit var codeScanner: CodeScanner
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[ScannerViewModel::class.java]
@@ -55,7 +58,7 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                                 val qRmsg = QRMessageData.getQRMessageObject(encryptedMsg)
                                 Log.i("qRMessageData", qRmsg.toString())
                                 val bundle = bundleOf("qrData" to qRmsg.toString(),"userId" to LauncherScreenFragment.studentEnrolment)
-                                findNavController().navigate(R.id.action_scannerFragment_to_attendanceInfoFragment, bundle)
+//                                findNavController().navigate(R.id.action_scannerFragment_to_attendanceInfoFragment, bundle)
                             }catch (e: JSONException){
                                 BasicUtils.errorDialogBox(requireContext(),"QR Scan Error","Retry to scan QR code again")
                                 Log.e(TAG, "onViewCreated: JsonException:$encryptedMsg", e)

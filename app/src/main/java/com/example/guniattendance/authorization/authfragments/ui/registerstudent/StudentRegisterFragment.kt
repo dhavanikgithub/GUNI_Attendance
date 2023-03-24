@@ -20,7 +20,9 @@ import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
 import com.example.guniattendance.moodle.MoodleConfig
-import com.example.guniattendance.utils.*
+import com.example.guniattendance.utils.BasicUtils
+import com.example.guniattendance.utils.CustomProgressDialog
+import com.example.guniattendance.utils.snackbar
 import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
@@ -39,13 +41,14 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private lateinit var viewModel: StudentRegisterViewModel
     private var curImageUri: Uri = Uri.EMPTY
     private var sem = 0
-    lateinit var userid: String
-    lateinit var userName: String
+    var userid: String? =  null
+    var userName: String? = null
     private lateinit var userInfo: BaseUserInfo
     private var imgURL: String = ""
     private var progressDialog: CustomProgressDialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[StudentRegisterViewModel::class.java]
@@ -56,6 +59,17 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         subscribeToObserve()
 
         binding = FragmentStudentRegisterBinding.bind(view)
+
+
+        /*val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                findNavController().navigate(StudentRegisterFragmentDirections.actionStudentRegisterFragmentToLauncherScreenFragment())
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(callback)*/
+
         binding.apply {
             //Setting automatically the values of fields..
             val enrol = LauncherScreenFragment.studentEnrolment
@@ -91,7 +105,8 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                             return@launch
                         }
                         progressDialog!!.start("Uploading....")
-                        val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(requireContext(),userid,curImageUri)
+                        val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(requireContext(),
+                            userid!!,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
                         progressDialog!!.stop()
                         try{
@@ -101,6 +116,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                         }
 
                     } catch (e: Exception){
+                        progressDialog!!.stop()
                         snackbar("Unknown Error, Contact Administrator!")
                         Log.e(TAG, "onViewCreated: ${e.message}")
                     }

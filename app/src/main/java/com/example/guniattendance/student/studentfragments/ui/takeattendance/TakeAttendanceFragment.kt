@@ -28,9 +28,10 @@ import com.example.guniattendance.facemodel.FaceNetModel
 import com.example.guniattendance.facemodel.Models
 import com.example.guniattendance.facemodel.utils.FileReader
 import com.example.guniattendance.facemodel.utils.FrameAnalyser
-import com.example.guniattendance.facemodel.utils.Logger
 import com.example.guniattendance.moodle.MoodleConfig
-import com.example.guniattendance.utils.*
+import com.example.guniattendance.utils.BasicUtils
+import com.example.guniattendance.utils.ImageUtils
+import com.example.guniattendance.utils.snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
@@ -42,7 +43,6 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.zip.Deflater
 import java.util.zip.DeflaterOutputStream
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
@@ -72,6 +72,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         viewModel = ViewModelProvider(requireActivity())[TakeAttendanceViewModel::class.java]
 

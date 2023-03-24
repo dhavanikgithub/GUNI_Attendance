@@ -1,6 +1,7 @@
 package com.example.guniattendance.student.studentfragments.ui.studenthome
 
 
+import android.app.AlertDialog
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -47,7 +48,16 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
+//        val callback = object : OnBackPressedCallback(true)
+//        {
+//            override fun handleOnBackPressed() {
+//                requireActivity().finish()
+//            }
+//        }
+//
+//        requireActivity().onBackPressedDispatcher.addCallback(callback)
 
         viewModel = ViewModelProvider(requireActivity())[StudentHomeViewModel::class.java]
 
@@ -98,13 +108,31 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                             Log.i(TAG, "userInfo: ${userInfo.id}")
                             val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
                             progressDialog!!.stop()
+
                             fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
-                            val bundle = Bundle()
-                            Log.i(TAG, "messageData: $messageData")
-                            bundle.putString("attendanceData", fullMessage.toString())
-                            bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
-                            bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
-                            findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+                            if(verifySession(fullMessage!!))
+                            {
+                                val bundle = Bundle()
+                                Log.i(TAG, "messageData: $messageData")
+                                bundle.putString("attendanceData", fullMessage.toString())
+                                bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
+                                bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
+                                findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+                            }
+                            else
+                            {
+                                val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+                                    setTitle( "Session")
+                                    setMessage( "Sorry, your attendance response time is over!" )
+                                    setCancelable( false )
+                                    setPositiveButton( "OK" ) { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    create()
+                                }
+                                alertDialog.show()
+                            }
+
                         }
                         catch(ex:Exception)
                         {
@@ -128,5 +156,14 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 }
             }
         }
+    }
+    private fun verifySession(data:QRMessageData):Boolean{
+        val current = Utility().getCurrenMillis()/1000
+        if(data.sessionStartDate <= current  && data.sessionEndDate >= current){
+            if(data.attendanceStartDate <= current && data.attendanceEndDate >= current){
+                return true
+            }
+        }
+        return false
     }
 }
