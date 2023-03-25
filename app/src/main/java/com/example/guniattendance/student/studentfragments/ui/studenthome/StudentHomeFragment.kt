@@ -14,6 +14,7 @@ import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.ImageUtils
 import com.example.guniattendance.utils.snackbar
@@ -50,14 +51,14 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
-//        val callback = object : OnBackPressedCallback(true)
-//        {
-//            override fun handleOnBackPressed() {
-//                requireActivity().finish()
-//            }
-//        }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(callback)
+        /*val callback = object : OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(callback)*/
 
         viewModel = ViewModelProvider(requireActivity())[StudentHomeViewModel::class.java]
 
@@ -68,9 +69,9 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             progressDialog = CustomProgressDialog(requireContext(),requireActivity())
         }
         binding.apply {
-//            layoutTakeAttendance.setOnClickListener {
-//                viewModel.getActiveAttendance()
-//            }
+            /*layoutTakeAttendance.setOnClickListener {
+                viewModel.getActiveAttendance()
+            }*/
 
             MainScope().launch {
                 progressDialog!!.start("Details Fetching...")
@@ -86,7 +87,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }
 
             btnSetting.setOnClickListener{
-                findNavController().navigate(R.id.settingFragment)
+                try{
+                    findNavController().navigate(R.id.settingFragment)
+                }
+                catch(ex:Exception)
+                {
+                    snackbar(ex.message.toString())
+                }
             }
 
             btnTakeAttendance.setOnClickListener {
@@ -110,6 +117,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                             progressDialog!!.stop()
 
                             fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
+                            Log.i(TAG,BasicUtils.getQRText(fullMessage!!))
                             if(verifySession(fullMessage!!))
                             {
                                 val bundle = Bundle()
@@ -155,6 +163,17 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                     }
                 }
             }
+
+            btnTakeFriendsAttendance.setOnClickListener {
+                try{
+                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToLauncherScreenFragment())
+                }
+                catch (ex:Exception)
+                {
+                    snackbar(ex.message.toString())
+                }
+
+            }
         }
     }
     private fun verifySession(data:QRMessageData):Boolean{
@@ -166,4 +185,5 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
         }
         return false
     }
+
 }

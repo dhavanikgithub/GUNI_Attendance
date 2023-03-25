@@ -8,11 +8,7 @@
     <fragment
         android:id="@+id/studentHomeFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.studenthome.StudentHomeFragment"
-        android:label="@string/app_name">
-        <action
-            android:id="@+id/action_studentHomeFragment_to_scannerFragment"
-            app:destination="@id/scannerFragment" />
-    </fragment>
+        android:label="@string/app_name"/>
     <fragment
         android:id="@+id/scannerFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"

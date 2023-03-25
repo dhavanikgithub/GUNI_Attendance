@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentAttendanceSuccessBinding
+import com.example.guniattendance.utils.snackbar
 
 class AttendanceSuccessFragment : Fragment(R.layout.fragment_attendance_success) {
 
@@ -33,6 +35,21 @@ class AttendanceSuccessFragment : Fragment(R.layout.fragment_attendance_success)
         viewModel = ViewModelProvider(requireActivity())[AttendanceSuccessViewModel::class.java]
 
         binding = FragmentAttendanceSuccessBinding.bind(view)
+
+        try{
+            val callback = object : OnBackPressedCallback(true)
+            {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(AttendanceSuccessFragmentDirections.actionSuccessAttendanceFragmentToStudentHomeFragment())
+                }
+            }
+
+            requireActivity().onBackPressedDispatcher.addCallback(callback)
+        }
+        catch (ex:Exception)
+        {
+            snackbar((ex.message).toString())
+        }
 
         binding.tvSucess.text="Your Attendance Marked Successfully"
     }

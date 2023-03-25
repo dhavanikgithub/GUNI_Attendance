@@ -8,16 +8,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
-import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
+import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.utils.BasicUtils
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import org.json.JSONException

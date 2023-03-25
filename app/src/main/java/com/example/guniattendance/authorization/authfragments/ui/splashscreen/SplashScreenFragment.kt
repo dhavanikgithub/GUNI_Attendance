@@ -2,23 +2,27 @@ package com.example.guniattendance.authorization.authfragments.ui.splashscreen
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
+import com.android.volley.RetryPolicy
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.guniattendance.R
-import com.example.guniattendance.authorization.DownloadModel
+import com.example.guniattendance.utils.BasicUtils
+import com.example.guniattendance.utils.LiveNetworkMonitor
 import com.example.guniattendance.utils.PermissionsUtils
+import com.example.guniattendance.utils.snackbar
 import kotlinx.coroutines.*
 import org.json.JSONArray
 import java.util.*
@@ -37,7 +41,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             PermissionsUtils.requestPermission(requireActivity())
         }
         else{
-            if(!PermissionsUtils.isOnline(requireContext())){
+            /*if(!PermissionsUtils.isOnline(requireContext())){
                 Log.i(ContentValues.TAG, "onCreate: 2")
                 AlertDialog.Builder(requireActivity()).setTitle("No Internet")
                     .setMessage("Your devices is not connected to internet. " +
@@ -48,57 +52,153 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
                         dialog.dismiss()
                     }
                     .setNegativeButton("Retry"){ dialog, _ ->
-                        findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentSelf())
-                        dialog.dismiss()
+                        try{
+                            findNavController().navigate(SplashScreenFragmentDirections.actionSplashScreenFragmentSelf())
+                            dialog.dismiss()
+                        }
+                        catch (ex:Exception)
+                        {
+                            snackbar(ex.message.toString())
+                        }
+
                     }
                     .create().show()
             }
             else{
-                val pm: PackageManager = requireContext().getPackageManager()
-                val pkgName: String = requireContext().getPackageName()
-                var pkgInfo: PackageInfo? = null
-                try {
-                    pkgInfo = pm.getPackageInfo(pkgName, 0)
-                } catch (e: PackageManager.NameNotFoundException) {
-                    e.printStackTrace()
-                }
-                val applicationVersion = pkgInfo!!.versionName
-                GlobalScope.launch {
-                    var versionFileURL = "https://script.google.com/macros/s/AKfycbzRZq71El7QfSmce5IGNY7yEHhoEpOYFpQeoYcDwPLE_RnzQIhYI68C8NAOejH6ayLOwA/exec"
-                    val mRequestQueue = Volley.newRequestQueue(context)
-                    val request = object : StringRequest(
-                        Method.GET, versionFileURL,
-                        { response ->
-                            val jsonArray = JSONArray(response)
-                            Log.i(TAG,jsonArray.toString(4))
-                            if(jsonArray.getJSONObject(0).getString("StudentAppVersion")==applicationVersion)
-                            {
-                                MainScope().launch {
+                try{
+                    MainScope().launch {
+                        val pm: PackageManager = (requireContext()).packageManager
+                        val pkgName: String = (requireContext()).packageName
+                        var pkgInfo: PackageInfo? = null
+                        try {
+                            pkgInfo = pm.getPackageInfo(pkgName, 0)
+                        } catch (e: PackageManager.NameNotFoundException) {
+                            e.printStackTrace()
+                        }
+                        val applicationVersion = pkgInfo!!.versionName
+                        val versionFileURL = "https://script.google.com/macros/s/AKfycbzRZq71El7QfSmce5IGNY7yEHhoEpOYFpQeoYcDwPLE_RnzQIhYI68C8NAOejH6ayLOwA/exec"
+                        val mRequestQueue = Volley.newRequestQueue(requireContext())
+                        val request = object : StringRequest(
+                            Method.GET, versionFileURL,
+                            { response ->
+                                val jsonArray = JSONArray(response)
+                                if(jsonArray.getJSONObject(0).getString("StudentAppVersion")!=applicationVersion)
+                                {
+                                    AlertDialog.Builder(requireActivity()).setTitle("App Update")
+                                        .setMessage("Your Application version is old please Update the APP")
+                                        .setPositiveButton("UPDATE"){ dialog, _ ->
+                                            val openURL = Intent(Intent.ACTION_VIEW)
+                                            openURL.data = Uri.parse("https://drive.google.com/drive/folders/1jwyzjhzpUuPvUZzvJ4I-fn58sRVjBSwQ?usp=sharing")
+                                            startActivity(openURL)
+                                            dialog.dismiss()
+                                        }
+                                        .setCancelable(false)
+                                        .create().show()
+                                }
+                                else{
                                     findNavController().navigate(
                                         SplashScreenFragmentDirections
                                             .actionSplashScreenFragmentToLauncherScreenFragment()
                                     )
                                 }
-                            }
-                            else{
-                                AlertDialog.Builder(requireActivity()).setTitle("App Update")
-                                    .setMessage("Your Application version is old please Update the APP")
-                                    .setPositiveButton("UPDATE"){ dialog, _ ->
-                                        val openURL = Intent(Intent.ACTION_VIEW)
-                                        openURL.data = Uri.parse("https://drive.google.com/drive/folders/1jwyzjhzpUuPvUZzvJ4I-fn58sRVjBSwQ?usp=sharing")
-                                        startActivity(openURL)
-                                        dialog.dismiss()
-                                    }
-                                    .setCancelable(false)
-                                    .create().show()
+
+                            },
+                            { error ->
+                                Log.e("AppUpdateService",error.toString())
+                            }){}
+                        request.retryPolicy = object : RetryPolicy {
+                            override fun getCurrentTimeout(): Int {
+                                return 7000
                             }
 
-                        },
-                        { error ->
-                            Log.e(TAG,error.toString())
-                        }){}
-                    mRequestQueue.add(request)
+                            override fun getCurrentRetryCount(): Int {
+                                return 500
+                            }
+
+                            @Throws(VolleyError::class)
+                            override fun retry(error: VolleyError) {
+                            }
+                        }
+                        mRequestQueue.add(request)
+                    }
                 }
+                catch (ex:Exception)
+                {
+                    snackbar(ex.message.toString())
+                }
+            }*/
+            try{
+                val connectivityManager = requireContext().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+                val liveNetworkMonitor = LiveNetworkMonitor(connectivityManager)
+                liveNetworkMonitor.observe(this) {
+                    if (it) {
+                        MainScope().launch {
+                            val pm: PackageManager = (requireContext()).packageManager
+                            val pkgName: String = (requireContext()).packageName
+                            var pkgInfo: PackageInfo? = null
+                            try {
+                                pkgInfo = pm.getPackageInfo(pkgName, 0)
+                            } catch (e: PackageManager.NameNotFoundException) {
+                                e.printStackTrace()
+                            }
+                            val applicationVersion = pkgInfo!!.versionName
+                            val versionFileURL =
+                                "https://script.google.com/macros/s/AKfycbzRZq71El7QfSmce5IGNY7yEHhoEpOYFpQeoYcDwPLE_RnzQIhYI68C8NAOejH6ayLOwA/exec"
+                            val mRequestQueue = Volley.newRequestQueue(requireContext())
+                            val request = object : StringRequest(
+                                Method.GET, versionFileURL,
+                                { response ->
+                                    val jsonArray = JSONArray(response)
+                                    if (jsonArray.getJSONObject(0)
+                                            .getString("StudentAppVersion") != applicationVersion
+                                    ) {
+                                        AlertDialog.Builder(requireActivity())
+                                            .setTitle("App Update")
+                                            .setMessage("Your Application version is old please Update the APP")
+                                            .setPositiveButton("UPDATE") { dialog, _ ->
+                                                val openURL = Intent(Intent.ACTION_VIEW)
+                                                openURL.data =
+                                                    Uri.parse("https://drive.google.com/drive/folders/1jwyzjhzpUuPvUZzvJ4I-fn58sRVjBSwQ?usp=sharing")
+                                                startActivity(openURL)
+                                                dialog.dismiss()
+                                            }
+                                            .setCancelable(false)
+                                            .create().show()
+                                    } else {
+                                        findNavController().navigate(
+                                            SplashScreenFragmentDirections
+                                                .actionSplashScreenFragmentToLauncherScreenFragment()
+                                        )
+                                    }
+
+                                },
+                                { error ->
+                                    Log.e(TAG, error.toString())
+                                    BasicUtils.errorDialogBox(requireContext(),"Connection","Internet connection is poor!")
+                                }) {}
+                            request.retryPolicy = object : RetryPolicy {
+                                override fun getCurrentTimeout(): Int {
+                                    return 7000
+                                }
+
+                                override fun getCurrentRetryCount(): Int {
+                                    return 500
+                                }
+
+                                @Throws(VolleyError::class)
+                                override fun retry(error: VolleyError) {
+                                }
+                            }
+                            mRequestQueue.add(request)
+                        }
+                    }
+                }
+
+            }
+            catch (ex:Exception)
+            {
+                snackbar(ex.message.toString())
             }
         }
     }
@@ -109,12 +209,12 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
     }
 
     override fun onDestroy() {
-        DownloadModel.destroyObject()
+//        DownloadModel.destroyObject()
         super.onDestroy()
     }
 
     override fun onDestroyView() {
-        DownloadModel.destroyObject()
+//        DownloadModel.destroyObject()
         super.onDestroyView()
     }
     override fun onRequestPermissionsResult(

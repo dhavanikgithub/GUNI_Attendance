@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.util.Size
@@ -61,7 +62,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
     private lateinit var userInfo:JSONObject
     var attendanceData:JSONObject?=null
     val TAG = "TakeAttendanceFragment"
-
+    lateinit var countTimer:CountDownTimer
     companion object {
 
         lateinit var logTextView : TextView
@@ -77,6 +78,22 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         viewModel = ViewModelProvider(requireActivity())[TakeAttendanceViewModel::class.java]
 
         binding = FragmentTakeAttendanceBinding.bind(view)
+
+        countTimer = object : CountDownTimer(70000, 1000) {
+
+            // Callback function, fired on regular interval
+            override fun onTick(millisUntilFinished: Long) {
+
+            }
+
+            // Callback function, fired
+            // when the time is up
+            override fun onFinish() {
+                countTimer.cancel()
+                findNavController().popBackStack()
+            }
+        }.start()
+
         userInfo = JSONObject(requireArguments().getString("userInfo")!!)
         attendanceData = JSONObject(requireArguments().getString("attendanceData")!!)
 

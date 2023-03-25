@@ -23,7 +23,6 @@ import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
-import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,11 +39,11 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     private lateinit var binding: FragmentStudentRegisterBinding
     private lateinit var viewModel: StudentRegisterViewModel
     private var curImageUri: Uri = Uri.EMPTY
-    private var sem = 0
+//    private var sem = 0
     var userid: String? =  null
     var userName: String? = null
-    private lateinit var userInfo: BaseUserInfo
-    private var imgURL: String = ""
+//    private lateinit var userInfo: BaseUserInfo
+//    private var imgURL: String = ""
     private var progressDialog: CustomProgressDialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

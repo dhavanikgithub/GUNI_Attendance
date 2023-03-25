@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
@@ -64,17 +63,17 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentLauncherScreenBinding.bind(view)
 
-//        val callback = object :OnBackPressedCallback(true)
-//        {
-//            override fun handleOnBackPressed() {
-//                requireActivity().finish()
-//            }
-//        }
-//
-//        requireActivity().onBackPressedDispatcher.addCallback(callback)
+        /*val callback = object :OnBackPressedCallback(true)
+        {
+            override fun handleOnBackPressed() {
+                requireActivity().finish()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(callback)*/
 
         binding.apply {
-//            DownloadModel.getDownloadObject(requireActivity(),binding.progressLayout,binding.progressText,binding.progressBar,binding.parentLayout).startModelFile1Download()
+            /*DownloadModel.getDownloadObject(requireActivity(),binding.progressLayout,binding.progressText,binding.progressBar,binding.parentLayout).startModelFile1Download()*/
 
             val downloadUtils = DownloadUtils(
                 downloadingContentText,
@@ -141,15 +140,15 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             }
         }
     }
-//    override fun onDestroy()
-//    {
-//        DownloadModel.destroyObject()
-//        super.onDestroy()
-//    }
-//
-//    override fun onDestroyView()
-//    {
-//        DownloadModel.destroyObject()
-//        super.onDestroyView()
-//    }
+    /*override fun onDestroy()
+    {
+        DownloadModel.destroyObject()
+        super.onDestroy()
+    }
+
+    override fun onDestroyView()
+    {
+        DownloadModel.destroyObject()
+        super.onDestroyView()
+    }*/
 }
