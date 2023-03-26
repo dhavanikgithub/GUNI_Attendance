@@ -71,14 +71,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
 //        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        viewModel = ViewModelProvider(requireActivity())[TakeAttendanceViewModel::class.java]
-
-        binding = FragmentTakeAttendanceBinding.bind(view)
-
+    override fun onResume() {
         countTimer = object : CountDownTimer(70000, 1000) {
 
             // Callback function, fired on regular interval
@@ -93,22 +86,25 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                 findNavController().popBackStack()
             }
         }.start()
+        super.onResume()
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        viewModel = ViewModelProvider(requireActivity())[TakeAttendanceViewModel::class.java]
+        binding = FragmentTakeAttendanceBinding.bind(view)
         userInfo = JSONObject(requireArguments().getString("userInfo")!!)
         attendanceData = JSONObject(requireArguments().getString("attendanceData")!!)
-
         profileImage = ImageUtils.convertStringtoBitmap(requireArguments().getString("profileImage")!!)
-
         logTextView=binding.logTextview
         previewView=binding.previewView
         logTextView.movementMethod = ScrollingMovementMethod()
 
         // Necessary to keep the Overlay above the PreviewView so that the boxes are visible.
         val boundingBoxOverlay = binding.bboxOverlay
-
         boundingBoxOverlay.setWillNotDraw(false)
         boundingBoxOverlay.setZOrderOnTop(true)
-
         faceNetModel = FaceNetModel( requireContext() , modelInfo , useGpu , useXNNPack )
         frameAnalyser = FrameAnalyser( requireContext() , boundingBoxOverlay , faceNetModel )
         fileReader = FileReader(faceNetModel)
@@ -237,5 +233,25 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         dos.write(input.toByteArray())
         dos.close()
         return Base64.getEncoder().encodeToString(baos.toByteArray())
+    }
+
+    override fun onDetach() {
+        countTimer.cancel()
+        super.onDetach()
+    }
+
+    override fun onDestroy() {
+        countTimer.cancel()
+        super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        countTimer.cancel()
+        super.onDestroyView()
+    }
+
+    override fun onPause() {
+        countTimer.cancel()
+        super.onPause()
     }
 }

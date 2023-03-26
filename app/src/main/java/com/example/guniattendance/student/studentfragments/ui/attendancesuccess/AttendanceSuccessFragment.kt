@@ -1,6 +1,9 @@
 package com.example.guniattendance.student.studentfragments.ui.attendancesuccess
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,15 +38,14 @@ class AttendanceSuccessFragment : Fragment(R.layout.fragment_attendance_success)
         viewModel = ViewModelProvider(requireActivity())[AttendanceSuccessViewModel::class.java]
 
         binding = FragmentAttendanceSuccessBinding.bind(view)
-
+        val mediaPlayer = MediaPlayer.create(requireContext(),R.raw.attendance_success_sound)
         try{
             val callback = object : OnBackPressedCallback(true)
             {
                 override fun handleOnBackPressed() {
-                    findNavController().navigate(AttendanceSuccessFragmentDirections.actionSuccessAttendanceFragmentToStudentHomeFragment())
+                    findNavController().popBackStack(R.id.studentHomeFragment,false)
                 }
             }
-
             requireActivity().onBackPressedDispatcher.addCallback(callback)
         }
         catch (ex:Exception)
@@ -51,7 +53,12 @@ class AttendanceSuccessFragment : Fragment(R.layout.fragment_attendance_success)
             snackbar((ex.message).toString())
         }
 
-        binding.tvSucess.text="Your Attendance Marked Successfully"
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.animAttendanceDone.visibility=View.VISIBLE
+            binding.animAttendanceDone.playAnimation()
+            mediaPlayer.start()
+            binding.tvSucess.text="Your Attendance Marked Successfully"
+        },300)
     }
 
 }

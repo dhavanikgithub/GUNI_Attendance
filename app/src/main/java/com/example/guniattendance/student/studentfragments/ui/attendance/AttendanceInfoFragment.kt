@@ -102,7 +102,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                                     bundle.putString("profileImage",profileImage)
                                     bundle.putString("userInfo",userInfo.toString())
                                     bundle.putString("attendanceData",attendanceData)
-                                    findNavController().navigate(R.id.action_attendanceInfoFragment_to_takeAttendanceFragment, bundle)
+                                    findNavController().navigate(R.id.takeAttendanceFragment, bundle)
                                 }
                                 else
                                 {

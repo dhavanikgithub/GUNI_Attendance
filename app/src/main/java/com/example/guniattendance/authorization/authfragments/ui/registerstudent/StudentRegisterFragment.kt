@@ -2,6 +2,7 @@ package com.example.guniattendance.authorization.authfragments.ui.registerstuden
 
 import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +12,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
@@ -20,6 +20,7 @@ import com.example.guniattendance.R
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
 import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.student.StudentActivity
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
@@ -109,7 +110,13 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                         Log.i("Successfully updated the profile picture:", res.toString(4))
                         progressDialog!!.stop()
                         try{
-                            findNavController().navigate(StudentRegisterFragmentDirections.actionStudentRegisterFragmentToStudentHomeFragment())
+                            Intent(
+                                requireActivity(),
+                                StudentActivity::class.java
+                            ).also { intent ->
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }
                         } catch (e: Exception){
                             Log.e(TAG, "StudentRegisterFragment: ${e.message}")
                         }

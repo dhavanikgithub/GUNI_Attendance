@@ -2,6 +2,7 @@ package com.example.guniattendance.student.studentfragments.ui.studenthome
 
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.AuthActivity
 import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
@@ -166,7 +168,13 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
             btnTakeFriendsAttendance.setOnClickListener {
                 try{
-                    findNavController().navigate(StudentHomeFragmentDirections.actionStudentHomeFragmentToLauncherScreenFragment())
+                    Intent(
+                        requireActivity(),
+                        AuthActivity::class.java
+                    ).also { intent ->
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
                 }
                 catch (ex:Exception)
                 {

@@ -1,5 +1,6 @@
 package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentLauncherScreenBinding
 import com.example.guniattendance.moodle.MoodleConfig
+import com.example.guniattendance.student.StudentActivity
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.DownloadUtils
 import com.example.guniattendance.utils.hideKeyboard
@@ -116,7 +118,13 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                                 }
                                 else
                                 {
-                                    findNavController().navigate(LauncherScreenFragmentDirections.actionLauncherScreenFragmentToStudentHomeFragment())
+                                    Intent(
+                                        requireActivity(),
+                                        StudentActivity::class.java
+                                    ).also { intent ->
+                                        startActivity(intent)
+                                        requireActivity().finish()
+                                    }
                                 }
                             }
                             catch (ex: Exception)

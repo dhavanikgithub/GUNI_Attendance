@@ -6,18 +6,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".student.studentfragments.ui.attendancesuccess.AttendanceSuccessFragment">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/anim_attendance_done"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.40"
+            app:lottie_autoPlay="false"
+            app:lottie_speed="1"
+            app:lottie_rawRes="@raw/attendance_success"
+            android:visibility="gone"
+            />
         <TextView
             android:id="@+id/tvSucess"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_250sdp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/anim_attendance_done"
+            app:layout_constraintVertical_bias="0.5"
+            android:layout_marginTop="10dp"
             android:textColor="@color/white"
+            android:gravity="center"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
