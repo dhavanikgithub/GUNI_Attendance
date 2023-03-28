@@ -15,8 +15,11 @@ import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.DownloadUtils
 import com.example.guniattendance.utils.hideKeyboard
 import com.example.guniattendance.utils.snackbar
+import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
@@ -33,7 +36,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         binding = FragmentLauncherScreenBinding.inflate(layoutInflater)
         if(progressDialog==null)
         {
-            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+            progressDialog= CustomProgressDialog(requireContext())
         }
 
         val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
@@ -100,24 +103,19 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                 else
                 {
                     studentEnrolment = et1Enrollment.text.toString()
-                    val pattern = Regex("^[0-9]{11}$")
+                    val pattern = Regex("^\\d{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
-                        progressDialog!!.start("Verifying Enrollment....")
-                        MainScope().launch{
+                        MainScope().launch {
                             try {
-                                Log.i(TAG, "onViewCreated: $studentEnrolment")
-                                val result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(studentEnrolment)
-                                progressDialog!!.stop()
-                                if (result.hasUserUploadImg)
+                                if (checkUser()!!.hasUserUploadImg)
                                 {
-                                    findNavController().navigate(
-                                        LauncherScreenFragmentDirections
-                                            .actionLauncherScreenFragmentToStudentRegisterFragment()
-                                    )
+                                    et1Enrollment.setText("")
+                                    findNavController().navigate(R.id.studentRegisterFragment)
                                 }
                                 else
                                 {
+                                    et1Enrollment.setText("")
                                     Intent(
                                         requireActivity(),
                                         StudentActivity::class.java
@@ -129,8 +127,8 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             }
                             catch (ex: Exception)
                             {
-                                progressDialog!!.stop()
-                                snackbar("Invalid Enrollment Number " + ex.message)
+//                                snackbar("Invalid Enrollment Number " + ex.message)
+                                snackbar("Check Internet or Enrollment")
                                 Log.e(TAG, "onViewCreated: Invalid Enrollment Number:$ex", ex)
                             }
                         }
@@ -159,4 +157,25 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         DownloadModel.destroyObject()
         super.onDestroyView()
     }*/
+
+    private suspend fun checkUser(): BaseUserInfo?
+    {
+        var result: BaseUserInfo? =null
+        progressDialog!!.start("Verifying Enrollment....")
+        val parentJob= GlobalScope.launch {
+            try {
+                result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(studentEnrolment)
+            }
+            catch (ex:Exception)
+            {
+                return@launch
+            }
+            return@launch
+        }
+        delay(10000)
+        parentJob.cancel()
+        parentJob.join()
+        progressDialog!!.stop()
+        return result
+    }
 }

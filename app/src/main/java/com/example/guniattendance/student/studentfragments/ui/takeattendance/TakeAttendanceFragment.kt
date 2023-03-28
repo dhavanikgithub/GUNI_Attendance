@@ -32,7 +32,6 @@ import com.example.guniattendance.facemodel.utils.FrameAnalyser
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.ImageUtils
-import com.example.guniattendance.utils.snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.MainScope
@@ -209,6 +208,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                             val bundle= Bundle()
                             bundle.putString("userInfo",userInfo.toString())
                             bundle.putString("attendanceData",attendanceData.toString())
+                            findNavController().popBackStack(R.id.attendanceInfoFragment,true)
                             findNavController().navigate(R.id.successAttendanceFragment,bundle)
                         }
                         else{
@@ -217,8 +217,9 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
                     }
                     catch (ex:Exception)
                     {
-                        snackbar("${ex.message}")
+//                        snackbar("${ex.message}")
                         Log.e(TAG,"MarkAttendance Error: ${ex.message}")
+                        findNavController().popBackStack()
                     }
                 }
 

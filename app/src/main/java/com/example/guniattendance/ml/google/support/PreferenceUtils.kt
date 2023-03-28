@@ -1,10 +1,8 @@
 package com.example.guniattendance.ml.google.support
 
-import android.R
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Size
-import androidx.camera.core.CameraSelector
 import androidx.preference.PreferenceManager
 import com.example.guniattendance.ml.google.support.CameraSource.SizePair
 import com.google.mlkit.vision.face.FaceDetectorOptions

@@ -1,9 +1,7 @@
 package com.example.guniattendance.ml.google.support
 
 import android.app.Application
-import android.os.Build.VERSION_CODES
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel

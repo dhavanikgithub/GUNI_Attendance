@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentSettingsBinding
 import com.example.guniattendance.utils.showProgress
@@ -20,17 +21,13 @@ import kotlinx.coroutines.launch
 class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     private val TAG = "SettingFragment"
-    var selectedURL:String?=null
+    private var selectedURL:String?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         (activity as AppCompatActivity?)!!.supportActionBar!!.title = "Application Settings"
         return inflater.inflate(R.layout.fragment_settings, container, false)
-    }
-
-    companion object {
-        fun newInstance() = SettingFragment()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,7 +120,7 @@ class SettingFragment : Fragment() {
                                     checkboxToggleEditor.putString("url", urlList[i].url)
                                     checkboxToggleEditor.apply()
                                     showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
-                                    snackbar("Url Saved")
+                                    findNavController().popBackStack()
                                 }
                                 catch (ex:Exception)
                                 {

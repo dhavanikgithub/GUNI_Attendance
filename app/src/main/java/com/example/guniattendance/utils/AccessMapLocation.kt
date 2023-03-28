@@ -10,10 +10,6 @@ import android.location.LocationManager
 import android.util.Log
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class AccessMapLocation(val requireActivity:Activity) {
     private var curLocation: Location? = null
@@ -79,18 +75,17 @@ class AccessMapLocation(val requireActivity:Activity) {
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }
-        try {
+        return try {
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 1L,
-                0f  ,
+                0f,
                 locationListener
             )
-            val loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            return loc
+            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         } catch (e: Exception) {
             Log.d("TAG_ERROR", "getLocation: ${e.message}")
-            return null
+            null
         }
     }
 }

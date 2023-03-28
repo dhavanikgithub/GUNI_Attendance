@@ -1,7 +1,6 @@
 package com.example.guniattendance.moodle
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
 
 

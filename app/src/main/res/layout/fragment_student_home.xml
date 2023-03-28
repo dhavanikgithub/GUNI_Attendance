@@ -44,7 +44,8 @@
                 android:layout_marginTop="@dimen/_30sdp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/guni_logo_desc"/>
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_image"
@@ -87,7 +88,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:weightSum="100"
+                        android:baselineAligned="false">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -99,9 +101,9 @@
                                 android:id="@+id/title_stud_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="left"
+                                android:gravity="start"
                                 android:padding="@dimen/_5sdp"
-                                android:text="Full Name: "
+                                android:text="@string/full_name"
                                 android:textAllCaps="false"
                                 android:textSize="@dimen/_14sdp"
                                 android:textStyle="bold" />
@@ -117,7 +119,7 @@
                                 android:id="@+id/tv_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="left"
+                                android:gravity="start"
                                 android:padding="@dimen/_5sdp"
                                 android:textAllCaps="false"
                                 android:textSize="@dimen/_14sdp" />
@@ -130,7 +132,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:weightSum="100">
+                        android:weightSum="100"
+                        android:baselineAligned="false">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -142,9 +145,9 @@
                                 android:id="@+id/title_stud_enrno"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="left"
+                                android:gravity="start"
                                 android:padding="@dimen/_5sdp"
-                                android:text="Enrollment: "
+                                android:text="@string/enrollment"
                                 android:textAllCaps="false"
                                 android:textSize="@dimen/_14sdp"
                                 android:textStyle="bold" />
@@ -171,7 +174,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:weightSum="100"
-                        android:visibility="gone">
+                        android:visibility="gone"
+                        android:baselineAligned="false">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -183,9 +187,9 @@
                                 android:id="@+id/title_stud_email"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:gravity="left"
+                                android:gravity="start"
                                 android:padding="@dimen/_5sdp"
-                                android:text="Email: "
+                                android:text="@string/email"
                                 android:textAllCaps="false"
                                 android:textSize="@dimen/_14sdp"
                                 android:textStyle="bold" />

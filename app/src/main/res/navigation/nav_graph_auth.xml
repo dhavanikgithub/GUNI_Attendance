@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph_auth"
-    app:startDestination="@id/splashScreenFragment">
+    app:startDestination="@id/launcherScreenFragment">
 
     <fragment
         android:id="@+id/launcherScreenFragment"
@@ -21,23 +19,6 @@
         android:id="@+id/studentRegisterFragment"
         android:name="com.example.guniattendance.authorization.authfragments.ui.registerstudent.StudentRegisterFragment"
         android:label="@string/app_name"/>
-    <fragment
-        android:id="@+id/splashScreenFragment"
-        android:name="com.example.guniattendance.authorization.authfragments.ui.splashscreen.SplashScreenFragment"
-        android:label="@string/app_name">
-        <action
-            android:id="@+id/action_splashScreenFragment_to_launcherScreenFragment"
-            app:destination="@id/launcherScreenFragment"
-            app:launchSingleTop="true"
-            app:popUpTo="@id/nav_graph_auth"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
-        android:id="@+id/scannerFragment"
-        android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"
-        android:label="@string/app_name"
-        tools:layout="@layout/fragment_scanner"
-        />
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingFragment"

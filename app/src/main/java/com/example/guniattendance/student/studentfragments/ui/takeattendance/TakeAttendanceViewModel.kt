@@ -6,6 +6,4 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TakeAttendanceViewModel @Inject constructor(
-) : ViewModel() {
-
-}
+) : ViewModel()

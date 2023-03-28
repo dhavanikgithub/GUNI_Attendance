@@ -7,7 +7,6 @@ import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -30,12 +29,12 @@ import java.text.SimpleDateFormat
 
 class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     private lateinit var binding: FragmentAttendanceInfoBinding
-    private lateinit var qRMsgData: String
+//    private lateinit var qRMsgData: String
     private lateinit var viewModel: AttendanceInfoViewModel
-    lateinit var QRBtn: AppCompatButton
-    var attendanceData:String?=null
+//    lateinit var QRBtn: AppCompatButton
+    private var attendanceData:String?=null
     private var qrData: QRMessageData? = null
-    var profileImage: String? = null
+    private var profileImage: String? = null
     private lateinit var userInfo: JSONObject
     private var progressDialog: CustomProgressDialog? = null
     private val TAG = "AttendanceInfoFragment"
@@ -71,7 +70,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
 
         if(progressDialog==null)
         {
-            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+            progressDialog= CustomProgressDialog(requireContext())
         }
         binding.apply {
 //            QRBtn.setOnClickListener{

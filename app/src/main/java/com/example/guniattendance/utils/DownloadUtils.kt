@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.downloader.*
+import com.example.guniattendance.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -43,16 +44,16 @@ class DownloadUtils(
             when (btnDownloadPause.text) {
                 "Pause" -> {
                     PRDownloader.pause(downloadId)
-                    btnDownloadPause.text="Resume"
+                    btnDownloadPause.text=requireActivity.resources.getString(R.string.resume)
                     downloadingContentText.text = downloadingContentText.text.toString().replace("is downloading...","download paused")
                 }
                 "Resume" -> {
                     PRDownloader.resume(downloadId)
-                    btnDownloadPause.text="Pause"
+                    btnDownloadPause.text=requireActivity.resources.getString(R.string.pause)
                     downloadingContentText.text = downloadingContentText.text.toString().replace("download paused","is downloading...")
                 }
                 else -> {
-                    btnDownloadPause.text="Pause"
+                    btnDownloadPause.text=requireActivity.resources.getString(R.string.pause)
                     checkDownload()
                 }
             }
@@ -68,26 +69,26 @@ class DownloadUtils(
         PRDownloader.initialize(requireContext, config)
         if(!file1.exists())
         {
-            RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
+            requireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(file1.length().toInt()!=4790720)
         {
             file1.delete()
-            RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
+            requireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(!file2.exists())
         {
-            RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
+            requireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else if(file2.length().toInt()!=23705216){
             file2.delete()
-            RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
+            requireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else{
             parentLayout.visibility=View.VISIBLE
         }
     }
-    fun Long.formatBinarySize(): String {
+    private fun Long.formatBinarySize(): String {
         val kiloByteAsByte = 1.0 * 1024.0
         val megaByteAsByte = 1.0 * 1024.0 * 1024.0
         val gigaByteAsByte = 1.0 * 1024.0 * 1024.0 * 1024.0
@@ -122,7 +123,7 @@ class DownloadUtils(
             else -> "Bigger than 1024 TB"
         }
     }
-    private fun RequireDownloadContent(contentURL:String, contentName:String, contentSavePath:String)
+    private fun requireDownloadContent(contentURL:String, contentName:String, contentSavePath:String)
     {
         if(contentName==file1Name)
         {
@@ -150,20 +151,20 @@ class DownloadUtils(
             .setOnPauseListener {
                 if(btnDownloadPause.text=="Pause")
                 {
-                    btnDownloadPause.text="Resume"
+                    btnDownloadPause.text=requireActivity.getString(R.string.resume)
                 }
             }
             .setOnCancelListener {
-                downloadingContentText.text="Downloading was canceled; please try again."
-                btnDownloadPause.text="Retry"
+                downloadingContentText.text=requireActivity.resources.getString(R.string.download_cancel_msg)
+                btnDownloadPause.text=requireActivity.resources.getString(R.string.retry)
             }
             .setOnProgressListener { progress: Progress? ->
                 val persentage = progress!!.currentBytes*100/progress.totalBytes
                 val downloadedSize = progress.currentBytes.formatBinarySize()
                 val totalSize = progress.totalBytes.formatBinarySize()
-                downloading_content_statistic_text.text= "${downloadedSize}/${totalSize}"
+                downloading_content_statistic_text.text= String.format(requireActivity.resources.getString(R.string.download_inspection),downloadedSize,totalSize)
                 progressBar.progress=persentage.toInt()
-                progressBarText.text= "$persentage%"
+                progressBarText.text= String.format(requireActivity.resources.getString(R.string.progress_percentage),persentage.toString())
             }
             .start(object : OnDownloadListener {
                 override fun onDownloadComplete() {
@@ -187,8 +188,8 @@ class DownloadUtils(
                     }
                 }
                 override fun onError(error: Error) {
-                    downloadingContentText.text="Downloading has an error"
-                        btnDownloadPause.text="Retry"
+                    downloadingContentText.text=requireActivity.resources.getString(R.string.download_error_msg)
+                        btnDownloadPause.text=requireActivity.resources.getString(R.string.retry)
                 }
             })
     }
@@ -197,18 +198,18 @@ class DownloadUtils(
     {
         if(!file1.exists())
         {
-            RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
+            requireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(file1.length().toInt()!=4790720){
-            RequireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
+            requireDownloadContent(file1DownloadUrl,file1Name,downloadPath)
         }
         else if(!file2.exists())
         {
-            RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
+            requireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else if(file2.length().toInt()!=23705216)
         {
-            RequireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
+            requireDownloadContent(file2DownloadUrl,file2Name,downloadPath)
         }
         else
         {

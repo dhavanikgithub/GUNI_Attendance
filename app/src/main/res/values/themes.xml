@@ -44,36 +44,14 @@
         <item name="android:textColor">@android:color/black</item>
     </style>
 
-    <style name="RedButtonStyle" parent="Widget.MaterialComponents.Button">
-        <item name="fontFamily">@font/montserrat_semibold</item>
-        <item name="cornerRadius">0dp</item>
-        <item name="backgroundTint">#FF0000</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
     <style name="FloatingActionButtonStyle" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="backgroundTint">@color/colorPrimary</item>
         <!--<item name="shapeAppearanceOverlay">@style/FabDiamondOverlay</item>-->
     </style>
 
-    <style name="FabDiamondOverlay" parent="ShapeAppearance.MaterialComponents.SmallComponent">
-        <item name="cornerFamilyBottomRight">cut</item>
-        <item name="cornerFamilyBottomLeft">cut</item>
-        <item name="cornerFamilyTopRight">rounded</item>
-        <item name="cornerFamilyTopLeft">rounded</item>
-        <item name="cornerSizeBottomLeft">50%</item>
-        <item name="cornerSizeBottomRight">50%</item>
-        <item name="cornerSizeTopLeft">0%</item>
-        <item name="cornerSizeTopRight">0%</item>
-    </style>
-
     <style name="TextViewStyle" parent="android:Widget.TextView">
         <item name="fontFamily">@font/montserrat_regular</item>
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">9.7sp</item>
     </style>
 
     <style name="roundedImageView">

@@ -48,33 +48,43 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                 isTouchFocusEnabled = true
 
                 codeScanner.decodeCallback = DecodeCallback {
-                    handler.post(Runnable {
+                    handler.post {
                         try {
                             val encryptedMsg = it.text
                             try {
                                 val qRmsg = QRMessageData.getQRMessageObject(encryptedMsg)
                                 Log.i("qRMessageData", qRmsg.toString())
-                                val bundle = bundleOf("qrData" to qRmsg.toString(),"userId" to LauncherScreenFragment.studentEnrolment)
+                                val bundle = bundleOf(
+                                    "qrData" to qRmsg.toString(),
+                                    "userId" to LauncherScreenFragment.studentEnrolment
+                                )
 //                                findNavController().navigate(R.id.action_scannerFragment_to_attendanceInfoFragment, bundle)
-                            }catch (e: JSONException){
-                                BasicUtils.errorDialogBox(requireContext(),"QR Scan Error","Retry to scan QR code again")
+                            } catch (e: JSONException) {
+                                BasicUtils.errorDialogBox(
+                                    requireContext(),
+                                    "QR Scan Error",
+                                    "Retry to scan QR code again"
+                                )
                                 Log.e(TAG, "onViewCreated: JsonException:$encryptedMsg", e)
                             }
-                        }
-                        catch (e:Exception){
-                            BasicUtils.errorDialogBox(requireContext(),"Error","Error:${e}")
-                            Log.e(TAG, "onViewCreated: Exception while generating QRMessage object:${e.message}", e)
+                        } catch (e: Exception) {
+                            BasicUtils.errorDialogBox(requireContext(), "Error", "Error:${e}")
+                            Log.e(
+                                TAG,
+                                "onViewCreated: Exception while generating QRMessage object:${e.message}",
+                                e
+                            )
                         }
 
-                    })
+                    }
                 }
 
                 codeScanner.errorCallback = ErrorCallback {
-                    handler.post(Runnable {
+                    handler.post {
                         //Handle Errors Here
-                    })
-
                     }
+
+                }
                 }
 
             }

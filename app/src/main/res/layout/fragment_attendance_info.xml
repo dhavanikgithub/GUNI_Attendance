@@ -18,20 +18,18 @@
         android:id="@+id/QRBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="QR Code"
+        android:text="@string/qr_code"
         android:textAllCaps="false"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginRight="50dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="70dp"
-        android:visibility="gone">
-    </androidx.appcompat.widget.AppCompatButton>
+        android:visibility="gone"/>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/attendanceBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mark Attendance"
+        android:text="@string/mark_attendance"
         android:textAllCaps="false"
         android:layout_marginBottom="70dp"
-        android:layout_gravity="center_horizontal|bottom">
-    </androidx.appcompat.widget.AppCompatButton>
+        android:layout_gravity="center_horizontal|bottom"/>
 </FrameLayout>

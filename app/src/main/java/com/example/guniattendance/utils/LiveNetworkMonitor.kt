@@ -34,7 +34,7 @@ class LiveNetworkMonitor @Inject constructor(private val connectivityManager: Co
     override fun onInactive() {
         connectivityManager.unregisterNetworkCallback(networkCallback)
     }
-    private fun createNetworkCallback() = object :ConnectivityManager.NetworkCallback(){
+    private fun createNetworkCallback() = object :NetworkCallback(){
         override fun onAvailable(network: Network) {
             println("Device got connection to this network: $network")
 

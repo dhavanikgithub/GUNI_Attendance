@@ -41,10 +41,10 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private lateinit var binding: FragmentStudentHomeBinding
     private lateinit var viewModel: StudentHomeViewModel
     private lateinit var userInfo: BaseUserInfo
-    lateinit var imgURL:String
+    private lateinit var imgURL:String
     private var progressDialog: CustomProgressDialog? = null
     val TAG = "StudentHomeFragment"
-    var profileImage: Bitmap? = null
+    private var profileImage: Bitmap? = null
     private var fullMessage: QRMessageData? =null
 
     private lateinit var repo: ModelRepository
@@ -68,7 +68,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         if(progressDialog==null)
         {
-            progressDialog = CustomProgressDialog(requireContext(),requireActivity())
+            progressDialog = CustomProgressDialog(requireContext())
         }
         binding.apply {
             /*layoutTakeAttendance.setOnClickListener {

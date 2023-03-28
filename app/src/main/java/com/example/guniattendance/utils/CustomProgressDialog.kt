@@ -1,9 +1,8 @@
 package com.example.guniattendance.utils
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
@@ -11,14 +10,14 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.guniattendance.R
 
-class CustomProgressDialog(context: Context,val reqActivity:Activity) {
+@SuppressLint("InflateParams")
+class CustomProgressDialog(context: Context) {
 
     private var dialog: CustomDialog
     private var cpTitle: TextView
@@ -83,6 +82,7 @@ class CustomProgressDialog(context: Context,val reqActivity:Activity) {
         }
     }
 
+    @Suppress("DEPRECATION")
     class CustomDialog(context: Context) : Dialog(context, R.style.CustomDialogTheme) {
         init {
             // Set Semi-Transparent Color for Dialog Background

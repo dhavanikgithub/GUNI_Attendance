@@ -2,106 +2,45 @@
     <string name="app_name">GUNI Attendance</string>
     <string name="capture_image">Capture Your Face</string>
     <string name="enter_your_email_address">Your email address</string>
-    <string name="moodle_username">Moodle Username</string>
-    <string name="moodle_pdw">Moodle Password</string>
-    <string name="enter_your_phone_number">Enter your phone number</string>
-    <string name="select_sem">Select Sem</string>
     <string name="register">Register</string>
     <string name="image">Image</string>
-    <string name="permission_camera_rationale">Camera permission is needed to show the camera preview.</string>
-    <string name="set_pin">Set pin</string>
     <string name="enter_your_name">Your name</string>
-    <string name="faculty_name">Faculty Name</string>
     <string name="take_attendance">Take Attendance</string>
-    <string name="student_list">Student list</string>
-    <string name="enter_pin">Enter pin</string>
-    <string name="let_s_go">Let\'s Go</string>
-    <string name="login">Login</string>
-    <string name="select_elective_subject_1">Select elective subject 1</string>
-    <string name="select_elective_subject_2">Select elective subject 2</string>
-    <string name="el_subject_1">el subject 1</string>
-    <string name="el_subject_2">el subject 2</string>
     <string name="select_lab">Select lab</string>
     <string name="select_class">Select class</string>
-    <string name="moodle_url">Enter Moodle Server Url</string>
-    <string name="moodle_btn">Set Up Moodle Server</string>
     <string name="enter_your_enrolment_number">Your Enrollment number</string>
-    <string name="enrolment_number">Enrolment number</string>
-    <string name="name">Name</string>
-    <string name="enable">Enable</string>
-    <string name="disable">Disable</string>
-    <string name="student_name">Student Name</string>
-    <string name="select_subject">Select subject</string>
-    <string name="sign_out">Sign out</string>
     <string name="setting">Settings</string>
-    <string name="edit">edit</string>
-    <string name="semester">Semester:</string>
-    <string name="class_lab">Class: Lab:</string>
-    <string name="update_student">Update Student</string>
-    <string name="select_branch">Select Branch</string>
-    <string name="location">Latitude:  \nLongitude: </string>
-    <string name="accuracy">Accuracy: </string>
-    <string name="register_faculty">Register Faculty</string>
-    <string name="already_user_nlogin_here">Already user?\nLogin here</string>
-    <string name="register_student">Register Student</string>
     <string name="check">Check</string>
-    <string name="want_to_attendance_for_someone_else">Want to add attendance for someone else?\nClick Here</string>
-    <string name="go_back">Go back</string>
-    <string name="take_your_attendance_nclick_here">Take your attendance? \nClick here</string>
-    <string-array name="semester">
-        <item>1st</item>
-        <item>2nd</item>
-        <item>3rd</item>
-        <item>4th</item>
-        <item>5th</item>
-        <item>6th</item>
-        <item>7th</item>
-        <item>8th</item>
-    </string-array>
-    <string-array name="type">
-        <item>Lecture</item>
-        <item>Lab</item>
-    </string-array>
-    <string-array name="branch">
-        <item>CE/IT</item>
-        <item>AI</item>
-    </string-array>
     <!-- Preference Titles -->
-    <string name="messages_header">Update Url</string>
-    <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Enter Moodle Server Url</string>
-    <string name="reply_title">Default reply action</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_settings">SettingsActivity</string>
 
     <!--Strings for Scanner-->
-    <string name="shortcut_scan_from_camera">Scan</string>
-    <string name="shortcut_scan_from_file">Scan image</string>
-    <string name="shortcut_create_barcode">Create barcode</string>
-    <string name="shortcut_history">History</string>
 
     <!--Scan barcode from camera fragment-->
-    <string name="fragment_scan_barcode_from_camera_scan_from_file">Scan image</string>
-    <string name="fragment_scan_barcode_from_camera_flash">Flash</string>
-    <string name="fragment_scan_barcode_from_camera_barcode_saved">Saved</string>
 
     <!--Scan barcode from file activity-->
-    <string name="activity_scan_barcode_from_file_title">Scan</string>
-    <string name="activity_scan_barcode_from_file_scan">OK</string>
-    <string name="activity_scan_barcode_from_file_rotate_left">Rotate left</string>
-    <string name="activity_scan_barcode_from_file_rotate_right">Rotate right</string>
-    <string name="activity_scan_barcode_from_file_change_image">Choose another image</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="setting_url_dialog_checkbox">Show URL Dialog Box everytime when app is launched?</string>
     <string name="friends_attendance">Friends Attendance</string>
+    <string name="guni_logo_desc">Ganpat University logo</string>
+    <string name="qr_code">QR Code</string>
+    <string name="mark_attendance">Mark Attendance</string>
+    <string name="zero_percentage">0%</string>
+    <string name="pause">Pause</string>
+    <string name="url_list">URl List</string>
+    <string name="save">Save</string>
+    <string name="full_name">Full Name:</string>
+    <string name="enrollment">Enrollment:</string>
+    <string name="email">Email:</string>
+    <string name="success_attendance_message">Your Attendance Marked Successfully</string>
+    <string name="resume">Resume</string>
+    <string name="download_inspection">%1$s/%2$s</string>
+    <string name="progress_percentage">%1$s\%%</string>
+    <string name="retry">Retry</string>
+    <string name="download_error_msg">Downloading has an error</string>
+    <string name="download_cancel_msg">Downloading was canceled; please try again.</string>
 
 </resources>

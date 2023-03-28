@@ -54,7 +54,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         viewModel = ViewModelProvider(requireActivity())[StudentRegisterViewModel::class.java]
         if(progressDialog==null)
         {
-            progressDialog= CustomProgressDialog(requireContext(),requireActivity())
+            progressDialog= CustomProgressDialog(requireContext())
         }
         subscribeToObserve()
 
@@ -96,15 +96,15 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
             }
 
             btnRegister.setOnClickListener {
+                progressDialog!!.start("Uploading....")
                 MainScope().launch {
-
                     try{
                         if(curImageUri == Uri.EMPTY)
                         {
+                            progressDialog!!.stop()
                             BasicUtils.errorDialogBox(requireContext(),"Error","Upload Image")
                             return@launch
                         }
-                        progressDialog!!.start("Uploading....")
                         val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(requireContext(),
                             userid!!,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))

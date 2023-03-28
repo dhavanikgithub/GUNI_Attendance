@@ -4,13 +4,14 @@ import android.app.AlertDialog
 import android.content.Context
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import java.text.SimpleDateFormat
+import java.util.*
 
 class BasicUtils {
 
     companion object{
         fun getQRText(data: QRMessageData):String{
-            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
-            val simpleTimeFormat = SimpleDateFormat("hh:mm a")
+            val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val simpleTimeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
             return "Course: ${data.courseName} (" +
                     "Group: ${data.groupName})\n\n" +
                     "Session Date:${simpleDateFormat.format(data.sessionStartDate*1000)}\n" +
@@ -19,7 +20,7 @@ class BasicUtils {
                     "Attendance Date:${simpleDateFormat.format(data.attendanceStartDate*1000)}\n" +
                     " From:${simpleTimeFormat.format(data.attendanceStartDate*1000)}"+
                     " To:${simpleTimeFormat.format(data.attendanceEndDate*1000)}\n" +
-                    "Duration: ${data.attendanceDuration}mins"
+                    "Duration: ${data.attendanceDuration}Minutes"
         }
 
         fun errorDialogBox(

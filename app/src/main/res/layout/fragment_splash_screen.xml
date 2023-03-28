@@ -13,7 +13,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.1"
+        android:contentDescription="@string/guni_logo_desc"/>
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieAnimation"

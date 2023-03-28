@@ -1,7 +1,6 @@
 package com.example.guniattendance.authorization.authfragments.ui.splashscreen
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -10,15 +9,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.android.volley.RetryPolicy
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.guniattendance.R
+import com.example.guniattendance.authorization.AuthActivity
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.LiveNetworkMonitor
 import com.example.guniattendance.utils.PermissionsUtils
@@ -28,6 +28,7 @@ import org.json.JSONArray
 import java.util.*
 
 
+@Suppress("DEPRECATION")
 @SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
@@ -129,7 +130,6 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             }*/
             try{
                 val connectivityManager = requireContext().getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
-
                 val liveNetworkMonitor = LiveNetworkMonitor(connectivityManager)
                 liveNetworkMonitor.observe(this) {
                     if (it) {
@@ -166,10 +166,20 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
                                             .setCancelable(false)
                                             .create().show()
                                     } else {
-                                        findNavController().navigate(
-                                            SplashScreenFragmentDirections
-                                                .actionSplashScreenFragmentToLauncherScreenFragment()
-                                        )
+                                        try{
+                                            Intent(
+                                                requireActivity(),
+                                                AuthActivity::class.java
+                                            ).also { intent ->
+                                                startActivity(intent)
+                                                requireActivity().finish()
+                                            }
+                                        }
+                                        catch (ex:Exception)
+                                        {
+                                            Log.e(TAG,ex.message.toString())
+                                        }
+
                                     }
 
                                 },
@@ -207,16 +217,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         super.onViewCreated(view, savedInstanceState)
         progress = view.findViewById(R.id.lottieAnimation)
     }
-
-    override fun onDestroy() {
-//        DownloadModel.destroyObject()
-        super.onDestroy()
-    }
-
-    override fun onDestroyView() {
-//        DownloadModel.destroyObject()
-        super.onDestroyView()
-    }
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
