@@ -32,7 +32,7 @@ class PreferenceUtils {
                 FaceDetectorOptions.CLASSIFICATION_MODE_NONE
 
             val performanceMode: Int =
-                FaceDetectorOptions.PERFORMANCE_MODE_FAST
+                FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE
 
 
             val enableFaceTracking =

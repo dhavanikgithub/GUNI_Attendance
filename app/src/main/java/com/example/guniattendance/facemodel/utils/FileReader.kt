@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 class FileReader( private var faceNetModel: FaceNetModel) {
 
     private val realTimeOpts = FaceDetectorOptions.Builder()
-        .setPerformanceMode( FaceDetectorOptions.PERFORMANCE_MODE_FAST )
+        .setPerformanceMode( FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE )
         .build()
     private val detector = FaceDetection.getClient( realTimeOpts )
     private val defaultScope = CoroutineScope( Dispatchers.Default )

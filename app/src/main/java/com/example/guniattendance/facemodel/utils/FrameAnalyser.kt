@@ -1,23 +1,19 @@
 package com.example.guniattendance.facemodel.utils
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.example.guniattendance.facemodel.FaceNetModel
 import com.example.guniattendance.facemodel.MaskDetectionModel
-import com.example.guniattendance.student.studentfragments.ui.takeattendance.TakeAttendanceFragment
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.pow
@@ -30,8 +26,9 @@ class FrameAnalyser(context: Context,
                      ) : ImageAnalysis.Analyzer {
 
     private lateinit var callback: ResultCallback
+    private var resultVerify:Int = 0
     private val realTimeOpts = FaceDetectorOptions.Builder()
-            .setPerformanceMode( FaceDetectorOptions.PERFORMANCE_MODE_FAST )
+            .setPerformanceMode( FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE )
             .build()
     private val detector = FaceDetection.getClient(realTimeOpts)
 
@@ -115,7 +112,13 @@ class FrameAnalyser(context: Context,
                     // Convert the cropped Bitmap to a ByteBuffer.
                     // Finally, feed the ByteBuffer to the FaceNet model.
                     val croppedBitmap = BitmapUtils.cropRectFromBitmap( cameraFrameBitmap , face.boundingBox )
+
                     subject = model.getFaceEmbedding( croppedBitmap )
+
+
+                    //Toast.makeText(context, input.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                    //Create and Initialize new object with Face embeddings and Name.
 
                     // Perform face mask detection on the cropped frame Bitmap.
                     var maskLabel = ""
@@ -161,6 +164,8 @@ class FrameAnalyser(context: Context,
                         val names = nameScoreHashmap.keys.toTypedArray()
                         nameScoreHashmap.clear()
 
+
+
                         // Calculate the minimum L2 distance from the stored average L2 norms.
                         val bestScoreUserName: String = if ( metricToBeUsed == "cosine" ) {
                             // In case of cosine similarity, choose the highest value.
@@ -182,7 +187,7 @@ class FrameAnalyser(context: Context,
                                 names[ avgScores.indexOf( avgScores.minOrNull()!! ) ]
                             }
                         }
-//                        Logger.log( "Person identified as $bestScoreUserName" )
+                        /*Logger.log( "Person identified as $bestScoreUserName" )*/
 
 
                         predictions.add(
@@ -193,8 +198,16 @@ class FrameAnalyser(context: Context,
                             )
                         )
                         if (bestScoreUserName != "Unknown") {
-//                            faceList = arrayListOf()
-                            callback.onResultGot(bestScoreUserName)
+                            /*faceList = arrayListOf()*/
+                            resultVerify++
+                            if(resultVerify==10)
+                            {
+                                resultVerify=0
+                                callback.onResultGot(bestScoreUserName)
+                            }
+                        }
+                        else{
+                            resultVerify=0
                         }
 
                     }
