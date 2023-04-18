@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentSender
 import android.graphics.Bitmap
+import android.location.LocationRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -20,12 +21,7 @@ import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.ImageUtils
 import com.example.guniattendance.utils.snackbar
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.LocationSettingsResponse
-import com.google.android.gms.tasks.Task
+//import com.example.guniattendancefaculty.moodle.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.model.BaseUserInfo
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
@@ -98,72 +94,86 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 }
             }
 
+            btnApplyForLeave.setOnClickListener {
+                findNavController().navigate(
+                    StudentHomeFragmentDirections.
+                            actionStudentHomeFragmentToLeaveFragment()
+                )
+            }
+            
+            btnCheckStatus.setOnClickListener {
+                findNavController().navigate(
+                    StudentHomeFragmentDirections.
+                            actionStudentHomeFragmentToLeaveStatusFragment()
+                )
+            }
+
             btnTakeAttendance.setOnClickListener {
 
-                val locationRequest: LocationRequest = LocationRequest.create()
-                locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                locationRequest.interval = 10000
-                locationRequest.fastestInterval = 10000 / 2
-                val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
-                locationSettingsRequestBuilder.addLocationRequest(locationRequest)
-                locationSettingsRequestBuilder.setAlwaysShow(true)
-                val settingsClient = LocationServices.getSettingsClient(requireContext())
-                val task: Task<LocationSettingsResponse> =
-                    settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
-                task.addOnSuccessListener {
-                    progressDialog!!.start("Preparing for attendance...")
-                    MainScope().launch {
-                        try{
-                            Log.i(TAG, "userInfo: ${userInfo.id}")
-                            val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
-                            progressDialog!!.stop()
-
-                            fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
-                            Log.i(TAG,BasicUtils.getQRText(fullMessage!!))
-                            if(verifySession(fullMessage!!))
-                            {
-                                val bundle = Bundle()
-                                Log.i(TAG, "messageData: $messageData")
-                                bundle.putString("attendanceData", fullMessage.toString())
-                                bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
-                                bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
-                                findNavController().navigate(R.id.attendanceInfoFragment,bundle)
-                            }
-                            else
-                            {
-                                val alertDialog = AlertDialog.Builder( requireContext() ).apply {
-                                    setTitle( "Session")
-                                    setMessage( "Sorry, your attendance response time is over!" )
-                                    setCancelable( false )
-                                    setPositiveButton( "OK" ) { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    create()
-                                }
-                                alertDialog.show()
-                            }
-
-                        }
-                        catch(ex:Exception)
-                        {
-                            progressDialog!!.stop()
-                            snackbar("Attendance not longer responsible!")
-                            Log.e(TAG,"getMessage Error: $ex")
-                        }
-                    }
-                }
-                task.addOnFailureListener(requireActivity()) { e ->
-                    if (e is ResolvableApiException) {
-                        try {
-                            e.startResolutionForResult(
-                                requireActivity(),
-                                0x1
-                            )
-                        } catch (sendIntentException: IntentSender.SendIntentException) {
-                            sendIntentException.printStackTrace()
-                        }
-                    }
-                }
+//                val locationRequest: LocationRequest = LocationRequest.create()
+//                locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//                locationRequest.interval = 10000
+//                locationRequest.fastestInterval = 10000 / 2
+//                val locationSettingsRequestBuilder = LocationSettingsRequest.Builder()
+//                locationSettingsRequestBuilder.addLocationRequest(locationRequest)
+//                locationSettingsRequestBuilder.setAlwaysShow(true)
+//                val settingsClient = LocationServices.getSettingsClient(requireContext())
+//                val task: Task<LocationSettingsResponse> =
+//                    settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
+//                task.addOnSuccessListener {
+//                    progressDialog!!.start("Preparing for attendance...")
+//                    MainScope().launch {
+//                        try{
+//                            Log.i(TAG, "userInfo: ${userInfo.id}")
+//                            val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
+//                            progressDialog!!.stop()
+//
+//                            fullMessage= QRMessageData.getQRMessageObject(messageData.fullMessage)
+//                            Log.i(TAG,BasicUtils.getQRText(fullMessage!!))
+//                            if(verifySession(fullMessage!!))
+//                            {
+//                                val bundle = Bundle()
+//                                Log.i(TAG, "messageData: $messageData")
+//                                bundle.putString("attendanceData", fullMessage.toString())
+//                                bundle.putString("userInfo",(userInfo.toJsonObject()).toString())
+//                                bundle.putString("profileImage",ImageUtils.convertBitmaptoString(profileImage!!))
+//                                findNavController().navigate(R.id.attendanceInfoFragment,bundle)
+//                            }
+//                            else
+//                            {
+//                                val alertDialog = AlertDialog.Builder( requireContext() ).apply {
+//                                    setTitle( "Session")
+//                                    setMessage( "Sorry, your attendance response time is over!" )
+//                                    setCancelable( false )
+//                                    setPositiveButton( "OK" ) { dialog, _ ->
+//                                        dialog.dismiss()
+//                                    }
+//                                    create()
+//                                }
+//                                alertDialog.show()
+//                            }
+//
+//                        }
+//                        catch(ex:Exception)
+//                        {
+//                            progressDialog!!.stop()
+//                            snackbar("Attendance not longer responsible!")
+//                            Log.e(TAG,"getMessage Error: $ex")
+//                        }
+//                    }
+//                }
+//                task.addOnFailureListener(requireActivity()) { e ->
+//                    if (e is ResolvableApiException) {
+//                        try {
+//                            e.startResolutionForResult(
+//                                requireActivity(),
+//                                0x1
+//                            )
+//                        } catch (sendIntentException: IntentSender.SendIntentException) {
+//                            sendIntentException.printStackTrace()
+//                        }
+//                    }
+//                }
             }
 
             btnTakeFriendsAttendance.setOnClickListener {

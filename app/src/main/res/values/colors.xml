@@ -8,6 +8,8 @@
     <color name="darkBackground">#202020</color>
     <color name="lightBackground">#808080</color>
     <color name="dialogBackground">#60000000</color>
+    <color name="black">#000000</color>
+    <color name="red">#FF0000</color>
 
     //Colors for Scanner Background
 </resources>

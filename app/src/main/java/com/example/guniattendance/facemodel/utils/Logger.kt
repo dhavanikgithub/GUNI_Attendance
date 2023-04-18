@@ -10,10 +10,11 @@ class Logger {
         fun log( message : String ) {
 //            TakeAttendanceFragment.setMessage(  TakeAttendanceFragment.logTextView.text.toString() + "\n" + ">> $message" )
             // To scroll to the last message
-            while ( TakeAttendanceFragment.logTextView.canScrollVertically(1) ) {
-                TakeAttendanceFragment.logTextView.scrollBy(0, 10)
-            }
+//            while ( TakeAttendanceFragment.logTextView.canScrollVertically(1) ) {
+//                TakeAttendanceFragment.logTextView.scrollBy(0, 10)
+//            }
         }
+
 
     }
 

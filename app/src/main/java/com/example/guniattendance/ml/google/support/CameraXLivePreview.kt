@@ -1,5 +1,7 @@
 package com.example.guniattendance.ml.google.support
 
+import android.app.Activity
+import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity

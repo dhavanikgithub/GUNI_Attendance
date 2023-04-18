@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_attendance_success" />
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingsFragment"
         android:label="@string/app_name" />
     <fragment
         android:id="@+id/takeAttendanceFragment"
@@ -41,10 +41,24 @@
         <action
             android:id="@+id/action_studentHomeFragment_to_settingFragment"
             app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_studentHomeFragment_to_leaveFragment"
+            app:destination="@id/leaveFragment" />
+        <action
+            android:id="@+id/action_studentHomeFragment_to_leaveStatusFragment"
+            app:destination="@id/leaveStatusFragment" />
     </fragment>
     <fragment
         android:id="@+id/scannerFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.scanner.ScannerFragment"
         android:label="@string/app_name"
         tools:layout="@layout/fragment_scanner" />
+    <fragment
+        android:id="@+id/leaveFragment"
+        android:name="com.example.guniattendance.LeaveFragment"
+        android:label="LeaveFragment" />
+    <fragment
+        android:id="@+id/leaveStatusFragment"
+        android:name="com.example.guniattendance.LeaveStatusFragment"
+        android:label="LeaveStatusFragment" />
 </navigation>

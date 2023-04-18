@@ -222,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginHorizontal="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_70sdp"
+                android:layout_marginTop="@dimen/_50sdp"
                 app:layout_constraintTop_toBottomOf="@id/data_main_layout"
                 android:weightSum="100">
                 <androidx.appcompat.widget.AppCompatButton
@@ -245,19 +245,54 @@
                     android:textSize="@dimen/_12sdp"
                     android:layout_weight="50" />
             </LinearLayout>
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:background="@drawable/button_background"
                 android:letterSpacing="0.16"
                 android:text="@string/setting"
                 android:textSize="@dimen/_12sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/takeAttLayout"
-                 />
+                app:layout_constraintVertical_bias="0.175"
+                tools:layout_editor_absoluteX="52dp" />
+
+            <LinearLayout
+                android:id="@+id/leave_btn_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_setting"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:weightSum="100">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_apply_for_leave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background"
+                    android:text="Apply For Leave"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_weight="50"
+                    android:layout_marginEnd="@dimen/_5sdp"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_check_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_background"
+                    android:text="Check Leave Status"
+                    android:textSize="@dimen/_10sdp"
+                    android:layout_weight="50"/>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
