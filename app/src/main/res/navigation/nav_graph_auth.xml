@@ -21,7 +21,11 @@
         android:label="@string/app_name"/>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingFragment"
-        android:label="@string/app_name" />
+        android:name="com.example.guniattendance.student.studentfragments.ui.settings.SettingsFragment"
+        android:label="@string/app_name" >
+        <action
+            android:id="@+id/action_settingFragment_to_launcherScreenFragment"
+            app:destination="@id/launcherScreenFragment" />
+    </fragment>
 
 </navigation>
