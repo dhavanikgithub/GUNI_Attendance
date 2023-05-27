@@ -3,6 +3,8 @@ package com.example.guniattendance.authorization.authfragments.ui.launcherscreen
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -24,29 +26,23 @@ import kotlinx.coroutines.launch
 
 class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
     private lateinit var binding: FragmentLauncherScreenBinding
-    private var progressDialog: CustomProgressDialog? = null
     private val TAG = "LauncherScreenFragment"
-    companion object{
-        lateinit var studentEnrolment: String
-    }
-
+    private var customProgressDialog: CustomProgressDialog?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = FragmentLauncherScreenBinding.inflate(layoutInflater)
-        if(progressDialog==null)
+        if(customProgressDialog==null)
         {
-            progressDialog= CustomProgressDialog(requireContext())
+            customProgressDialog=CustomProgressDialog(requireContext())
         }
-
         val checkboxTogglePref: SharedPreferences = requireActivity().getSharedPreferences("buttonToggle", 0)
         val checkboxCheck = checkboxTogglePref.getBoolean("buttonToggle", false)
         MainScope().launch {
             if(checkboxCheck){
-                progressDialog!!.start("Please wait connection is establishing....")
+                customProgressDialog!!.start("Please wait connection is establishing....")
                 MoodleConfig.getModelRepo(requireContext())
                 val url = ModelRepository.getMoodleUrlObject(requireContext())
-                progressDialog!!.stop()
+                customProgressDialog!!.stop()
                 android.app.AlertDialog.Builder(requireActivity()).setTitle("Current Moodle URL")
                         .setMessage(url.url)
                         .setPositiveButton("Continue"){ dialog, _ ->
@@ -94,21 +90,49 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
             )
             downloadUtils.start()
 
+            et1Enrollment.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val pattern = Regex("^\\d{11}$")
+                    if(et1Enrollment.text.toString().isEmpty())
+                    {
+                        et1Enrollment.error="Enrollment number is empty!"
+                    }
+                    else if(!pattern.containsMatchIn(et1Enrollment.text.toString()))
+                    {
+                        et1Enrollment.error="Enrollment is not valid"
+                    }
+                    else{
+                        et1Enrollment.error=null
+                    }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
             btnCheckEnrol.setOnClickListener{
                 hideKeyboard(requireActivity())
                 if(et1Enrollment.text.toString().isEmpty())
                 {
-                   snackbar("Enrollment number is empty!")
+                    et1Enrollment.error="Enrollment number is empty!"
+                    snackbar("Enrollment number is empty!")
                 }
                 else
                 {
-                    studentEnrolment = et1Enrollment.text.toString()
+                    et1Enrollment.error=null
+                    var studentEnrolment = et1Enrollment.text.toString()
                     val pattern = Regex("^\\d{11}$")
                     if (pattern.containsMatchIn(studentEnrolment))
                     {
+                        val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+                        val editor = localStudentData.edit()
+                        editor.putString("studentEnrolment",studentEnrolment)
+                        editor.apply()
+
                         MainScope().launch {
                             try {
-                                if (checkUser()!!.hasUserUploadImg)
+                                if (checkUser(studentEnrolment)!!.hasUserUploadImg)
                                 {
                                     et1Enrollment.setText("")
                                     findNavController().navigate(R.id.studentRegisterFragment)
@@ -128,13 +152,14 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
                             catch (ex: Exception)
                             {
 //                                snackbar("Invalid Enrollment Number " + ex.message)
-                                snackbar("Check Internet or Enrollment")
+                                snackbar("Check Internet or Enrollment or exceed limit of login")
                                 Log.e(TAG, "onViewCreated: Invalid Enrollment Number:$ex", ex)
                             }
                         }
                     }
                     else
                     {
+                        et1Enrollment.error="Enrollment is not valid"
                         snackbar("Invalid Enrollment Number")
                     }
                 }
@@ -158,10 +183,14 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         super.onDestroyView()
     }*/
 
-    private suspend fun checkUser(): BaseUserInfo?
+    private suspend fun checkUser(studentEnrolment:String): BaseUserInfo?
     {
+        if(customProgressDialog==null)
+        {
+            customProgressDialog=CustomProgressDialog(requireContext())
+        }
         var result: BaseUserInfo? =null
-        progressDialog!!.start("Verifying Enrollment....")
+        customProgressDialog!!.start("Verifying Enrollment....")
         val parentJob= GlobalScope.launch {
             try {
                 result = MoodleConfig.getModelRepo(requireContext()).isStudentRegisterForFace(studentEnrolment)
@@ -175,7 +204,7 @@ class LauncherScreenFragment : Fragment(R.layout.fragment_launcher_screen) {
         delay(10000)
         parentJob.cancel()
         parentJob.join()
-        progressDialog!!.stop()
+        customProgressDialog!!.stop()
         return result
     }
 }

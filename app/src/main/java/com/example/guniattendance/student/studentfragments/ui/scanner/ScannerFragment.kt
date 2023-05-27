@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.budiyev.android.codescanner.*
 import com.example.guniattendance.R
-import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentScannerBinding
 import com.example.guniattendance.utils.BasicUtils
 import com.guni.uvpce.moodleapplibrary.model.QRMessageData
@@ -54,9 +53,11 @@ class ScannerFragment : Fragment(R.layout.fragment_scanner) {
                             try {
                                 val qRmsg = QRMessageData.getQRMessageObject(encryptedMsg)
                                 Log.i("qRMessageData", qRmsg.toString())
+                                val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+                                val studentEnrolment = localStudentData.getString("studentEnrolment", "")
                                 val bundle = bundleOf(
                                     "qrData" to qRmsg.toString(),
-                                    "userId" to LauncherScreenFragment.studentEnrolment
+                                    "userId" to studentEnrolment
                                 )
 //                                findNavController().navigate(R.id.action_scannerFragment_to_attendanceInfoFragment, bundle)
                             } catch (e: JSONException) {

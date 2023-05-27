@@ -30,8 +30,10 @@ class CustomProgressDialog(context: Context) {
     }
 
     fun stop() {
-
-        dialog.dismiss()
+        if (dialog.isShowing) {
+            // Dismiss the dialog
+            dialog.dismiss()
+        }
     }
 
     init {

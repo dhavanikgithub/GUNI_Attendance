@@ -36,7 +36,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
     private var qrData: QRMessageData? = null
     private var profileImage: String? = null
     private lateinit var userInfo: JSONObject
-    private var progressDialog: CustomProgressDialog? = null
+    private var customProgressDialog:CustomProgressDialog?=null
     private val TAG = "AttendanceInfoFragment"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +59,10 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
 
         binding = FragmentAttendanceInfoBinding.bind(view)
 
+        if(customProgressDialog==null)
+        {
+            customProgressDialog=CustomProgressDialog(requireContext())
+        }
         /*val callback = object : OnBackPressedCallback(true)
         {
             override fun handleOnBackPressed() {
@@ -68,10 +72,6 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
 
         requireActivity().onBackPressedDispatcher.addCallback(callback)*/
 
-        if(progressDialog==null)
-        {
-            progressDialog= CustomProgressDialog(requireContext())
-        }
         binding.apply {
 //            QRBtn.setOnClickListener{
 //                it.findNavController().navigate(R.id.action_attendanceInfoFragment_to_scannerFragment)
@@ -89,10 +89,8 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                     val task: Task<LocationSettingsResponse> =
                         settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
                     task.addOnSuccessListener {
-                        progressDialog!!.start("Checking Range....")
                         try{
-                            val applicableLocation = AccessMapLocation(requireActivity()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),qrData!!.locationRange)
-                            progressDialog!!.stop()
+                            val applicableLocation = AccessMapLocation(requireActivity(),requireContext()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),qrData!!.locationRange)
                             if(applicableLocation)
                             {
                                 if(verifySession(qrData!!))
@@ -137,11 +135,11 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                         }
                         catch (ex:Exception)
                         {
-                            progressDialog!!.stop()
+                            customProgressDialog!!.stop()
                             snackbar("${ex.message}")
                             Log.e(TAG,ex.message.toString())
                         }
-                        progressDialog!!.stop()
+                        customProgressDialog!!.stop()
 
                     }
                     task.addOnFailureListener(requireActivity()) { e ->
@@ -160,7 +158,7 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                 }
                 catch (e:Exception)
                 {
-                    progressDialog!!.stop()
+                    customProgressDialog!!.stop()
                     snackbar("Error in fetch Location")
                     Log.e(ContentValues.TAG,"Location Error: $e")
                 }

@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.authorization.AuthActivity
-import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentHomeBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.BasicUtils
@@ -42,12 +41,12 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
     private lateinit var viewModel: StudentHomeViewModel
     private lateinit var userInfo: BaseUserInfo
     private lateinit var imgURL:String
-    private var progressDialog: CustomProgressDialog? = null
     val TAG = "StudentHomeFragment"
     private var profileImage: Bitmap? = null
     private var fullMessage: QRMessageData? =null
 
     private lateinit var repo: ModelRepository
+    private var customProgressDialog:CustomProgressDialog?=null
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,9 +65,9 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
 
         binding = FragmentStudentHomeBinding.bind(view)
 
-        if(progressDialog==null)
+        if(customProgressDialog==null)
         {
-            progressDialog = CustomProgressDialog(requireContext())
+            customProgressDialog=CustomProgressDialog(requireContext())
         }
         binding.apply {
             /*layoutTakeAttendance.setOnClickListener {
@@ -76,16 +75,18 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
             }*/
 
             MainScope().launch {
-                progressDialog!!.start("Details Fetching...")
+                customProgressDialog!!.start("Details Fetching...")
+                val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+                val studentEnrolment = localStudentData.getString("studentEnrolment", "")
                 repo = MoodleConfig.getModelRepo(requireContext())
-                userInfo = repo.getUserInfo(LauncherScreenFragment.studentEnrolment)
+                userInfo = repo.getUserInfo(studentEnrolment!!)
                 imgURL = userInfo.imageUrl
                 profileImage = MoodleConfig.getModelRepo(requireContext()).getURLtoBitmap(imgURL)
                 ivImage.setImageBitmap(profileImage)
                 tvName.text = userInfo.lastname
-                tvEnrollNo.text = LauncherScreenFragment.studentEnrolment
+                tvEnrollNo.text = studentEnrolment
                 tvEmailId.text = userInfo.emailAddress
-                progressDialog!!.stop()
+                customProgressDialog!!.stop()
             }
 
             btnSetting.setOnClickListener{
@@ -111,12 +112,12 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                 val task: Task<LocationSettingsResponse> =
                     settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
                 task.addOnSuccessListener {
-                    progressDialog!!.start("Preparing for attendance...")
+                    customProgressDialog!!.start("Preparing for attendance...")
                     MainScope().launch {
                         try{
                             Log.i(TAG, "userInfo: ${userInfo.id}")
                             val messageData = MoodleConfig.getModelRepo(requireContext()).getMessage(userInfo.id)
-                            progressDialog!!.stop()
+                            customProgressDialog!!.stop()
 
                             fullMessage=QRMessageData.getQRMessageObject(messageData.fullMessage)
                             Log.i(TAG,BasicUtils.getQRText(fullMessage!!))
@@ -146,7 +147,7 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         }
                         catch(ex:Exception)
                         {
-                            progressDialog!!.stop()
+                            customProgressDialog!!.stop()
                             snackbar("Attendance not longer responsible!")
                             Log.e(TAG,"getMessage Error: $ex")
                         }
@@ -164,6 +165,14 @@ class StudentHomeFragment : Fragment(R.layout.fragment_student_home) {
                         }
                     }
                 }
+            }
+
+            btnApplyForLeave.setOnClickListener {
+                findNavController().navigate(R.id.leaveRequestFragment)
+            }
+
+            btnLeaveStatus.setOnClickListener {
+                findNavController().navigate(R.id.leaveStatusFragment)
             }
 
             btnTakeFriendsAttendance.setOnClickListener {

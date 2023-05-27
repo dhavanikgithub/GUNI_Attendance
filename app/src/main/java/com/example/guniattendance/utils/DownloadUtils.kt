@@ -9,7 +9,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.downloader.*
 import com.example.guniattendance.R
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -169,21 +168,6 @@ class DownloadUtils(
             .start(object : OnDownloadListener {
                 override fun onDownloadComplete() {
                     MainScope().launch {
-                        if(contentName==file1Name)
-                        {
-                            Snackbar.make(
-                                requireParentFragment.requireView(),
-                                "content1 Downloaded",
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                        else{
-                            Snackbar.make(
-                                requireParentFragment.requireView(),
-                                "content2 Downloaded",
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
                         checkDownload()
                     }
                 }

@@ -33,8 +33,6 @@ import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.ImageUtils
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
@@ -43,7 +41,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.zip.Deflater
@@ -99,6 +96,15 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        if (ActivityCompat.checkSelfPermission(requireContext() , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            requestCameraPermission()
+        }
+        else
+        {
+            startCameraPreview()
+        }
+
         val realTimeFdo = FaceDetectorOptions.Builder()
             .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
             .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
@@ -121,76 +127,13 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         frameAnalyser = FrameAnalyser( requireContext() , boundingBoxOverlay , faceNetModel )
         fileReader = FileReader(faceNetModel)
 
-        if (ActivityCompat.checkSelfPermission(requireContext() , Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            requestCameraPermission()
-        }
-        else
-        {
-            startCameraPreview()
-        }
-        analyzePhoto(profileImage!!)
 
-    }
-
-    private fun analyzePhoto(bitmap:Bitmap)
-    {
-        Log.d(TAG,"analyzePhoto: ")
-
-        val smallerBitmap = Bitmap.createScaledBitmap(
-            bitmap,
-            bitmap.width/ SCALING_FACTOR,
-            bitmap.height/ SCALING_FACTOR,
-            false
-        )
-
-        val inputImage = InputImage.fromBitmap(smallerBitmap,0)
-
-        detector.process(inputImage).addOnSuccessListener {faces->
-            Log.d(TAG,"analyzePhoto: Successfully selected face...")
-            for (face in faces){
-                val rect = face.boundingBox
-                rect.set(
-                    rect.left* SCALING_FACTOR,
-                    rect.top*(SCALING_FACTOR-1),
-                    rect.right*(SCALING_FACTOR),
-                    rect.bottom* SCALING_FACTOR+90
-                )
-            }
-            val face = cropDetectedFace(bitmap,faces)
+        MainScope().launch {
             val images = ArrayList<Pair<String, Bitmap>>()
-            try {
-                MainScope().launch {
-                    images.add(Pair(userInfo.getString("lastname"), face))
-                    fileReader.run( images , fileReaderCallback )
-                }
-
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
+            images.add(Pair(userInfo.getString("lastname"), profileImage!!))
+            fileReader.run( images , fileReaderCallback )
         }
-        .addOnFailureListener {e->
-            Log.d(TAG,"analyzePhoto: ",e)
-        }
-    }
-    private fun cropDetectedFace(bitmap: Bitmap, faces:List<Face>):Bitmap
-    {
-        val face = faces[0]
-        val rect = face.boundingBox
-        val x = Math.max(rect.left,0)
-        val y = Math.max(rect.top,0)
-        val width = rect.width()
-        val height =rect.height()
 
-        val croppedBitmap = Bitmap.createBitmap(
-            bitmap,
-            x,
-            y,
-            if(x+width>bitmap.width) bitmap.width-x else width,
-            if(y+height>bitmap.height) bitmap.height-y else height
-        )
-        return croppedBitmap
     }
     private fun startCameraPreview() {
         cameraProviderFuture = ProcessCameraProvider.getInstance( requireContext() )
@@ -211,6 +154,7 @@ class TakeAttendanceFragment : Fragment(R.layout.fragment_take_attendance) {
         val imageFrameAnalysis = ImageAnalysis.Builder()
             .setTargetResolution(Size( 480, 640 ) )
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
             .build()
         imageFrameAnalysis.setAnalyzer(Executors.newSingleThreadExecutor(), frameAnalyser )
         cameraProvider.bindToLifecycle(this as LifecycleOwner, cameraSelector, preview , imageFrameAnalysis  )

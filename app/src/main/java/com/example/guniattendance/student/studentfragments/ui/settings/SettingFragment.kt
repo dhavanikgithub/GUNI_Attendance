@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentSettingsBinding
-import com.example.guniattendance.utils.showProgress
+import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.snackbar
 import com.guni.uvpce.moodleapplibrary.model.MoodleBasicUrl
 import com.guni.uvpce.moodleapplibrary.repo.ModelRepository
@@ -22,6 +22,8 @@ class SettingFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
     private val TAG = "SettingFragment"
     private var selectedURL:String?=null
+    private var customProgressDialog:CustomProgressDialog?=null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,6 +37,10 @@ class SettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSettingsBinding.bind(view)
 
+        if(customProgressDialog==null)
+        {
+            customProgressDialog=CustomProgressDialog(requireContext())
+        }
 //        val callback = object : OnBackPressedCallback(true)
 //        {
 //            override fun handleOnBackPressed() {
@@ -54,7 +60,8 @@ class SettingFragment : Fragment() {
             s1UrlList.keyListener=null
             MainScope().launch{
                 requireActivity().runOnUiThread {
-                    showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
+                    customProgressDialog!!.start("Please wait URL is fetching...")
+//                    showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
                 }
 
                 urlList = ModelRepository.getMoodleUrlList(requireActivity())
@@ -84,11 +91,16 @@ class SettingFragment : Fragment() {
                         val setUrl = checkboxTogglePref.getString("url", null)
                         if (setUrl != null) {
                             s1UrlList.setText(setUrl,false)
-                            showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                            customProgressDialog!!.stop()
+//                            showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                         }
-                        showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                        customProgressDialog!!.stop()
+
+//                        showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                     }
-                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                    customProgressDialog!!.stop()
+
+//                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                     selectedURL = s1UrlList.text.toString()
 
                 }
@@ -99,7 +111,8 @@ class SettingFragment : Fragment() {
             }
             saveBtn.setOnClickListener {
                 MainScope().launch {
-                    showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
+                    customProgressDialog!!.start("")
+//                    showProgress(activity = requireActivity(), bool = true, parentLayout = parentLayout, loading = lottieAnimation)
                     if(!toggleUrlDialog.isChecked){
                         checkboxToggleEditor.putBoolean("buttonToggle", toggleUrlDialog.isChecked)
                         checkboxToggleEditor.apply()
@@ -119,7 +132,8 @@ class SettingFragment : Fragment() {
                                     ModelRepository.setMoodleUrlSetting(requireContext(), urlList[i])
                                     checkboxToggleEditor.putString("url", urlList[i].url)
                                     checkboxToggleEditor.apply()
-                                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                                    customProgressDialog!!.stop()
+//                                    showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                                     findNavController().popBackStack()
                                 }
                                 catch (ex:Exception)
@@ -133,7 +147,8 @@ class SettingFragment : Fragment() {
 
                     }
                     else{
-                        showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
+                        customProgressDialog!!.stop()
+//                        showProgress(activity = requireActivity(), bool = false, parentLayout = parentLayout, loading = lottieAnimation)
                         snackbar("URL not selected")
                     }
                 }

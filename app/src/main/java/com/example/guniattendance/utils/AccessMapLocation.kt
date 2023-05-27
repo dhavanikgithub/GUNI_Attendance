@@ -11,10 +11,11 @@ import android.util.Log
 import com.jianastrero.capiche.doIHave
 import com.jianastrero.capiche.iNeed
 
-class AccessMapLocation(val requireActivity:Activity) {
+class AccessMapLocation(val requireActivity:Activity, val requireContext:Context) {
     private var curLocation: Location? = null
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
+    private var customProgressDialog:CustomProgressDialog?=null
     fun markAttendance(Latitude:Double,Longitude:Double,Range:Long):Boolean
     {
         requireActivity.doIHave(
@@ -62,6 +63,11 @@ class AccessMapLocation(val requireActivity:Activity) {
 
     @SuppressLint("MissingPermission")
     private fun getLocation(): Location? {
+        if(customProgressDialog==null)
+        {
+            customProgressDialog=CustomProgressDialog(requireContext)
+        }
+        customProgressDialog!!.start("Preparing Location...")
         locationManager =
             requireActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -75,17 +81,22 @@ class AccessMapLocation(val requireActivity:Activity) {
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
         }
-        return try {
+
+        try {
             locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 1L,
                 0f,
                 locationListener
             )
-            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            var curLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            customProgressDialog!!.stop()
+            return curLoc
         } catch (e: Exception) {
             Log.d("TAG_ERROR", "getLocation: ${e.message}")
-            null
+            customProgressDialog!!.stop()
+            return null
         }
+
     }
 }

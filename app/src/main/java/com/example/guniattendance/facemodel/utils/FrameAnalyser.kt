@@ -76,7 +76,11 @@ class FrameAnalyser(context: Context,
             isProcessing = true
 
             // Rotated bitmap for the FaceNet model
-            val frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees )
+            val cameraXImage = image.image!!
+            var frameBitmap = Bitmap.createBitmap( cameraXImage.width , cameraXImage.height , Bitmap.Config.ARGB_8888 )
+            frameBitmap.copyPixelsFromBuffer( image.planes[0].buffer )
+            frameBitmap = BitmapUtils.rotateBitmap( frameBitmap , image.imageInfo.rotationDegrees.toFloat() )
+            //val frameBitmap = BitmapUtils.imageToBitmap( image.image!! , image.imageInfo.rotationDegrees )
 
             // Configure frameHeight and frameWidth for output2overlay transformation matrix.
             if ( !boundingBoxOverlay.areDimsInit ) {
@@ -84,7 +88,7 @@ class FrameAnalyser(context: Context,
                 boundingBoxOverlay.frameWidth = frameBitmap.width
             }
 
-            val inputImage = InputImage.fromMediaImage(image.image!!, image.imageInfo.rotationDegrees )
+            val inputImage = InputImage.fromBitmap( frameBitmap , 0 )
             detector.process(inputImage)
                 .addOnSuccessListener { faces ->
                     CoroutineScope( Dispatchers.Default ).launch {
@@ -200,7 +204,7 @@ class FrameAnalyser(context: Context,
                         if (bestScoreUserName != "Unknown") {
                             /*faceList = arrayListOf()*/
                             resultVerify++
-                            if(resultVerify==10)
+                            if(resultVerify==2)
                             {
                                 resultVerify=0
                                 callback.onResultGot(bestScoreUserName)

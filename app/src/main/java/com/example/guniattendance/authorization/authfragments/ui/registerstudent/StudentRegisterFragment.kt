@@ -17,7 +17,6 @@ import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
 import com.example.guniattendance.R
-import com.example.guniattendance.authorization.authfragments.ui.launcherscreen.LauncherScreenFragment
 import com.example.guniattendance.databinding.FragmentStudentRegisterBinding
 import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.student.StudentActivity
@@ -43,23 +42,23 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
 //    private var sem = 0
     var userid: String? =  null
     var userName: String? = null
+    private var customProgressDialog:CustomProgressDialog?=null
 //    private lateinit var userInfo: BaseUserInfo
 //    private var imgURL: String = ""
-    private var progressDialog: CustomProgressDialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 //        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity())[StudentRegisterViewModel::class.java]
-        if(progressDialog==null)
-        {
-            progressDialog= CustomProgressDialog(requireContext())
-        }
+
         subscribeToObserve()
 
         binding = FragmentStudentRegisterBinding.bind(view)
-
+        if(customProgressDialog==null)
+        {
+            customProgressDialog= CustomProgressDialog(requireContext())
+        }
 
         /*val callback = object : OnBackPressedCallback(true)
         {
@@ -71,15 +70,16 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         requireActivity().onBackPressedDispatcher.addCallback(callback)*/
 
         binding.apply {
+            val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+            val enrol = localStudentData.getString("studentEnrolment", "")
             //Setting automatically the values of fields..
-            val enrol = LauncherScreenFragment.studentEnrolment
             enrollmentText.setText(enrol)
             enrollmentText.isEnabled = false
 
             MainScope().launch {
                 try {
-                    progressDialog!!.start("Preparing Info....")
-                    val result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol)
+                    customProgressDialog!!.start("Preparing Info....")
+                    val result = MoodleConfig.getModelRepo(requireActivity()).getUserInfo(enrol!!)
                     userid = result.id
                     userName = result.username
                     nameText.setText(result.lastname)
@@ -91,24 +91,24 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                     activity?.let { BasicUtils.errorDialogBox(it, "getUserInfo Error","getUserInfo Error, Contact Administrator!"+e.message) }
                 }
                 finally {
-                    progressDialog!!.stop()
+                    customProgressDialog!!.stop()
                 }
             }
 
             btnRegister.setOnClickListener {
-                progressDialog!!.start("Uploading....")
+                customProgressDialog!!.start("Uploading....")
                 MainScope().launch {
                     try{
                         if(curImageUri == Uri.EMPTY)
                         {
-                            progressDialog!!.stop()
+                            customProgressDialog!!.stop()
                             BasicUtils.errorDialogBox(requireContext(),"Error","Upload Image")
                             return@launch
                         }
                         val res = MoodleConfig.getModelRepo(requireActivity()).uploadStudentPicture(requireContext(),
                             userid!!,curImageUri)
                         Log.i("Successfully updated the profile picture:", res.toString(4))
-                        progressDialog!!.stop()
+                        customProgressDialog!!.stop()
                         try{
                             Intent(
                                 requireActivity(),
@@ -122,7 +122,7 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
                         }
 
                     } catch (e: Exception){
-                        progressDialog!!.stop()
+                        customProgressDialog!!.stop()
                         snackbar("Unknown Error, Contact Administrator!")
                         Log.e(TAG, "onViewCreated: ${e.message}")
                     }
@@ -147,7 +147,14 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
         requireActivity().iNeed(
             Manifest.permission.CAMERA,
             onGranted = {
-                startCrop()
+                try{
+                    startCrop()
+                }
+                catch(ex:Exception)
+                {
+                    snackbar(ex.message.toString())
+                }
+
             },
             onDenied = {
                 snackbar("Camera permission needed to access features")
@@ -156,29 +163,43 @@ class StudentRegisterFragment : Fragment(R.layout.fragment_student_register) {
     }
 
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
-        if (result.isSuccessful) {
-            curImageUri = result.uriContent!!
-            val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, curImageUri)
-            binding.ivImage.setImageBitmap(bitmap)
-            viewModel.setCurrentImageUri(curImageUri)
+        try{
+            if (result.isSuccessful) {
+                curImageUri = result.uriContent!!
+                val bitmap: Bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, curImageUri)
+                binding.ivImage.setImageBitmap(bitmap)
+                viewModel.setCurrentImageUri(curImageUri)
 
-        } else {
-            val exception = result.error
-            snackbar(exception.toString())
+            } else {
+                val exception = result.error
+                snackbar(exception.toString())
+            }
         }
+        catch(ex:Exception)
+        {
+            snackbar(ex.message.toString())
+        }
+
     }
 
     private fun startCrop() {
-        cropImage.launch(
-            options {
-                setGuidelines(CropImageView.Guidelines.ON)
-                setAspectRatio(1, 1)
-                setCropShape(CropImageView.CropShape.OVAL)
-                setOutputCompressQuality(70)
-                setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
-                setImageSource(includeGallery = false, includeCamera = true)
-            }
-        )
+        try{
+            cropImage.launch(
+                options {
+                    setGuidelines(CropImageView.Guidelines.ON)
+                    setAspectRatio(1, 1)
+                    setCropShape(CropImageView.CropShape.OVAL)
+                    setOutputCompressQuality(70)
+                    setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+                    setImageSource(includeGallery = false, includeCamera = true)
+                }
+            )
+        }
+        catch(ex:Exception)
+        {
+            snackbar(ex.message.toString())
+        }
+
     }
 
     private fun subscribeToObserve() {
