@@ -37,6 +37,7 @@ class StudentActivity : AppCompatActivity() {
             "",
             Snackbar.LENGTH_INDEFINITE
         )*/
+
         val connectivityManager = this.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
 
         val liveNetworkMonitor = LiveNetworkMonitor(connectivityManager)
@@ -49,7 +50,9 @@ class StudentActivity : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration.Builder(
             setOf(
-                R.id.studentHomeFragment
+                R.id.studentHomeFragment,
+                R.id.leaveHomeFragment,
+                R.id.leaveLoginFragment
             )
         ).build()
 

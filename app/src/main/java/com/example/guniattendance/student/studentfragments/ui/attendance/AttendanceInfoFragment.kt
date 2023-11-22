@@ -90,7 +90,8 @@ class AttendanceInfoFragment : Fragment(R.layout.fragment_attendance_info) {
                         settingsClient.checkLocationSettings(locationSettingsRequestBuilder.build())
                     task.addOnSuccessListener {
                         try{
-                            val applicableLocation = AccessMapLocation(requireActivity(),requireContext()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),qrData!!.locationRange)
+//                            val applicableLocation = AccessMapLocation(requireActivity(),requireContext()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),qrData!!.locationRange)
+                            val applicableLocation = AccessMapLocation(requireActivity(),requireContext()).markAttendance(qrData!!.facultyLocationLat.toDouble(),qrData!!.facultyLocationLong.toDouble(),1000)
                             if(applicableLocation)
                             {
                                 if(verifySession(qrData!!))

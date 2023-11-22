@@ -1,5 +1,6 @@
 package com.example.guniattendance.student.studentfragments.ui.leave.status
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
@@ -15,7 +16,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.guniattendance.R
 import com.example.guniattendance.databinding.FragmentLeaveStatusBinding
-import com.example.guniattendance.moodle.MoodleConfig
 import com.example.guniattendance.utils.BasicUtils
 import com.example.guniattendance.utils.CustomProgressDialog
 import com.example.guniattendance.utils.leave.LeaveListAdapter
@@ -45,8 +45,14 @@ class LeaveStatusFragment : Fragment(R.layout.fragment_leave_status) {
             customProgressDialog= CustomProgressDialog(requireContext())
         }
 
-        val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
-        val studentEnrolment = localStudentData.getString("studentEnrolment", "")
+//        val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+
+        val sharedPreferences = requireActivity().getSharedPreferences("student", Context.MODE_PRIVATE)
+
+        val studentEnrolment = sharedPreferences.getString("enrollment", "")
+        val studentName = sharedPreferences.getString("name", "")
+
+//        val studentEnrolment = localStudentData.getString("studentEnrolment", "")
         /*val studentEnrolment = "21012022022"*/
         val dataList = ArrayList<LeaveListData>()
 
@@ -140,7 +146,7 @@ class LeaveStatusFragment : Fragment(R.layout.fragment_leave_status) {
         MainScope().launch {
             try{
                 customProgressDialog!!.start("Loading....")
-                val userData = MoodleConfig.getModelRepo(requireContext()).getUserInfo(studentEnrolment.toString())
+//                val userData = MoodleConfig.getModelRepo(requireContext()).getUserInfo(studentEnrolment.toString())
                 val request: StringRequest = object : StringRequest(Method.POST, url, Response.Listener { response: String? ->
                             try {
                                 customProgressDialog!!.stop()
@@ -165,7 +171,7 @@ class LeaveStatusFragment : Fragment(R.layout.fragment_leave_status) {
                                     val leaveListData = LeaveListData(
                                         jsonObject.getString("id"),
                                         studentEnrolment.toString(),
-                                        userData.lastname,
+                                        studentName.toString(),
                                         jsonObject.getString("proctor_id"),
                                         jsonObject.getString("type"),
                                         jsonObject.getString("start_date"),
@@ -185,17 +191,17 @@ class LeaveStatusFragment : Fragment(R.layout.fragment_leave_status) {
                                         binding.applicationReason.text=leaveListData.reason
                                         /*binding.proofData.text=leaveListData.attachment*/
 
-                                        if(leaveListData.status=="Approved")
+                                        if(leaveListData.status.contains("Approved"))
                                         {
                                             binding.leaveStatus.setTextColor(Color.parseColor("#45C560"))
                                             binding.btnCancelLayout.visibility=View.GONE
                                         }
-                                        else if(leaveListData.status == "Rejected")
+                                        else if(leaveListData.status.contains("Rejected"))
                                         {
                                             binding.leaveStatus.setTextColor(Color.parseColor("#FF2531"))
                                             binding.btnCancelLayout.visibility=View.GONE
                                         }
-                                        else if(leaveListData.status=="Canceled")
+                                        else if(leaveListData.status.contains("Canceled"))
                                         {
                                             binding.leaveStatus.setTextColor(Color.parseColor("#FF2531"))
                                             binding.btnCancelLayout.visibility=View.GONE

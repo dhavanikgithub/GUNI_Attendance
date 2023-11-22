@@ -3,6 +3,7 @@ package com.example.guniattendance.student.studentfragments.ui.leave.request
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -200,8 +201,12 @@ class LeaveRequestFragment : Fragment(R.layout.fragment_leave_request) {
                 }
 
                 MainScope().launch {
-                    val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
-                    val studentEnrolment = localStudentData.getString("studentEnrolment", "")
+//                    val localStudentData = requireActivity().getSharedPreferences("studentData", 0)
+                    val sharedPreferences = requireActivity().getSharedPreferences("student", Context.MODE_PRIVATE)
+
+                    val studentEnrolment = sharedPreferences.getString("enrollment", "")
+
+//                    val studentEnrolment = localStudentData.getString("studentEnrolment", "")
                     val request: StringRequest =
                         object : StringRequest(
                             Method.POST, url, Response.Listener { response: String? ->

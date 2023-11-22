@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GUNI Attendance</string>
+    <string name="app_name">Student</string>
     <string name="capture_image">Capture Your Face</string>
     <string name="enter_your_email_address">Your email address</string>
     <string name="register">Register</string>

@@ -61,17 +61,17 @@ class LeaveListAdapter(private val context: Context, private val dataList: Array
         leaveReasonTextView.text=data.reason
         startDateTextView.text=data.startDate
         endDateTextView.text=data.endDate
-        if(data.status=="Approved")
+        if(data.status.contains("Approved"))
         {
             leaveStatusTextView.setTextColor(Color.parseColor("#45C560"))
             btnCancel.visibility=View.GONE
         }
-        else if(data.status == "Rejected")
+        else if(data.status.contains("Rejected"))
         {
             leaveStatusTextView.setTextColor(Color.parseColor("#FF2531"))
             btnCancel.visibility=View.GONE
         }
-        else if(data.status == "Canceled")
+        else if(data.status.contains("Canceled"))
         {
             leaveStatusTextView.setTextColor(Color.parseColor("#FF2531"))
             btnCancel.visibility=View.GONE

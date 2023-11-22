@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".student.studentfragments.ui.leave.leavehome.LeaveHomeFragment">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <androidx.appcompat.widget.AppCompatButton
+           android:id="@+id/btn_leave_logout"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_gravity="right"
+           android:background="@drawable/button_background"
+           android:letterSpacing="0.16"
+           android:text="Logout"
+           android:textAllCaps="false"
+           android:textSize="@dimen/_12sdp"
+           android:textStyle="bold"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           android:layout_marginTop="20dp"
+           android:layout_marginEnd="20dp"/>
+       <androidx.appcompat.widget.AppCompatButton
+           android:id="@+id/btn_apply_for_leave"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:background="@drawable/button_background"
+           android:text="Apply For\nLeave"
+           android:textSize="@dimen/_12sdp"
+           android:layout_weight="50"
+           android:letterSpacing="0.16"
+           android:layout_marginHorizontal="@dimen/_10sdp"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintEnd_toStartOf="@id/btn_leave_status"
+           />
+
+       <androidx.appcompat.widget.AppCompatButton
+           android:id="@+id/btn_leave_status"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:background="@drawable/button_background"
+           android:text="Leave\nStatus"
+           android:letterSpacing="0.16"
+           android:textSize="@dimen/_12sdp"
+           android:layout_weight="50"
+           android:layout_marginHorizontal="@dimen/_10sdp"
+           app:layout_constraintTop_toTopOf="parent"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintStart_toEndOf="@id/btn_apply_for_leave"
+           app:layout_constraintEnd_toEndOf="parent"/>
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

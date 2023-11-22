@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/studentHomeFragment">
+    app:startDestination="@id/leaveLoginFragment">
 
     <fragment
         android:id="@+id/successAttendanceFragment"
@@ -61,4 +61,28 @@
         android:id="@+id/leaveStatusFragment"
         android:name="com.example.guniattendance.student.studentfragments.ui.leave.status.LeaveStatusFragment"
         android:label="@string/app_name" />
+    <fragment
+        android:id="@+id/leaveHomeFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.leave.leavehome.LeaveHomeFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_leave_home" >
+        <action
+            android:id="@+id/action_leaveHomeFragment_to_leaveRequestFragment"
+            app:destination="@id/leaveRequestFragment" />
+        <action
+            android:id="@+id/action_leaveHomeFragment_to_leaveStatusFragment"
+            app:destination="@id/leaveStatusFragment" />
+        <action
+            android:id="@+id/action_leaveHomeFragment_to_leaveLoginFragment"
+            app:destination="@id/leaveLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/leaveLoginFragment"
+        android:name="com.example.guniattendance.student.studentfragments.ui.leave.login.LeaveLoginFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_leave_login" >
+        <action
+            android:id="@+id/action_leaveLoginFragment_to_leaveHomeFragment"
+            app:destination="@id/leaveHomeFragment" />
+    </fragment>
 </navigation>

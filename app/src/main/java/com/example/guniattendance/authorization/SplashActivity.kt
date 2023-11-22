@@ -1,11 +1,13 @@
 package com.example.guniattendance.authorization
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.guniattendance.R
+import com.example.guniattendance.student.StudentActivity
 import com.example.guniattendance.utils.LiveNetworkMonitor
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -17,6 +19,11 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        Intent(this,StudentActivity::class.java).apply {
+            startActivity(this)
+        }
+        finish()
 
         snackbar=Snackbar.make(
             findViewById(android.R.id.content),
